@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Help</class>
+ <widget class="QDialog" name="Help">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>630</width>
+    <height>234</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Помощь</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>591</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Программа работает с файлами excel.
+Для корректного считывания данных они должны располагаться на первом листе. Первый столбец считается осью X, остальные - значениями по Y. В таблице могут быть заголовки (их присутствие желательно).
+Сохранение по умолчанию производится в файл &quot;result.xls&quot;. На первом листе будут находиться исходные данные, на втором спектры и взаимные спектры.
+Во вкладке &quot;Файл&quot; расположены функции, связанные с общим управлением программой: открытие файла, сохранение его в папку по-умолчанию, или в отдельную папку, закрытие файла и выход из программы.
+На вкладке &quot;Анализ&quot; предлагаются все функции обработки имеющихся данных.
+Вкладка &quot;Сервис&quot; содержит функции, изменяющие форму подачи данных.
+Вкладка &quot;Помощь&quot; предлагает открыть это окно, чтобы прочитать описание программы.</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::AutoText</enum>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignJustify|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+   <property name="margin">
+    <number>3</number>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

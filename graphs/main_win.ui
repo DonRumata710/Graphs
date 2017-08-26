@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GraphsClass</class>
+ <widget class="QMainWindow" name="GraphsClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1040</width>
+    <height>855</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Graphs</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1041</width>
+      <height>831</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+    <property name="tabsClosable">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1040</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="open"/>
+    <addaction name="separator"/>
+    <addaction name="save"/>
+    <addaction name="saveas"/>
+    <addaction name="separator"/>
+    <addaction name="close"/>
+    <addaction name="separator"/>
+    <addaction name="exit"/>
+   </widget>
+   <widget class="QMenu" name="help">
+    <property name="title">
+     <string>Помощь</string>
+    </property>
+    <addaction name="about"/>
+   </widget>
+   <widget class="QMenu" name="menuFyfkbp">
+    <property name="title">
+     <string>Анализ</string>
+    </property>
+    <addaction name="aSmoothing"/>
+    <addaction name="aApproximation"/>
+    <addaction name="aDeviations"/>
+    <addaction name="separator"/>
+    <addaction name="aSpectr"/>
+    <addaction name="aCorrelation"/>
+    <addaction name="separator"/>
+    <addaction name="aFullWavelet"/>
+    <addaction name="separator"/>
+    <addaction name="aPow"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Сервис</string>
+    </property>
+    <addaction name="aMultyGraph"/>
+    <addaction name="aLogScale"/>
+    <addaction name="aFill"/>
+    <addaction name="aGrid"/>
+    <addaction name="separator"/>
+    <addaction name="aWaveletSimple"/>
+    <addaction name="separator"/>
+    <addaction name="aSaveWavlet"/>
+    <addaction name="aCloseGraph"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menuFyfkbp"/>
+   <addaction name="menu_2"/>
+   <addaction name="help"/>
+  </widget>
+  <action name="open">
+   <property name="text">
+    <string>Открыть</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Помощь</string>
+   </property>
+  </action>
+  <action name="save">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+  </action>
+  <action name="saveas">
+   <property name="text">
+    <string>Сохранить как</string>
+   </property>
+  </action>
+  <action name="close">
+   <property name="text">
+    <string>Закрыть</string>
+   </property>
+  </action>
+  <action name="exit">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="about">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Спектры</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>Спектральные корреляции</string>
+   </property>
+  </action>
+  <action name="aSmoothing">
+   <property name="text">
+    <string>Сглаживание</string>
+   </property>
+  </action>
+  <action name="aApproximation">
+   <property name="text">
+    <string>Аппроксимация</string>
+   </property>
+  </action>
+  <action name="aSpectr">
+   <property name="text">
+    <string>Спектры</string>
+   </property>
+  </action>
+  <action name="aWavelets">
+   <property name="text">
+    <string>Вейвлеты</string>
+   </property>
+  </action>
+  <action name="aCorrelation">
+   <property name="text">
+    <string>Спектральные корреляции</string>
+   </property>
+  </action>
+  <action name="aDeviations">
+   <property name="text">
+    <string>Ряд отклонений</string>
+   </property>
+  </action>
+  <action name="aFullWavelet">
+   <property name="text">
+    <string>3-х мерные вейвлеты</string>
+   </property>
+  </action>
+  <action name="aLogScale">
+   <property name="text">
+    <string>Логарифмические шкалы</string>
+   </property>
+  </action>
+  <action name="aSaveWavlet">
+   <property name="text">
+    <string>Сохранить график</string>
+   </property>
+  </action>
+  <action name="aFill">
+   <property name="text">
+    <string>Заполнить пропуски</string>
+   </property>
+  </action>
+  <action name="aGrid">
+   <property name="text">
+    <string>Сетка</string>
+   </property>
+  </action>
+  <action name="aPow">
+   <property name="text">
+    <string>Мощность</string>
+   </property>
+  </action>
+  <action name="aWaveletSimple">
+   <property name="text">
+    <string>Разбить вейвлет</string>
+   </property>
+  </action>
+  <action name="aCloseGraph">
+   <property name="text">
+    <string>Очистить приложение</string>
+   </property>
+  </action>
+  <action name="aMultyGraph">
+   <property name="text">
+    <string>Сравнение графиков</string>
+   </property>
+  </action>
+  <action name="aWavletBreak">
+   <property name="text">
+    <string>Разбить вейвлет</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="graphs.qrc"/>
+ </resources>
+ <connections/>
+</ui>
