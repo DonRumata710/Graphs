@@ -28,52 +28,29 @@
 
 #pragma once
 
+
+#include <string>
 #include <vector>
-#include <memory>
-#include <complex>
-
-#include <ActiveQt/qaxobject.h>
-#include <ActiveQt/qaxbase.h>
 
 
-#include "waveletfunction.h"
-
-
-using std::vector;
-using std::shared_ptr;
-typedef shared_ptr<QPolygonF> pPolygon;
-
-
-class Row;
-class WaveletProducer;
-
-
-
-class WaveletData
+class Row : public std::vector<double>
 {
 public:
-    WaveletData (const vector<double>& x, const vector<double>& y, const WaveletFunction* function);
+    explicit Row (std::string name);
+    Row (std::string name, size_t size, double val);
+    Row (const Row& values);
+    Row (const Row&& values);
 
-    const WaveletProducer& get_producer () const;
+    Row& operator= (const Row& values);
 
-    void save_data (QAxObject*);
+    bool    operator<  (const std::string& row) const  { return m_name < row; }
+    bool    operator<  (const Row& row) const          { return m_name < row.m_name; }
+
+    bool    operator== (const std::string& name) const { return m_name == name; }
+    bool    operator== (const Row& row) const          { return m_name == row.m_name; }
+
+    std::string get_name () const                      { return m_name; }
 
 private:
-    /*
-     * void m_haaf_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_french_hat_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_morlet_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_calc_morlet_factors (const int num_points, const int min_points, std::vector<std::complex<double>>& data);
-     */
-
-    vector<double> wavelet;
-    size_t columns = 0;
-
-    Intervals m_intervals;
-
-    std::unique_ptr<WaveletProducer> data;
-
-    bool m_isFrenchHat = false;
-
-    static int m_numThreads;
+    std::string m_name;
 };

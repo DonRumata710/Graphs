@@ -31,23 +31,16 @@
 #include "plotdata.h"
 #include "abstractmodel.h"
 
-#include <ActiveQt/qaxobject.h>
-#include <ActiveQt/qaxbase.h>
-
-#include "View/choiseexception.h"
-
 
 class GraphModel : public AbstractModel
 {
 public:
     GraphModel () {}
 
-    GraphModel (QAxObject* obj)
+    GraphModel (pDocument doc)
     {
-        load_data (obj);
+        load_data (doc);
     }
-
-    //GraphModel (const GraphModel& graph) : m_data (graph.m_data) {}
 
     virtual ~GraphModel () {}
 
@@ -68,8 +61,8 @@ public:
     GraphModel* get_relative_sp (double begin, double end, unsigned step) const;
     GraphModel* get_power () const;
 
-    void save_data (QAxObject* workbook) const;
-    void load_data (QAxObject* workbook);
+    void save_data (pDocument document) const;
+    void load_data (pDocument document);
 
     void remove_spaces ()
     {

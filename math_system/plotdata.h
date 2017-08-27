@@ -27,35 +27,65 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
 
 
-#include <qobject.h>
+#include "document/document.h"
 
-#include <memory>
+#include <functional>
+#include <vector>
+#include <list>
 #include <string>
 
+#include "row.h"
 
-class QAxObject;
+
+typedef std::vector<std::string> StringList;
 
 
-class ExcelFile : public QObject
+class PlotData
 {
-    Q_OBJECT
-
 public:
-    ExcelFile(const std::string& filename);
-    ~ExcelFile();
+    PlotData ();
+    PlotData (const PlotData&);
+    PlotData (pDocument);
 
-    QAxObject* get_table () const;
+    void load_data (pDocument doc);
+    void save_data (pDocument doc);
+
+    PlotData& operator= (const PlotData& plotData);
+
+    size_t get_size () const;
+    bool empty () const;
+    StringList get_headers () const;
+
+    const std::string& get_name () const;
+    void set_name (const std::string& name);
+
+    PlotData get_approx () const;
+    PlotData get_smoothing (int) const;
+
+    PlotData get_deviations () const;
+    PlotData get_relative_sp (double, double, unsigned) const;
+    PlotData get_correlations (double, double, unsigned) const;
+
+    PlotData get_power () const;
+
+    void add_row (const Row&);
+
+    const Row& get_axis () const;
+    const Row* get_row (const std::string& row_name) const;
+
+    void remove_spaces ();
 
 private:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-    std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_stat_sheets;
-};
+    struct PrivateData;
+    typedef std::shared_ptr<PrivateData> pPrivateData;
 
-#endif // EXCELFILE_H
+    PlotData (pPrivateData data);
+
+    std::vector<Row>& get_series () const;
+    std::vector<double> get_smoothed (const std::vector<double>&) const;
+    std::vector<Row>::iterator find_column (const std::string&) const;
+
+    pPrivateData m_data;
+};

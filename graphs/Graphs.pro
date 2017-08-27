@@ -18,16 +18,6 @@ FORMS += \
     wavelet.ui
 
 HEADERS += \
-    Model/abstractmodel.h \
-    Model/graphmodel.h \
-    Model/plotdata.h \
-    Model/row.h \
-    Model/threadscontrol.h \
-    Model/wavelemodel.h \
-    Model/waveletdata.h \
-    Model/waveletfunction.h \
-    Model/waveletproducer.h \
-    Model/waveletstep.h \
     Presenter/graphpresenter.h \
     Presenter/matrixrasterdata.h \
     Presenter/spectrogrampresenter.h \
@@ -50,13 +40,6 @@ HEADERS += \
     View/zoomer.h
 
 SOURCES += \
-    Model/graphmodel.cpp \
-    Model/plotdata.cpp \
-    Model/threadscontrol.cpp \
-    Model/wavelemodel.cpp \
-    Model/waveletdata.cpp \
-    Model/waveletfunction.cpp \
-    Model/waveletproducer.cpp \
     Presenter/graphpresenter.cpp \
     Presenter/matrixrasterdata.cpp \
     Presenter/spectrogrampresenter.cpp \
@@ -75,6 +58,8 @@ SOURCES += \
     View/zoomer.cpp \
     main.cpp
 
+INCLUDEPATH += $$PWD/../include
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../3rd_party/qwt/lib/ -lqwt
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../3rd_party/qwt/lib/ -lqwtd
 else:unix:!macx: LIBS += -L$$OUT_PWD/../3rd_party/qwt/lib/ -lqwt
@@ -87,3 +72,25 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/lib/qwt.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/lib/qwtd.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/src/libqwt.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../exel_reader/ -lExelReader
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../exel_reader/ -lExelReader
+
+DEPENDPATH += $$PWD/../exel_reader
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/libExelReader.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/libExelReader.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/ExelReader.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/ExelReader.lib
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../math_system/release/ -lMathSystem
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../math_system/debug/ -lMathSystem
+else:unix:!macx: LIBS += -L$$OUT_PWD/../math_system/ -lMathSystem
+
+DEPENDPATH += $$PWD/../math_system
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/MathSystem.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/MathSystem.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a

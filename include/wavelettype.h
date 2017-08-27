@@ -26,37 +26,19 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #pragma once
+#ifndef WAVELET_TYPE_H
+#define WAVELET_TYPE_H
 
 
-#include <string>
-#include <vector>
-using std::string;
-
-
-typedef std::vector<string> StringList;
-
-
-enum AxisType
+enum class WaveletType
 {
-    TYPE_NUM,
-    TYPE_TIME
-};
+    UNKNOWN,
+    HAAR,
+    FHAT,
+    MORLET
+}
 
 
-class AbstractModel
-{
-public:
-    virtual ~AbstractModel () {}
-
-    AxisType get_type () const { return m_type; }
-
-    virtual StringList get_headers () const = 0;
-    virtual string get_name () const = 0;
-
-protected:
-    void set_type (AxisType type) { m_type = type; }
-
-private:
-    AxisType m_type = TYPE_NUM;
-};
+#endif

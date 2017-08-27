@@ -26,64 +26,8 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #include "graphmodel.h"
-
-
-inline bool is_digit (char c)
-{
-    return c >= '0' && c <= '9';
-}
-
-
-inline bool is_letter (char c)
-{
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c < 0;
-}
-
-
-AxisType get_str_type (string str)
-{
-    auto s (str.begin ());
-    unsigned i (1);
-    QChar sep = '\n';
-    int lng[5] = { 0 };
-    bool lettersLong (false);
-    bool letters (false);
-    if (!is_digit(*s)) return TYPE_NUM;
-    ++s;
-    //if (!(*s++).isDigit ())
-    while (s != str.end ())
-    {
-        if (is_digit(*s)) i++;
-        else
-        {
-            if (is_letter(*s))
-            {
-                if (letters && lettersLong) return TYPE_NUM;
-                else
-                {
-                    unsigned j (0);
-                    while (is_letter(*s) && s++ != str.end ()) ++j;
-                    if (j > 2 && !lettersLong) lettersLong = TYPE_TIME;
-                    else if (!letters) letters = TYPE_TIME;
-                    else return TYPE_NUM;
-                }
-            }
-            else if (sep == *s || *s == ',') sep = '\n';
-            else if (sep == '\n') sep = *s;
-            else return TYPE_NUM;
-            if (i > 4) return TYPE_NUM;
-            ++lng[i];
-            i = 0;
-        }
-        ++s;
-    }
-    if (lng[4] < 2 && lng[2] != 0 &&
-        ((lng[1] + lng[2] + lng[4] > 1 && lettersLong && lng[1] + lng[2] + lng[4] < 5) ||
-        (lng[1] + lng[2] + lng[4] > 2 && !lettersLong && lng[1] + lng[2] + lng[4] < 6)))
-        return TYPE_TIME;
-    return TYPE_NUM;
-}
 
 
 GraphModel* GraphModel::get_correlations (double begin, double end, unsigned step) const
@@ -101,6 +45,17 @@ GraphModel* GraphModel::get_power () const
     return new GraphModel (m_source.get_power ());
 }
 
+void GraphModel::save_data(pDocument document) const
+{
+
+}
+
+void GraphModel::load_data(pDocument document)
+{
+
+}
+
+/*
 void GraphModel::save_data (QAxObject* workbook) const
 {
     unique_ptr<QAxObject> sheetToCopy (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
@@ -124,6 +79,7 @@ void GraphModel::load_data (QAxObject* workbook)
 
     m_source.set_data (StatSheet.get ());
 }
+*/
 
 StringList GraphModel::get_headers() const { return m_source.get_headers (); }
 

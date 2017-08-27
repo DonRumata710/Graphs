@@ -28,7 +28,6 @@
 
 #include "wavelet.h"
 #include "rangemaster.h"
-#include "Model/waveletfunction.h"
 
 
 WaveletWindow::WaveletWindow (QWidget* parent) : QDialog (parent)
@@ -44,13 +43,20 @@ WaveletWindow::WaveletWindow (QWidget* parent) : QDialog (parent)
     range->set_spin_box (m_wavelet.sbMax, m_wavelet.sbMin);
 }
 
-WaveletFunction* WaveletWindow::get_func () const
+WaveletInitParams WaveletWindow::get_func() const
 {
+    WaveletInitParams params;
+    params.max_points_num = m_wavelet.sbMax->value ();
+    params.min_points_num = m_wavelet.sbMin->value ();
+
     if (m_wavelet.cbWaveletFunction->currentText () == QString("HAAR"))
-        return new HaarWavelet(m_wavelet.sbMin->value (), m_wavelet.sbMax->value ());
+        params.type = WaveletType::HAAR;
     else if (m_wavelet.cbWaveletFunction->currentText () == QString("FHAT"))
-        return new FhatWavelet(m_wavelet.sbMin->value (), m_wavelet.sbMax->value ());
+        params.type = WaveletType::FHAT;
     else if (m_wavelet.cbWaveletFunction->currentText () == QString("MORLET"))
-        return new MorletWavelet(m_wavelet.sbMin->value ());
-    else return nullptr;
+        params.type = WaveletType::MORLET;
+    else
+        params.type = WaveletType::UNKNOWN;
+
+    return params;
 }

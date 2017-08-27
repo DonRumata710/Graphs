@@ -26,11 +26,11 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#include "graphpresenter.h"
-#include "graphmodel.h"
+#include "Presenter/graphpresenter.h"
+#include "Model/graphmodel.h"
 
-#include "spectrogrampresenter.h"
-#include "wavelemodel.h"
+#include "Presenter/spectrogrampresenter.h"
+#include "Model/wavelemodel.h"
 
 #include "multygraph.h"
 

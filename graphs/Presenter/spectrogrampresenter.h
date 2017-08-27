@@ -28,8 +28,10 @@
 
 #pragma once
 
-#include "Model/waveletdata.h"
+
 #include "tabpresenter.h"
+
+#include "math/waveletdata.h"
 
 #include <qwt_plot_spectrogram.h>
 

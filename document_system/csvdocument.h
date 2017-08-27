@@ -36,7 +36,7 @@ class CsvDocument : public iDocument
 public:
     explicit CsvDocument (const std::string& filename);
 
-    virtual bool is_x_axis_time () override;
+    virtual AxisType get_x_axis_type () override;
 
     virtual size_t get_columns_number () override;
     virtual size_t get_rows_number () override;

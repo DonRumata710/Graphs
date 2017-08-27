@@ -33,7 +33,7 @@
 #include <QtGui>
 #include <qwt_plot.h>
 
-#include "Model/abstractmodel.h"
+#include "math/abstractmodel.h"
 
 
 class LogScale;

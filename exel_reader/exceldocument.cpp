@@ -31,12 +31,12 @@
 #include "excelfile.h"
 
 
-struct ExcelDocument::PrivateData : public ExcelFile
+struct ExcelDocument::PrivateData
 {
-    PrivateData (const std::string& filename) : ExcelFile (filename)
+    PrivateData (const std::string& filename) : file (filename)
     {}
 
-
+    ExcelFile file;
 };
 
 
@@ -49,27 +49,27 @@ ExcelDocument::~ExcelDocument()
     delete data;
 }
 
-bool ExcelDocument::is_x_axis_time()
+iDocument::AxisType ExcelDocument::get_x_axis_type()
 {
-
+    return TYPE_NUM;
 }
 
 size_t ExcelDocument::get_columns_number()
 {
-
+    return 0;
 }
 
 size_t ExcelDocument::get_rows_number()
 {
-
+    return 0;
 }
 
 std::vector<std::string> ExcelDocument::get_headers()
 {
-
+    return std::vector<std::string> ();
 }
 
 double ExcelDocument::get_item(size_t row, size_t column)
 {
-
+    return 0.0;
 }

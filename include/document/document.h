@@ -27,35 +27,30 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
 
-
-#include <qobject.h>
-
-#include <memory>
+#include <vector>
 #include <string>
+#include <memory>
 
 
-class QAxObject;
-
-
-class ExcelFile : public QObject
+class iDocument
 {
-    Q_OBJECT
-
 public:
-    ExcelFile(const std::string& filename);
-    ~ExcelFile();
+    enum AxisType
+    {
+        TYPE_NUM,
+        TYPE_TIME
+    };
 
-    QAxObject* get_table () const;
+    virtual ~iDocument () {}
 
-private:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-    std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_stat_sheets;
+    virtual AxisType get_x_axis_type () = 0;
+
+    virtual size_t get_columns_number () = 0;
+    virtual size_t get_rows_number () = 0;
+
+    virtual std::vector<std::string> get_headers () = 0;
+    virtual double get_item (size_t row, size_t column) = 0;
 };
 
-#endif // EXCELFILE_H
+typedef std::shared_ptr<iDocument> pDocument;

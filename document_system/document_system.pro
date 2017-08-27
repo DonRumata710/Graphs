@@ -6,16 +6,24 @@
 
 QT       -= core gui
 
-TARGET = document_system
+TARGET = DocumentSystem
 TEMPLATE = lib
+
+CONFIG += staticlib
 
 DEFINES += DOCUMENT_SYSTEM_LIBRARY
 
-SOURCES += document.cpp \
-    csvdocument.cpp
+SOURCES += csvdocument.cpp
+
+INCLUDEPATH += ../include/ \
+    ../include/document \
+    .
 
 HEADERS += document.h \
-    csvdocument.h
+    csvdocument.h \
+    ../include/document/document.h
+
+DESTDIR = $${OUT_PWD}
 
 unix {
     target.path = /usr/lib

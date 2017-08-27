@@ -28,73 +28,31 @@
 
 #pragma once
 
-#include <QtCore>
-#include <QtGui>
-#include <QtWidgets>
 
-#include <functional>
-#include <vector>
-#include <list>
-#include <memory>
+#include "axistype.h"
+
 #include <string>
-using std::shared_ptr;
-using std::unique_ptr;
+#include <vector>
 using std::string;
-
-#include "row.h"
-
-
-using std::shared_ptr;
-class QAxObject;
 
 
 typedef std::vector<string> StringList;
 
 
-typedef shared_ptr<QPolygonF> pPolygon;
 
-class PlotData
+class AbstractModel
 {
-    struct PrivateData;
-
 public:
-    PlotData ();
-    PlotData (const PlotData&);
-    PlotData (QAxObject*);
-    PlotData (PrivateData* data);
+    virtual ~AbstractModel () {}
 
-    void set_data (QAxObject*);
-    void save_data (QAxObject*) const;
+    AxisType get_type () const { return m_type; }
 
-    PlotData& operator= (const PlotData& plotData);
+    virtual StringList get_headers () const = 0;
+    virtual string get_name () const = 0;
 
-    size_t get_size () const;
-    bool empty () const;
-    StringList get_headers () const;
-
-    string get_name () const;
-    void set_name (string);
-
-    PlotData get_approx () const;
-    PlotData get_smoothing (int) const;
-
-    PlotData get_deviations () const;
-    PlotData get_relative_sp (double, double, unsigned) const;
-    PlotData get_correlations (double, double, unsigned) const;
-
-    PlotData get_power () const;
-
-    void add_row (const Row&);
-
-    const Row& get_axis () const;
-    const Row* get_row (string) const;
-
-    void remove_spaces ();
+protected:
+    void set_type (AxisType type) { m_type = type; }
 
 private:
-    std::vector<Row>& get_series () const;
-    std::vector<double> get_smoothed (const std::vector<double>&) const;
-    std::vector<Row>::iterator find_column (string) const;
-
-    shared_ptr<PrivateData> m_data;
+    AxisType m_type = TYPE_NUM;
 };

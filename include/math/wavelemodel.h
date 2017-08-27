@@ -27,35 +27,36 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
 
 
-#include <qobject.h>
+#include "abstractmodel.h"
+#include "waveletproducer.h"
 
-#include <memory>
-#include <string>
-
-
-class QAxObject;
+#include <map>
 
 
-class ExcelFile : public QObject
+using std::map;
+
+class GraphModel;
+class WaveletFunction;
+
+
+class WaveletModel : public AbstractModel
 {
-    Q_OBJECT
-
 public:
-    ExcelFile(const std::string& filename);
-    ~ExcelFile();
+    WaveletModel (GraphModel*, WaveletFunction*);
+    virtual ~WaveletModel ();
 
-    QAxObject* get_table () const;
+    void save_data (pDocument document);
+
+    const WaveletProducer& get_data (string);
+
+    virtual StringList get_headers () const override;
+    virtual string get_name () const override;
 
 private:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-    std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_stat_sheets;
-};
+    void add_data (const string, WaveletData*);
 
-#endif // EXCELFILE_H
+    map<string, WaveletData*> m_data;
+    string m_name;
+};

@@ -39,11 +39,11 @@ using std::shared_ptr;
 
 ExcelFile::ExcelFile(const std::string &filename)
 {
-    m_excel = new QAxObject ("Excel.Application", this);
-    m_workbooks = m_excel->querySubObject ("Workbooks");
-    m_workbook = workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename));
-    m_sheets = workbook->querySubObject ("Sheets");
-    m_stat_sheets = mSheets->querySubObject ("Item(const QVariant&)", QVariant (1));
+    m_excel = std::make_unique<QAxObject> ("Excel.Application", this);
+    m_workbooks.reset (m_excel->querySubObject ("Workbooks"));
+    m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
+    m_sheets.reset (m_workbook->querySubObject ("Sheets"));
+    m_stat_sheets.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
 }
 
 ExcelFile::~ExcelFile()

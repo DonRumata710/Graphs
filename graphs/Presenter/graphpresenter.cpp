@@ -29,9 +29,9 @@
 #include "graphpresenter.h"
 #include "spectrogrampresenter.h"
 
-#include "Model/row.h"
-#include "Model/graphmodel.h"
-#include "Model/wavelemodel.h"
+#include "math/row.h"
+#include "math/graphmodel.h"
+#include "math/wavelemodel.h"
 
 #include "View/multygraph.h"
 #include "View/smoothing.h"

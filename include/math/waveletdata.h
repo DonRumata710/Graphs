@@ -27,35 +27,46 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
 
 
-#include <qobject.h>
+#include "document/document.h"
 
+#include <vector>
 #include <memory>
-#include <string>
+#include <complex>
+
+#include "waveletfunction.h"
 
 
-class QAxObject;
+class Row;
+class WaveletProducer;
 
 
-class ExcelFile : public QObject
+class WaveletData
 {
-    Q_OBJECT
-
 public:
-    ExcelFile(const std::string& filename);
-    ~ExcelFile();
+    WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletFunction* function);
 
-    QAxObject* get_table () const;
+    const WaveletProducer& get_producer () const;
+
+    void save_data (pDocument document);
 
 private:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-    std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_stat_sheets;
-};
+    /*
+     * void m_haaf_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
+     * void m_french_hat_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
+     * void m_morlet_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
+     * void m_calc_morlet_factors (const int num_points, const int min_points, std::vector<std::complex<double>>& data);
+     */
 
-#endif // EXCELFILE_H
+    std::vector<double> wavelet;
+    size_t columns = 0;
+
+    Intervals m_intervals;
+
+    std::unique_ptr<WaveletProducer> data;
+
+    bool m_isFrenchHat = false;
+
+    static size_t m_numThreads;
+};

@@ -30,28 +30,14 @@
 
 #include "threadscontrol.h"
 
-#include <ActiveQt/qaxobject.h>
-#include <ActiveQt/qaxbase.h>
-
-
-bool is_text (QString str)
-{
-    return !(str.begin ()->isDigit () && (str.end () - 1)->isDigit ());
-}
-
-
-bool operator< (const string&str, const Row& col)
-{
-    return str < col.get_name ();
-}
+#include <algorithm>
 
 
 struct PlotData::PrivateData
 {
-    string name = "Data";
+    std::string name = "Data";
     std::vector<Row> series;
 };
-
 
 
 class Function
@@ -85,8 +71,7 @@ private:
 
 /////////////////////////////////////////////////////////////////////
 PlotData::PlotData () : m_data (new PrivateData ()) {}
-PlotData::PlotData (QAxObject* sheet) { set_data (sheet); }
-PlotData::PlotData (PrivateData* data) : m_data (data) {}
+PlotData::PlotData (PlotData::pPrivateData data) : m_data (data) {}
 PlotData::PlotData (const PlotData& data) : m_data (data.m_data) {}
 
 PlotData& PlotData::operator= (const PlotData& plotData)
@@ -95,6 +80,7 @@ PlotData& PlotData::operator= (const PlotData& plotData)
     return *this;
 }
 
+/*
 void PlotData::set_data (QAxObject* StatSheet)
 {
     QAxObject* cell (StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (1), QVariant (1)));
@@ -116,13 +102,19 @@ void PlotData::set_data (QAxObject* StatSheet)
     delete cell;
 
     if (!noHeader)
-    for (unsigned i = 1; i <= numColumns; ++i)
     {
-        cell = StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (1), QVariant (i));
-        get_series ().push_back (Row (cell->property ("Value").toString ().toStdString(), dataSize - 1, 0.0));
-        delete cell;
+        for (unsigned i = 1; i <= numColumns; ++i)
+        {
+            cell = StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (1), QVariant (i));
+            get_series ().push_back (Row (cell->property ("Value").toString ().toStdString(), dataSize - 1, 0.0));
+            delete cell;
+        }
     }
-    else for (unsigned i = 1; i <= numColumns; ++i) get_series ().push_back (Row (QString::number (i).toStdString (), dataSize, 0.0));
+    else
+    {
+        for (unsigned i = 1; i <= numColumns; ++i)
+            get_series ().push_back (Row (QString::number (i).toStdString (), dataSize, 0.0));
+    }
 
     QAxObject* Cell1 (StatSheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (noHeader ? 1 : 2), QVariant (1)));
     QAxObject* Cell2 (StatSheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (dataSize), QVariant (numColumns)));
@@ -133,7 +125,8 @@ void PlotData::set_data (QAxObject* StatSheet)
     for (unsigned row = 0; row < dataSize - (noHeader ? 0 : 1); ++row)
     {
         QList<QVariant> rowList (list[row].toList ());
-        for (unsigned col = 0; col < numColumns; ++col) get_series ()[col][row] = rowList[col].toDouble ();
+        for (unsigned col = 0; col < numColumns; ++col)
+            get_series ()[col][row] = rowList[col].toDouble ();
     }
 
     delete Cell1;
@@ -173,18 +166,21 @@ void PlotData::save_data (QAxObject* sheet) const
 
     range->setProperty ("Value", QVariant (rowsList));
 }
-
+*/
 
 size_t PlotData::get_size () const { return m_data->series.size () - 1; }
 
 bool PlotData::empty () const { return m_data->series.empty (); }
 
-string PlotData::get_name () const
+const std::string& PlotData::get_name () const
 {
     return m_data->name;
 }
 
-void PlotData::set_name (string name) { m_data->name = name; }
+void PlotData::set_name (const std::string& name)
+{
+    m_data->name = name;
+}
 
 StringList PlotData::get_headers () const
 {
@@ -197,9 +193,9 @@ StringList PlotData::get_headers () const
 
 PlotData PlotData::get_approx () const
 {
-    PrivateData* newdata = new PrivateData ();
-    newdata->series.assign (get_series ().size (), Row ());
-    newdata->series[0] = Row (m_data->series[0].get_name (), 2, 0.0);
+    pPrivateData newdata (std::make_shared<PrivateData> ());
+    newdata->series.reserve (get_series ().size ());
+    newdata->series.push_back (Row (m_data->series[0].get_name (), 2, 0.0));
     newdata->series[0][0] = m_data->series[0][0];
     newdata->series[0][1] = m_data->series[0][m_data->series[0].size () - 1];
 
@@ -243,9 +239,9 @@ PlotData PlotData::get_approx () const
 
 PlotData PlotData::get_smoothing (int points) const
 {
-    PrivateData* d = new PrivateData ();
-    d->series.assign (get_series ().size (), Row ());
-    d->series[0] = get_series ()[0];
+    pPrivateData d (std::make_shared<PrivateData> ());
+    d->series.reserve (get_series ().size ());
+    d->series.push_back(get_series ()[0]);
 
     prepare_threads ();
 
@@ -283,9 +279,9 @@ PlotData PlotData::get_smoothing (int points) const
 
 PlotData PlotData::get_deviations () const
 {
-    PrivateData* d = new PrivateData ();
-    d->series.assign (get_series ().size (), Row());
-    d->series[0] = get_series ()[0];
+    pPrivateData d (std::make_shared<PrivateData> ());
+    d->series.reserve (get_series ().size ());
+    d->series.push_back (get_series ()[0]);
 
     prepare_threads ();
 
@@ -310,7 +306,8 @@ PlotData PlotData::get_deviations () const
 ///////////////////////////////////////////////////////////
 void PlotData::add_row (const Row& col)
 {
-    if (find_column (col.get_name ()) != m_data->series.end ()) return;
+    if (find_column (col.get_name ()) != m_data->series.end ())
+        return;
     m_data->series.push_back (col);
     std::sort (m_data->series.begin () + 1, m_data->series.end ());
 }
@@ -320,18 +317,18 @@ void PlotData::add_row (const Row& col)
 const Row& PlotData::get_axis () const
 {
     if (m_data->series.empty ())
-        throw string ("PlotData is empty!");
+        throw std::string ("PlotData is empty!");
     return m_data->series[0];
 }
 
-const Row* PlotData::get_row (string col) const
+const Row* PlotData::get_row (const std::string& col) const
 {
-    pPolygon row (new QPolygonF (m_data->series[0].size ()));
-
     auto it = find_column (col);
 
-    if (it != m_data->series.end ()) return &(*it);
-    else return nullptr;
+    if (it != m_data->series.end ())
+        return &(*it);
+    else
+        return nullptr;
 }
 
 
@@ -361,10 +358,12 @@ std::vector<Row>& PlotData::get_series () const
     return m_data->series;
 }
 
-std::vector<Row>::iterator PlotData::find_column (string col) const
+std::vector<Row>::iterator PlotData::find_column (const std::string& col) const
 {
-    if (m_data->series.empty ()) return m_data->series.end ();
-    return std::equal_range (m_data->series.begin () + 1, m_data->series.end (), col).first;
+    if (m_data->series.empty ())
+        return m_data->series.end ();
+    else
+        return std::equal_range (m_data->series.begin () + 1, m_data->series.end (), col).first;
 }
 
 
@@ -380,13 +379,12 @@ PlotData PlotData::get_relative_sp (double fromLin, double toLin, unsigned numst
         toLin = tmp;
     }
 
-    //QVector<double> friquency;
     double from (log10 (fromLin));
     double to (log10 (toLin));
     double step ((to - from) / (numstep - 1));
     double max (to + step / 4.0);
 
-    PrivateData* sp = new PrivateData ();
+    pPrivateData sp (std::make_shared<PrivateData> ());
     sp->series.reserve (m_data->series.size () * m_data->series.size ());
     sp->series.push_back (Row ("Friquency"));
     Row& friquency (sp->series[0]);
@@ -400,9 +398,9 @@ PlotData PlotData::get_relative_sp (double fromLin, double toLin, unsigned numst
     for (unsigned rowFst = 1; rowFst < m_data->series.size (); ++rowFst)
     for (unsigned rowSnd = rowFst; rowSnd < m_data->series.size (); ++rowSnd)
     {
-        string f (m_data->series[rowFst].get_name ());
-        string s (m_data->series[rowSnd].get_name ());
-        string name ((f == s) ? f : (f + "-" + s));
+        std::string f (m_data->series[rowFst].get_name ());
+        std::string s (m_data->series[rowSnd].get_name ());
+        std::string name ((f == s) ? f : (f + "-" + s));
 
         sp->series.push_back (Row (name, sp->series[0].size (), 0.0));
         Row& row (sp->series[sp->series.size () - 1]);
@@ -466,7 +464,7 @@ PlotData PlotData::get_correlations (double from, double to, unsigned numstep) c
     double step ((to - from) / (numstep - 1));
     double max (to + step / 4.0);
 
-    PrivateData* corr = new PrivateData ();
+    pPrivateData corr (std::make_shared<PrivateData> ());
     corr->series.reserve ((get_series ().size () - 1) * (get_series ().size () - 1) / 2);
     corr->series.push_back (Row ("Friquency"));
     Row& friquency (corr->series[0]);
@@ -519,7 +517,7 @@ PlotData PlotData::get_correlations (double from, double to, unsigned numstep) c
 
 PlotData PlotData::get_power () const
 {
-    PrivateData* pow = new PrivateData ();
+    pPrivateData pow (std::make_shared<PrivateData> ());
 
     pow->series = get_series ();
 

@@ -33,27 +33,27 @@ CsvDocument::CsvDocument(const std::string &filename)
 
 }
 
-bool CsvDocument::is_x_axis_time()
+iDocument::AxisType CsvDocument::get_x_axis_type()
 {
-
+    return TYPE_NUM;
 }
 
 size_t CsvDocument::get_columns_number()
 {
-
+    return 0;
 }
 
 size_t CsvDocument::get_rows_number()
 {
-
+    return 0;
 }
 
 std::vector<std::string> CsvDocument::get_headers()
 {
-
+    return std::vector<std::string> ();
 }
 
 double CsvDocument::get_item(size_t row, size_t column)
 {
-
+    return 0.0;
 }

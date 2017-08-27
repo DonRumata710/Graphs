@@ -38,12 +38,12 @@
 
 struct Intervals
 {
-    double minX = 0;
-    double maxX = 0;
-    double minY = 0;
-    double maxY = 0;
-    double minZ = 0;
-    double maxZ = 0;
+    double minX = 0.0;
+    double maxX = 0.0;
+    double minY = 0.0;
+    double maxY = 0.0;
+    double minZ = 0.0;
+    double maxZ = 0.0;
 
     Intervals () {}
 
@@ -62,13 +62,15 @@ struct Intervals
 class WaveletFunction
 {
 public:
+    virtual ~WaveletFunction () {}
+
     virtual Intervals compute (const std::vector<double>& x, const std::vector<double>& y, std::vector<double>& wavelet, size_t& num_columns, size_t& min_points, size_t& max_points) const = 0;
     virtual WaveletStep get_step () const = 0;
     virtual std::string get_name () const = 0;
 };
 
 
-class HaarWavelet : public WaveletFunction
+class HaarWavelet final : public WaveletFunction
 {
 public:
     HaarWavelet (const size_t min_points, const size_t max_points);
@@ -82,7 +84,7 @@ private:
 };
 
 
-class FhatWavelet : public WaveletFunction
+class FhatWavelet final : public WaveletFunction
 {
 public:
     FhatWavelet (const size_t min_points, const size_t max_points);
@@ -96,7 +98,7 @@ private:
 };
 
 
-class MorletWavelet : public WaveletFunction
+class MorletWavelet final : public WaveletFunction
 {
 public:
     MorletWavelet (size_t num_periods);

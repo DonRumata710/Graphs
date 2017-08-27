@@ -37,8 +37,6 @@
 #include "logscale.h"
 #include "multygraph.h"
 
-#include <ActiveQt/qaxobject.h>
-#include <ActiveQt/qaxbase.h>
 #include <qfiledialog.h>
 
 #include <memory>

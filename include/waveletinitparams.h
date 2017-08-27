@@ -26,36 +26,21 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
+#ifndef WAVELET_INIT_PARAMS_H
+#define WAVELET_INIT_PARAMS_H
 
 
-#include <qobject.h>
-
-#include <memory>
-#include <string>
+#include "wavelettype.h"
 
 
-class QAxObject;
-
-
-class ExcelFile : public QObject
+struct WaveletInitParams
 {
-    Q_OBJECT
+    WaveletType type;
+    size_t min_points_num;
+    size_t max_points_num;
+}
 
-public:
-    ExcelFile(const std::string& filename);
-    ~ExcelFile();
 
-    QAxObject* get_table () const;
-
-private:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-    std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_stat_sheets;
-};
-
-#endif // EXCELFILE_H
+#endif

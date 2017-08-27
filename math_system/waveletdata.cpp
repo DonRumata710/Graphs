@@ -40,7 +40,7 @@
 #include <complex>
 
 
-WaveletData::WaveletData (const vector<double>& x, const vector<double>& y, const WaveletFunction* function)
+WaveletData::WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletFunction* function)
 {
     columns = x.size ();
 
@@ -58,8 +58,9 @@ const WaveletProducer& WaveletData::get_producer () const
 }
 
 
-void WaveletData::save_data (QAxObject* sheet)
+void WaveletData::save_data (pDocument document)
 {
+    /*
     if (wavelet.empty ()) return;
 
     QAxObject* Cell1 (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
@@ -86,4 +87,5 @@ void WaveletData::save_data (QAxObject* sheet)
     }
 
     range->setProperty ("Value", QVariant (rowsList));
+    */
 }

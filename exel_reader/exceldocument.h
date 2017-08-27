@@ -38,10 +38,10 @@
 class ExcelDocument final : public iDocument
 {
 public:
-    ExcelDocument(const std::string& filename);
+    explicit ExcelDocument(const std::string& filename);
     ~ExcelDocument ();
 
-    virtual bool is_x_axis_time () override;
+    virtual AxisType get_x_axis_type () override;
 
     virtual size_t get_columns_number () override;
     virtual size_t get_rows_number () override;
@@ -50,6 +50,8 @@ public:
     virtual double get_item (size_t row, size_t column) override;
 
 private:
+    ExcelDocument(const ExcelDocument&) = delete;
+
     struct PrivateData;
     PrivateData* data;
 };

@@ -26,7 +26,11 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #pragma once
+
+
+#include "waveletinitparams.h"
 
 #include <QtCore>
 #include <QtGui>
@@ -34,15 +38,13 @@
 
 #include "ui_wavelet.h"
 
-#include "Model/waveletfunction.h"
-
 
 class WaveletWindow : public QDialog
 {
 public:
     WaveletWindow (QWidget* parent = nullptr);
 
-    WaveletFunction* get_func () const;
+    WaveletInitParams get_func () const;
 
 private:
     Ui_Wavelet m_wavelet;

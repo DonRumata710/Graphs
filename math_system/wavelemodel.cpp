@@ -54,8 +54,9 @@ WaveletModel::WaveletModel (GraphModel* graph, WaveletFunction* type)
 
 WaveletModel::~WaveletModel () {}
 
-void WaveletModel::save_data (QAxObject* workbook)
+void WaveletModel::save_data (pDocument document)
 {
+    /*
     for (auto& data : m_data)
     {
         unique_ptr<QAxObject> sheetToCopy (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
@@ -64,6 +65,7 @@ void WaveletModel::save_data (QAxObject* workbook)
         newSheet->setProperty ("Name", QString (data.first.c_str ()));
         data.second->save_data (newSheet.get ());
     }
+    */
 }
 
 const WaveletProducer& WaveletModel::get_data (string name)

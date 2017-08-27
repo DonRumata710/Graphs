@@ -27,27 +27,15 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
+#ifndef AXIS_TYPE_H
+#define AXIS_TYPE_H
 
-#include <vector>
-#include <string>
 
-
-class iDocument
+enum AxisType
 {
-public:
-    enum AxisType
-    {
-        TYPE_NUM,
-        TYPE_TIME
-    };
-
-    virtual ~iDocument ();
-
-    virtual AxisType get_x_axis_tipe () = 0;
-
-    virtual size_t get_columns_number () = 0;
-    virtual size_t get_rows_number () = 0;
-
-    virtual std::vector<std::string> get_headers () = 0;
-    virtual double get_item (size_t row, size_t column) = 0;
+    TYPE_NUM,
+    TYPE_TIME
 };
+
+
+#endif

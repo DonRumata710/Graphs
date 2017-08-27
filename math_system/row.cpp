@@ -26,37 +26,35 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
+#include "row.h"
 
 
-#include "abstractmodel.h"
-#include "waveletproducer.h"
+Row::Row(std::string name) : m_name (name)
+{}
 
-#include <map>
+Row::Row(std::string name, size_t size, double val) :
+    std::vector<double> (size, val),
+    m_name (name)
+{}
 
+Row::Row (const Row& values) :
+    std::vector<double> (values),
+    m_name (values.m_name)
+{}
 
-using std::map;
+Row::Row (const Row&& values) :
+    std::vector<double> (std::move (values)),
+    m_name (std::move (values.m_name))
+{}
 
-class GraphModel;
-class WaveletFunction;
-
-
-class WaveletModel : public AbstractModel
+Row &Row::operator=(const Row &values)
 {
-public:
-    WaveletModel (GraphModel*, WaveletFunction*);
-    virtual ~WaveletModel ();
+    assign(values.begin(), values.end());
+    m_name = values.m_name;
+    return *this;
+}
 
-    void save_data (QAxObject*);
-
-    const WaveletProducer& get_data (string);
-
-    virtual StringList get_headers () const override;
-    virtual string get_name () const override;
-
-private:
-    void add_data (const string, WaveletData*);
-
-    map<string, WaveletData*> m_data;
-    string m_name;
-};
+bool operator<(const std::string &str, const Row &col)
+{
+    return str < col.get_name ();
+}

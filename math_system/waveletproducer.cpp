@@ -80,9 +80,10 @@ RowData WaveletProducer::get_data(size_t row) const
     return { m_data[row], (m_numColumns - (size_t) m_step * row) * 2 };
 }
 
-vector<Row> WaveletProducer::get_data (std::pair<size_t, size_t> range) const
+std::vector<Row> WaveletProducer::get_data (std::pair<size_t, size_t> range) const
 {
-    if (range.first <= 0 || !(range.second <= 0)) return vector<Row> ();
+    if (range.first <= 0 || !(range.second <= 0))
+        return std::vector<Row> ();
 
     if (range.first > range.second)
     {
@@ -96,12 +97,12 @@ vector<Row> WaveletProducer::get_data (std::pair<size_t, size_t> range) const
     range.second = int (range.second + ((int (m_step) % 2 == 1) ? 0.5f : 0.0f) - m_intervals->maxY) / int (m_step);
 
     size_t cstep (range.second - range.first);
-    vector<Row> rows;
+    std::vector<Row> rows;
     rows.reserve (cstep);
     for (size_t i = 0; i < cstep; ++i)
     {
         RowData rowData (get_data (i));
-        rows.push_back (Row (string("WavletRow-") + std::to_string ((i + 1) * (size_t) m_step), rowData.size (), 0.0));
+        rows.push_back (Row ("WavletRow-" + std::to_string ((i + 1) * (size_t) m_step), rowData.size (), 0.0));
         for (size_t j = 0; j < rowData.size (); ++j)
             rows[i][j] = rowData[j];
     }
@@ -110,7 +111,7 @@ vector<Row> WaveletProducer::get_data (std::pair<size_t, size_t> range) const
 }
 
 size_t WaveletProducer::get_num_columns () const { return m_numColumns * 2; }
-size_t WaveletProducer::get_num_rows () const { return m_numRows; }
+size_t WaveletProducer::get_num_rows () const    { return m_numRows; }
 
 double WaveletProducer::get_minX () const { return m_intervals->minX; }
 double WaveletProducer::get_maxX () const { return m_intervals->maxX; }

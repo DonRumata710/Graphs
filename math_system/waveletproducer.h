@@ -29,41 +29,73 @@
 #pragma once
 
 
-#include <string>
-using std::string;
+#include <vector>
+
+#include "waveletstep.h"
+#include "waveletdata.h"
 
 
-///////////////////////////////////////////////////////////////////////
-class Row : public std::vector<double>
+struct RowData
 {
 public:
-    explicit Row (string name = "") : m_name (name) {}
-    Row (string name, size_t size, double val) : std::vector<double> (size, val), m_name (name) {}
-    //Row (string name, QVector<double>& values) : std::vector<double> (values), m_name (name) {}
-    //Row (string name, QVector<double>&& values) : std::vector<double> (values), m_name (name) {}
+    RowData () {}
 
-    Row (const Row& values) : std::vector<double> (values), m_name (values.m_name) {}
-    Row (const Row&& values) : std::vector<double> (std::move (values)), m_name (std::move (values.m_name)) {}
+    RowData (const double* start, size_t size) :
+        m_start (start), m_size (size)
+    {}
 
-    Row& operator= (const Row& values)
+    double operator[] (size_t i) const
     {
-        assign(values.begin(), values.end());
-        m_name = values.m_name;
-        return *this;
+        return m_start[i];
     }
 
-    bool    operator<  (const string& row) const  { return m_name < row; }
-    bool    operator<  (const Row& row) const      { return m_name < row.m_name; }
-
-    bool    operator== (const string& name) const { return m_name == name; }
-    bool    operator== (const Row& row) const      { return m_name == row.m_name; }
-
-    string get_name () const                      { return m_name; }
+    size_t size () const { return m_size; }
 
 private:
-    string m_name;
+    const double* m_start;
+    size_t m_size;
 };
-////////////////////////////////////////////////////////////
 
 
-bool operator< (const QString&str, const Row& col);
+
+class WaveletProducer
+{
+public:
+    WaveletProducer (const std::vector<double>& data, const size_t nColumns, size_t startRow, size_t endRow, WaveletStep step, const Intervals* intervals);
+
+    Row get_axisX () const;
+
+    double value (size_t row, size_t col) const;
+
+    size_t row_size (size_t i) const;
+
+    RowData get_data (size_t row) const;
+
+    std::vector<Row> get_data (std::pair<size_t, size_t>) const;
+
+    size_t get_num_columns () const;
+    size_t get_num_rows () const;
+
+    double get_minX () const;
+    double get_maxX () const;
+    double get_minY () const;
+    double get_maxY () const;
+    double get_minZ () const;
+    double get_maxZ () const;
+
+private:
+    std::vector<const double*> m_data;
+    size_t m_counter = 1;
+
+    size_t m_numColumns;
+    size_t m_numRows;
+
+    const size_t m_size;
+
+    WaveletStep m_step;
+
+    const Intervals* m_intervals;
+};
+
+
+typedef std::shared_ptr<WaveletProducer> pWaveletProducer;
