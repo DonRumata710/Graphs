@@ -26,13 +26,14 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #include "row.h"
 
 
-Row::Row(std::string name) : m_name (name)
+Row::Row(const std::string& name) : m_name (name)
 {}
 
-Row::Row(std::string name, size_t size, double val) :
+Row::Row(const std::string& name, size_t size, double val) :
     std::vector<double> (size, val),
     m_name (name)
 {}

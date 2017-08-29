@@ -17,10 +17,11 @@ SOURCES += \
     exceldocument.cpp \
     excelfile.cpp
 
-INCLUDEPATH += ../include/
+INCLUDEPATH += ../include/ \
+    ../include/excel/
 
 HEADERS += \
-    exceldocument.h \
+    ../include/excel/exceldocument.h \
     excelfile.h
 
 DESTDIR = $${OUT_PWD}

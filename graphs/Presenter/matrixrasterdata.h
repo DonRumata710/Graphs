@@ -27,8 +27,11 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
+#ifndef MATRIX_RASTER_DATA_H
+#define MATRIX_RASTER_DATA_H
 
-#include "Model/waveletproducer.h"
+
+#include "math/waveletproducer.h"
 #include "qwt_raster_data.h"
 #include <vector>
 
@@ -54,3 +57,5 @@ private:
     double dy;
 };
 
+
+#endif

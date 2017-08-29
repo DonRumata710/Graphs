@@ -31,6 +31,7 @@
 #include "threadscontrol.h"
 
 #include <algorithm>
+#include <iterator>
 
 
 struct PlotData::PrivateData
@@ -363,7 +364,19 @@ std::vector<Row>::iterator PlotData::find_column (const std::string& col) const
     if (m_data->series.empty ())
         return m_data->series.end ();
     else
-        return std::equal_range (m_data->series.begin () + 1, m_data->series.end (), col).first;
+        return quick_search (m_data->series.begin () + 1, m_data->series.end (), col);
+}
+
+PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& end, const std::string& col) const
+{
+    const iterRow mid (begin + std::distance(begin, end) / 2);
+
+    if (mid->get_name () < col)
+        return quick_search (begin, mid, col);
+    else if (mid->get_name () > col)
+        return quick_search (mid, end, col);
+    else
+        return mid;
 }
 
 

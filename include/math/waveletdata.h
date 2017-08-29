@@ -32,6 +32,7 @@
 #include "document/document.h"
 
 #include "waveletinitparams.h"
+#include "intervals.h"
 
 #include <vector>
 #include <memory>

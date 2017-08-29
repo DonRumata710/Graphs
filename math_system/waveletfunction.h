@@ -28,11 +28,13 @@
 
 #pragma once
 
+
+#include "waveletstep.h"
+#include "intervals.h"
+
 #include <vector>
 #include <complex>
 #include <string>
-
-#include "waveletstep.h"
 
 
 class WaveletFunction

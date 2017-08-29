@@ -81,11 +81,15 @@ private:
     struct PrivateData;
     typedef std::shared_ptr<PrivateData> pPrivateData;
 
+    typedef std::vector<Row>::iterator iterRow;
+
     PlotData (pPrivateData data);
 
     std::vector<Row>& get_series () const;
     std::vector<double> get_smoothed (const std::vector<double>&) const;
-    std::vector<Row>::iterator find_column (const std::string&) const;
+    iterRow find_column (const std::string&) const;
+
+    iterRow quick_search (const iterRow& begin, const iterRow& end, const std::string& col) const;
 
     pPrivateData m_data;
 };

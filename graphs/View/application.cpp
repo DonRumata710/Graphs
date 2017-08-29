@@ -137,6 +137,7 @@ void Application::open_file (QString filename)
 
 void Application::load_data (QString filename)
 {
+    /*
     m_filename = filename;
     unique_ptr<QAxObject> mExcel (new QAxObject ("Excel.Application", this));
     unique_ptr<QAxObject> workbooks (mExcel->querySubObject ("Workbooks"));
@@ -158,10 +159,12 @@ void Application::load_data (QString filename)
     mExcel->setProperty ("DisplayAlerts", QVariant ("False"));
     workbook->dynamicCall ("Close()");
     mExcel->dynamicCall ("Quit()");
+    */
 }
 
 void Application::save_doc (QString filename)
 {
+    /*
     unique_ptr<QAxObject> mExcel (new QAxObject ("Excel.Application", this));
     unique_ptr<QAxObject> workbooks (mExcel->querySubObject ("Workbooks"));
     unique_ptr<QAxObject> workbook (workbooks->querySubObject ("Open(const QVariant&)", QVariant (m_filename)));
@@ -180,6 +183,7 @@ void Application::save_doc (QString filename)
     workbook->dynamicCall ("SaveAs(const QVariant&)", QVariant (filename));
     workbook->dynamicCall ("Close()");
     mExcel->dynamicCall ("Quit()");
+    */
 }
 
 

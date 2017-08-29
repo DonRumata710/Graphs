@@ -30,7 +30,8 @@
 #ifndef EXCELDOCUMENT_H
 #define EXCELDOCUMENT_H
 
-#include "document.h"
+
+#include "document/document.h"
 
 #include <string>
 
@@ -55,5 +56,6 @@ private:
     struct PrivateData;
     PrivateData* data;
 };
+
 
 #endif // EXCELDOCUMENT_H

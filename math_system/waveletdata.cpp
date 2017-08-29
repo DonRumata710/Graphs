@@ -43,6 +43,20 @@ WaveletData::WaveletData (const std::vector<double>& x, const std::vector<double
 {
     columns = x.size ();
 
+    std::unique_ptr<WaveletFunction> function;
+    if (wavelet_init_params.type == "HAAR")
+    {
+        function = std::make_unique<HaarWavelet>(wavelet_init_params.min_points_num, wavelet_init_params.max_points_num);
+    }
+    else if (wavelet_init_params.type == "FHAT")
+    {
+        function = std::make_unique<FhatWavelet>(wavelet_init_params.min_points_num, wavelet_init_params.max_points_num);
+    }
+    else if (wavelet_init_params.type == "MORLET")
+    {
+        function = std::make_unique<MorletWavelet>(wavelet_init_params.min_points_num);
+    }
+
     size_t num_columns (0);
     size_t min_points (0);
     size_t max_points (0);
