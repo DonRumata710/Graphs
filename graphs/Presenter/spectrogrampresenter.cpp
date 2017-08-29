@@ -70,14 +70,14 @@ public:
 };
 
 
-SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, WaveletFunction* func) :
+SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params) :
     TabPresenter (parent, new WaveletModel (graph, func)),
-    m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(func->get_name().c_str()) + "\" " + QString(graph->get_name ().c_str())))
+    m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(wavelet_init_params.type) + "\" " + QString(graph->get_name ().c_str())))
 {
     if (parent)
     {
         connect (get_headers (), SIGNAL (currentTextChanged (const QString&)), SLOT (attach_raster (const QString&)));
-        parent->addTab (this, tr ("Wavelet") + " \"" + QString(func->get_name().c_str ()) + "\" "+ QString(graph->get_name ().c_str ()));
+        parent->addTab (this, tr ("Wavelet") + " \"" + QString(wavelet_init_params.type) + "\" "+ QString(graph->get_name ().c_str ()));
 
         QwtPlotCanvas *canvas = new QwtPlotCanvas (m_plot);
         canvas->setPalette (Qt::darkGray);

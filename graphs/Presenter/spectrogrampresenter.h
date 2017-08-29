@@ -32,6 +32,7 @@
 #include "tabpresenter.h"
 
 #include "math/waveletdata.h"
+#include "waveletinitparams.h"
 
 #include <qwt_plot_spectrogram.h>
 
@@ -46,7 +47,7 @@ class SpectrogramPresenter : public TabPresenter
     Q_OBJECT
 
 public:
-    SpectrogramPresenter (QTabWidget* parent, GraphModel*, WaveletFunction*);
+    SpectrogramPresenter (QTabWidget* parent, GraphModel*, const WaveletInitParams&);
 
     GraphPresenter* get_local_wavlet ();
 

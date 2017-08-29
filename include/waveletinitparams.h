@@ -32,15 +32,16 @@
 #define WAVELET_INIT_PARAMS_H
 
 
-#include "wavelettype.h"
+#include <string>
+#include <cstdint>
 
 
 struct WaveletInitParams
 {
-    WaveletType type;
+    std::string type;
     size_t min_points_num;
     size_t max_points_num;
-}
+};
 
 
 #endif

@@ -29,18 +29,17 @@
 #include "waveletdata.h"
 #include "row.h"
 #include "waveletproducer.h"
-
+#include "waveletfunction.h"
 #include "threadscontrol.h"
 
 #include <atomic>
-
 #include <iostream>
 
 #include <math.h>
 #include <complex>
 
 
-WaveletData::WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletFunction* function)
+WaveletData::WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletInitParams& wavelet_init_params)
 {
     columns = x.size ();
 
@@ -56,7 +55,6 @@ const WaveletProducer& WaveletData::get_producer () const
 {
     return *data;
 }
-
 
 void WaveletData::save_data (pDocument document)
 {

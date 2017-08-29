@@ -31,11 +31,11 @@
 
 #include "document/document.h"
 
+#include "waveletinitparams.h"
+
 #include <vector>
 #include <memory>
 #include <complex>
-
-#include "waveletfunction.h"
 
 
 class Row;
@@ -45,7 +45,7 @@ class WaveletProducer;
 class WaveletData
 {
 public:
-    WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletFunction* function);
+    WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletInitParams&);
 
     const WaveletProducer& get_producer () const;
 

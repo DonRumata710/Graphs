@@ -29,10 +29,10 @@
 #pragma once
 
 
-#include <vector>
-
 #include "waveletstep.h"
 #include "waveletdata.h"
+
+#include <vector>
 
 
 struct RowData

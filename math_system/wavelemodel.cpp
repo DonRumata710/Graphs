@@ -34,7 +34,7 @@
 using std::unique_ptr;
 
 
-WaveletModel::WaveletModel (GraphModel* graph, WaveletFunction* type)
+WaveletModel::WaveletModel (GraphModel* graph, const WaveletInitParams& wavelet_init_params)
 {
     m_name = "Wavelet " + graph->get_name ();
 
@@ -46,7 +46,7 @@ WaveletModel::WaveletModel (GraphModel* graph, WaveletFunction* type)
     {
         const Row* row (graph->get_source (name));
         if (row)
-            add_data (name, new WaveletData (axis, *graph->get_source (name), type));
+            add_data (name, new WaveletData (axis, *graph->get_source (name), wavelet_init_params));
         else
             throw string ("There were not found any row with such name!");
     }
@@ -68,7 +68,7 @@ void WaveletModel::save_data (pDocument document)
     */
 }
 
-const WaveletProducer& WaveletModel::get_data (string name)
+const WaveletProducer& WaveletModel::get_data (const string& name)
 {
     return m_data[name]->get_producer ();
 }

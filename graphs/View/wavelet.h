@@ -28,6 +28,8 @@
 
 
 #pragma once
+#ifndef WAVELET_H
+#define WAVELET_H
 
 
 #include "waveletinitparams.h"
@@ -44,10 +46,13 @@ class WaveletWindow : public QDialog
 public:
     WaveletWindow (QWidget* parent = nullptr);
 
-    WaveletInitParams get_func () const;
+    WaveletInitParams get_wavelet_info () const;
 
 private:
     Ui_Wavelet m_wavelet;
 
     QStringList m_list;
 };
+
+
+#endif

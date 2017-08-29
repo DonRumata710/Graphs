@@ -35,30 +35,6 @@
 #include "waveletstep.h"
 
 
-
-struct Intervals
-{
-    double minX = 0.0;
-    double maxX = 0.0;
-    double minY = 0.0;
-    double maxY = 0.0;
-    double minZ = 0.0;
-    double maxZ = 0.0;
-
-    Intervals () {}
-
-    Intervals(double lX, double hX, double lY, double hY, double lZ, double hZ) :
-        minX (lX),
-        maxX (hX),
-        minY (lY),
-        maxY (hY),
-        minZ (lZ),
-        maxZ (hZ)
-    {}
-};
-
-
-
 class WaveletFunction
 {
 public:

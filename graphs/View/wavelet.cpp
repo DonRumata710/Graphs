@@ -43,20 +43,11 @@ WaveletWindow::WaveletWindow (QWidget* parent) : QDialog (parent)
     range->set_spin_box (m_wavelet.sbMax, m_wavelet.sbMin);
 }
 
-WaveletInitParams WaveletWindow::get_func() const
+WaveletInitParams WaveletWindow::get_wavelet_info() const
 {
     WaveletInitParams params;
     params.max_points_num = m_wavelet.sbMax->value ();
     params.min_points_num = m_wavelet.sbMin->value ();
-
-    if (m_wavelet.cbWaveletFunction->currentText () == QString("HAAR"))
-        params.type = WaveletType::HAAR;
-    else if (m_wavelet.cbWaveletFunction->currentText () == QString("FHAT"))
-        params.type = WaveletType::FHAT;
-    else if (m_wavelet.cbWaveletFunction->currentText () == QString("MORLET"))
-        params.type = WaveletType::MORLET;
-    else
-        params.type = WaveletType::UNKNOWN;
-
+    params.type = m_wavelet.cbWaveletFunction->currentText ().toStdString();
     return params;
 }

@@ -31,6 +31,7 @@
 
 #include "abstractmodel.h"
 #include "waveletproducer.h"
+#include "waveletinitparams.h"
 
 #include <map>
 
@@ -44,12 +45,12 @@ class WaveletFunction;
 class WaveletModel : public AbstractModel
 {
 public:
-    WaveletModel (GraphModel*, WaveletFunction*);
+    WaveletModel (GraphModel*, const WaveletInitParams&);
     virtual ~WaveletModel ();
 
     void save_data (pDocument document);
 
-    const WaveletProducer& get_data (string);
+    const WaveletProducer& get_data (const string&);
 
     virtual StringList get_headers () const override;
     virtual string get_name () const override;

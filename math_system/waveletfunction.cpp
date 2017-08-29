@@ -26,6 +26,7 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #include "waveletfunction.h"
 
 #include "threadscontrol.h"
@@ -34,9 +35,7 @@
 #include <limits>
 
 
-
-#define M_PI       3.14159265358979323846
-
+const double M_PI = 3.14159265358979323846;
 
 
 HaarWavelet::HaarWavelet (const size_t min_points, const size_t max_points) :

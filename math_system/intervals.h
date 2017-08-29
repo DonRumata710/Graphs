@@ -26,19 +26,31 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-#ifndef WAVELET_TYPE_H
-#define WAVELET_TYPE_H
+#ifndef INTERVALS_H
+#define INTERVALS_H
 
 
-enum class WaveletType
+struct Intervals
 {
-    UNKNOWN,
-    HAAR,
-    FHAT,
-    MORLET
-}
+    double minX = 0.0;
+    double maxX = 0.0;
+    double minY = 0.0;
+    double maxY = 0.0;
+    double minZ = 0.0;
+    double maxZ = 0.0;
+
+    Intervals () {}
+
+    Intervals(double lX, double hX, double lY, double hY, double lZ, double hZ) :
+        minX (lX),
+        maxX (hX),
+        minY (lY),
+        maxY (hY),
+        minZ (lZ),
+        maxZ (hZ)
+    {}
+};
 
 
-#endif
+#endif // INTERVALS_H

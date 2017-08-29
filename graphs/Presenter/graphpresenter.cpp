@@ -146,7 +146,7 @@ SpectrogramPresenter* GraphPresenter::get_wavelet () const
     SpectrogramPresenter* wavelet = new SpectrogramPresenter (
         get_tab (),
         get_model (),
-        waveletWin.get_func ()
+        waveletWin.get_wavelet_info ()
     );
 
     return wavelet;

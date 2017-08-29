@@ -37,7 +37,13 @@ HEADERS += \
     waveletdata.h \
     waveletfunction.h \
     waveletproducer.h \
-    waveletstep.h
+    waveletstep.h \
+    ../include/math/abstractmodel.h \
+    ../include/math/graphmodel.h \
+    ../include/math/row.h \
+    ../include/math/wavelemodel.h \
+    ../include/math/waveletdata.h \
+    intervals.h
 
 DESTDIR = $${OUT_PWD}
 
