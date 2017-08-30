@@ -48,7 +48,7 @@ public:
     WaveletModel (GraphModel*, const WaveletInitParams&);
     virtual ~WaveletModel ();
 
-    void save_data (pDocument document);
+    virtual void save_data (pDocument document) const override;
 
     const WaveletProducer& get_data (const string&);
 

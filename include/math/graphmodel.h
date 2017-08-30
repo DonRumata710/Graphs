@@ -61,7 +61,7 @@ public:
     GraphModel* get_relative_sp (double begin, double end, unsigned step) const;
     GraphModel* get_power () const;
 
-    void save_data (pDocument document) const;
+    virtual void save_data (pDocument document) const override;
     void load_data (pDocument document);
 
     void remove_spaces ()
@@ -93,6 +93,7 @@ public:
 
     virtual StringList get_headers () const override;
     virtual string get_name () const override;
+
 
 private:
     GraphModel (PlotData plotData) : m_source (plotData) {}

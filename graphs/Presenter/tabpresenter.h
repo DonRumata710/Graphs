@@ -28,16 +28,20 @@
 
 #pragma once
 
+
+#include "math/abstractmodel.h"
+#include "View/grid.h"
+
+#include <qwt_plot.h>
+
 #include <QtCore>
 #include <QtWidgets>
 #include <QtGui>
-#include <qwt_plot.h>
 
-#include "math/abstractmodel.h"
+#include <memory>
 
 
 class LogScale;
-class Grid;
 
 
 class TabPresenter : public QWidget
@@ -47,7 +51,9 @@ class TabPresenter : public QWidget
 public:
     TabPresenter (QTabWidget*, AbstractModel*);
 
-    void save (QString);
+    void save_picture (QString);
+
+    AbstractModel* get_model () const;
 
 public slots:
     void set_grid ();
@@ -57,18 +63,15 @@ public slots:
     void set_scale_y (int);
 
 protected:
-    QComboBox* get_headers () const { return m_source; }
-    AbstractModel* get_model () const { return m_model; }
-
-protected:
+    QComboBox* get_headers () const;
     void set_x_format (AxisType);
     QTabWidget* get_tab () const;
-
-    QwtPlot* m_plot;
-    Grid* m_grid = nullptr;
+    QwtPlot* get_plot () const;
 
 private:
     AbstractModel* m_model;
     QTabWidget* m_tab;
     QComboBox* m_source;
+    QwtPlot* m_plot;
+    std::unique_ptr<Grid> m_grid;
 };

@@ -54,7 +54,7 @@ WaveletModel::WaveletModel (GraphModel* graph, const WaveletInitParams& wavelet_
 
 WaveletModel::~WaveletModel () {}
 
-void WaveletModel::save_data (pDocument document)
+void WaveletModel::save_data (pDocument document) const
 {
     /*
     for (auto& data : m_data)

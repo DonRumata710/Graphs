@@ -30,7 +30,6 @@ INCLUDEPATH += \
 HEADERS += \
     abstractmodel.h \
     graphmodel.h \
-    plotdata.h \
     row.h \
     threadscontrol.h \
     wavelemodel.h \
@@ -44,7 +43,9 @@ HEADERS += \
     ../include/math/waveletdata.h \
     intervals.h \
     ../include/math/waveletproducer.h \
-    ../include/math/waveletstep.h
+    ../include/math/waveletstep.h \
+    ../include/math/intervals.h \
+    ../include/math/plotdata.h
 
 DESTDIR = $${OUT_PWD}
 

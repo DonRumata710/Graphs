@@ -27,6 +27,9 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
+#ifndef DOCUMENT_H
+#define DOCUMENT_H
+
 
 #include <vector>
 #include <string>
@@ -54,3 +57,6 @@ public:
 };
 
 typedef std::shared_ptr<iDocument> pDocument;
+
+
+#endif DOCUMENT_H

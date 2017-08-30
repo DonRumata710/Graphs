@@ -37,12 +37,13 @@
 #include "View/smoothing.h"
 #include "View/spectr.h"
 #include "View/wavelet.h"
+#include "View/choiseexception.h"
 
 #include "qwt_plot.h"
 
 
-GraphPresenter::GraphPresenter (QTabWidget* parent, QAxObject* obj) :
-    TabPresenter (parent, new GraphModel (obj))
+GraphPresenter::GraphPresenter (QTabWidget* parent, pDocument doc) :
+    TabPresenter (parent, new GraphModel (doc))
 {
     if (parent)
     {
@@ -152,7 +153,6 @@ SpectrogramPresenter* GraphPresenter::get_wavelet () const
     return wavelet;
 }
 
-
 void GraphPresenter::set_current_curve (const QString& cur)
 {
     m_current = cur;
@@ -160,15 +160,18 @@ void GraphPresenter::set_current_curve (const QString& cur)
 
 void GraphPresenter::attach_curve ()
 {
-    if (m_current.isEmpty ()) return;
+    if (m_current.isEmpty ())
+        return;
 
     const Row* samples (get_model ()->get_source (m_current.toStdString()));
-    if (samples) add_curve (get_model ()->get_axis (), *samples, m_current);
+    if (samples)
+        add_curve (get_model ()->get_axis (), *samples, m_current);
 
     samples = get_model ()->get_approx (m_current.toStdString());
-    if (samples) add_curve (get_model ()->get_approx_axis (), *samples, m_current);
+    if (samples)
+        add_curve (get_model ()->get_approx_axis (), *samples, m_current);
 
-    m_plot->replot ();
+    get_plot ()->replot ();
 }
 
 void GraphPresenter::detach_curve ()
@@ -189,7 +192,7 @@ void GraphPresenter::attach_curve (const QString& name)
     samples = get_model ()->get_approx (name.toStdString());
     if (samples) add_curve (get_model ()->get_approx_axis (), *samples, name);
 
-    m_plot->replot ();
+    get_plot ()->replot ();
 }
 
 void GraphPresenter::detach_curve (const QString& name)
@@ -222,7 +225,7 @@ void GraphPresenter::detach_curve (const QString& name)
                 break;
         }
 
-    m_plot->replot ();
+    get_plot ()->replot ();
     --m_count;
 }
 
@@ -230,7 +233,7 @@ void GraphPresenter::clear ()
 {
     for (pCurve p : m_curves) p->detach ();
     m_curves.clear ();
-    m_plot->replot ();
+    get_plot ()->replot ();
     m_count = 0;
 }
 
@@ -257,6 +260,6 @@ void GraphPresenter::add_curve (const vector<double>& axis, const vector<double>
     default:
         break;
     }
-    p->attach (m_plot);
+    p->attach (get_plot ());
     m_curves.insert (m_curves.end (), p);
 }

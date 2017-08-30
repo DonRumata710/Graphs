@@ -76,25 +76,28 @@ TabPresenter::TabPresenter (QTabWidget* parent, AbstractModel* model) :
 }
 
 
-void TabPresenter::save (QString filename)
+void TabPresenter::save_picture (QString filename)
 {
     QwtPlotRenderer renderer;
     renderer.exportTo (m_plot, filename);
 }
 
+AbstractModel* TabPresenter::get_model() const
+{
+    return m_model;
+}
 
 void TabPresenter::set_grid ()
 {
     if (!m_grid)
     {
-        m_grid = new Grid ();
+        m_grid = std::make_unique<Grid> ();
         m_grid->attach (m_plot);
     }
     else
     {
         m_grid->detach ();
-        delete m_grid;
-        m_grid = nullptr;
+        m_grid.reset ();
     }
     m_plot->replot ();
 }
@@ -125,6 +128,11 @@ void TabPresenter::set_scale_y (int state)
     m_plot->replot ();
 }
 
+QComboBox* TabPresenter::get_headers() const
+{
+    return m_source;
+}
+
 void TabPresenter::set_x_format (AxisType axis)
 {
     if (axis == AxisType::TYPE_TIME)
@@ -136,4 +144,9 @@ void TabPresenter::set_x_format (AxisType axis)
 QTabWidget* TabPresenter::get_tab () const
 {
     return m_tab;
+}
+
+QwtPlot* TabPresenter::get_plot() const
+{
+    return m_plot;
 }

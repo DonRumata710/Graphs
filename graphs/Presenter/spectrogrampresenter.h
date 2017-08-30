@@ -51,8 +51,6 @@ public:
 
     GraphPresenter* get_local_wavlet ();
 
-    WaveletModel* get_model ();
-
 public slots:
     void attach_raster (const QString&);
     void clear ();
