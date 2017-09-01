@@ -107,9 +107,8 @@ void Application::open_file (QString filename)
     if (filename.isNull () || filename.isEmpty ()) return;
 
     // prepare data
-    load_data (filename);
     m_filename = filename;
-    m_manager.load_data (filename);
+    m_manager.load_data (filename.toStdString ());
 
     //m_spectr.add_data (std::make_shared<PlotData> (
     //    m_source.get_data (tr ("Source row")).get_relative_sp (m_grid.sbBegin->value (), m_grid.sbEnd->value (), m_grid.sbStep->value ())

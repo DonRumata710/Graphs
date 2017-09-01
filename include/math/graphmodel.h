@@ -37,7 +37,7 @@ class GraphModel : public AbstractModel
 public:
     GraphModel () {}
 
-    GraphModel (pDocument doc)
+    GraphModel (pDocumentReader doc)
     {
         load_data (doc);
     }
@@ -61,8 +61,8 @@ public:
     GraphModel* get_relative_sp (double begin, double end, unsigned step) const;
     GraphModel* get_power () const;
 
-    virtual void save_data (pDocument document) const override;
-    void load_data (pDocument document);
+    void load_data (pDocumentReader document);
+    virtual void save_data (pDocumentWriter document) const override;
 
     void remove_spaces ()
     {

@@ -35,7 +35,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 
 
 class iDocumentReader
@@ -52,7 +51,7 @@ public:
     virtual double get_item (size_t row, size_t column) = 0;
 };
 
-typedef std::unique_ptr<iDocumentReader> pDocumentReader;
+typedef iDocumentReader* pDocumentReader;
 
 
 #endif // DOCUMENT_H

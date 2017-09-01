@@ -30,6 +30,7 @@
 
 
 #include "document/documentreader.h"
+#include "document/documentwriter.h"
 
 #include <functional>
 #include <vector>
@@ -47,10 +48,10 @@ class PlotData
 public:
     PlotData ();
     PlotData (const PlotData&);
-    PlotData (pDocument);
+    PlotData (pDocumentReader);
 
     void load_data (pDocumentReader doc);
-    void save_data (pDocumentReader doc);
+    void save_data (pDocumentWriter doc);
 
     PlotData& operator= (const PlotData& plotData);
 

@@ -30,9 +30,11 @@
 
 #include "View/curve.h"
 #include "tabpresenter.h"
+#include "document/documentreader.h"
 
 #include <vector>
 #include <memory>
+
 
 using std::vector;
 typedef std::shared_ptr<QPolygonF> pPolygon;
@@ -42,7 +44,6 @@ class MultyGraphTools;
 class Row;
 class GraphModel;
 class SpectrogramPresenter;
-class QAxObject;
 class PlotData;
 
 

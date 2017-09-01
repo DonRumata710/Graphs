@@ -31,7 +31,7 @@
 #define EXCELDOCUMENTWRITER_H
 
 
-#include "document/documentwriter.h"
+#include "document/documentcreator.h"
 
 
 class ExcelDocumentWriter : public iDocumentWriter
@@ -43,6 +43,9 @@ public:
 
     virtual bool write_headers (const std::vector<std::string>& headers) override;
     virtual bool write_row (const std::vector<double>& row) override;
+
+private:
+    ExcelDocumentWriter (const std::string& filename);
 };
 
 

@@ -31,7 +31,7 @@
 #define ABSTRACT_MODEL_H
 
 
-#include "document/documentreader.h"
+#include "document/documentwriter.h"
 
 #include "axistype.h"
 
@@ -51,7 +51,7 @@ public:
 
     AxisType get_type () const { return m_type; }
 
-    virtual void save_data (pDocument document) const = 0;
+    virtual void save_data (pDocumentWriter document) const = 0;
 
     virtual StringList get_headers () const = 0;
     virtual string get_name () const = 0;

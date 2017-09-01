@@ -52,3 +52,8 @@ bool CsvDocumentWriter::write_row(const std::vector<double> &row)
 {
     return true;
 }
+
+CsvDocumentWriter::CsvDocumentWriter(const std::string& filename)
+{
+
+}

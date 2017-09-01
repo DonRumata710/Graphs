@@ -54,7 +54,7 @@ ExcelDocumentReader::~ExcelDocumentReader()
     delete data;
 }
 
-iDocument::AxisType ExcelDocumentReader::get_x_axis_type()
+AxisType ExcelDocumentReader::get_x_axis_type()
 {
     return TYPE_NUM;
 }

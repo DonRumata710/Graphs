@@ -30,6 +30,10 @@
 #include "documentcreator.h"
 
 
+std::unordered_map<std::string, pDocumentReader (*)(const std::string&)> DocumentCreator::m_reader_creators;
+std::unordered_map<std::string, pDocumentWriter (*)(const std::string&)> DocumentCreator::m_writer_creators;
+
+
 void DocumentCreator::add_readable_extention(const std::string& extention, pDocumentReader (*instance_creator)(const std::string&))
 {
     m_reader_creators[extention] = instance_creator;

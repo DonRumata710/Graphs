@@ -91,3 +91,15 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/MathSystem.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/MathSystem.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
+else:unix:!macx: LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
+
+DEPENDPATH += $$PWD/../document_system
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/libDocumentSystem.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/libDocumentSystem.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/DocumentSystem.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/DocumentSystem.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../document_system/libDocumentSystem.a

@@ -52,3 +52,8 @@ bool ExcelDocumentWriter::write_row(const std::vector<double> &row)
 {
     return true;
 }
+
+ExcelDocumentWriter::ExcelDocumentWriter(const std::string& filename)
+{
+
+}

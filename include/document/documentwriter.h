@@ -50,7 +50,7 @@ public:
 };
 
 
-typedef std::unique_ptr<iDocumentWriter> pDocumentWriter;
+typedef iDocumentWriter* pDocumentWriter;
 
 
 #endif // DOCUMENTWRITER_H

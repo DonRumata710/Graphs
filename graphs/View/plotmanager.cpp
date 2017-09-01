@@ -38,6 +38,8 @@
 
 #include "plotmanager.h"
 
+#include "document/documentcreator.h"
+
 
 PlotManager::PlotManager () {}
 
@@ -51,7 +53,9 @@ void PlotManager::set_tab (QTabWidget* _tab)
 void PlotManager::load_data (const std::string& filename)
 {
     size_t index (tab->count ());
-    m_pages.push_back (pPresenter (new GraphPresenter (tab, workbook)));
+    m_pages.push_back (pPresenter (
+         new GraphPresenter (tab, DocumentCreator::get_document_reader(filename))
+    ));
 
     tab->setCurrentIndex (index);
 }
@@ -67,20 +71,13 @@ void PlotManager::save_data (const std::string& filename)
     //    sheet = sheets->querySubObject ("Item (const QVariant&)", QVariant (1));
     //}
 
+    std::unique_ptr<iDocumentWriter> document (DocumentCreator::get_document_writer(filename));
+
     for (pPresenter page : m_pages)
     {
-        GraphPresenter* source = qobject_cast<GraphPresenter*> (page);
+        TabPresenter* source = qobject_cast<TabPresenter*> (page);
         if (source)
-        {
-            source->get_model ()->save_data (document);
-            continue;
-        }
-        SpectrogramPresenter* wavelet = qobject_cast<SpectrogramPresenter*> (page);
-        if (wavelet)
-        {
-            wavelet->get_model ()->save_data (document);
-            continue;
-        }
+            source->get_model()->save_data(document.get ());
     }
 }
 

@@ -42,7 +42,7 @@
 #include "qwt_plot.h"
 
 
-GraphPresenter::GraphPresenter (QTabWidget* parent, pDocument doc) :
+GraphPresenter::GraphPresenter (QTabWidget* parent, pDocumentReader doc) :
     TabPresenter (parent, new GraphModel (doc))
 {
     if (parent)

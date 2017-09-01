@@ -43,6 +43,9 @@ public:
 
     virtual bool write_headers (const std::vector<std::string>& headers) override;
     virtual bool write_row (const std::vector<double>& row) override;
+
+private:
+    CsvDocumentWriter (const std::string& filename);
 };
 
 
