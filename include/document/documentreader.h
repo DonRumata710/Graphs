@@ -27,47 +27,32 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
+#ifndef DOCUMENT_H
+#define DOCUMENT_H
 
 
-#include "document/documentreader.h"
-
-#include "waveletinitparams.h"
-#include "intervals.h"
+#include "axistype.h"
 
 #include <vector>
+#include <string>
 #include <memory>
-#include <complex>
 
 
-class Row;
-class WaveletProducer;
-
-
-class WaveletData
+class iDocumentReader
 {
 public:
-    WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletInitParams&);
+    virtual ~iDocumentReader () {}
 
-    const WaveletProducer& get_producer () const;
+    virtual AxisType get_x_axis_type () = 0;
 
-    void save_data (pDocumentReader document);
+    virtual size_t get_columns_number () = 0;
+    virtual size_t get_rows_number () = 0;
 
-private:
-    /*
-     * void m_haaf_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_french_hat_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_morlet_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_calc_morlet_factors (const int num_points, const int min_points, std::vector<std::complex<double>>& data);
-     */
-
-    std::vector<double> wavelet;
-    size_t columns = 0;
-
-    Intervals m_intervals;
-
-    std::unique_ptr<WaveletProducer> data;
-
-    bool m_isFrenchHat = false;
-
-    static size_t m_numThreads;
+    virtual std::vector<std::string> get_headers () = 0;
+    virtual double get_item (size_t row, size_t column) = 0;
 };
+
+typedef std::shared_ptr<iDocument> pDocumentReader;
+
+
+#endif // DOCUMENT_H

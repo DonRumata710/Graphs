@@ -27,35 +27,26 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELDOCUMENT_H
-#define EXCELDOCUMENT_H
+#ifndef DOCUMENTWRITER_H
+#define DOCUMENTWRITER_H
 
 
-#include "document/document.h"
+#include "axistype.h"
 
+#include <vector>
 #include <string>
 
 
-class ExcelDocument final : public iDocument
+class iDocumentWriter
 {
 public:
-    explicit ExcelDocument(const std::string& filename);
-    ~ExcelDocument ();
+    virtual ~iDocumentWriter () {}
 
-    virtual AxisType get_x_axis_type () override;
+    virtual bool set_x_axis_type () = 0;
 
-    virtual size_t get_columns_number () override;
-    virtual size_t get_rows_number () override;
-
-    virtual std::vector<std::string> get_headers () override;
-    virtual double get_item (size_t row, size_t column) override;
-
-private:
-    ExcelDocument(const ExcelDocument&) = delete;
-
-    struct PrivateData;
-    PrivateData* data;
+    virtual bool write_headers (const std::vector<std::string>& headers);
+    virtual bool write_row (const std::vector<double>& row);
 };
 
 
-#endif // EXCELDOCUMENT_H
+#endif // DOCUMENTWRITER_H

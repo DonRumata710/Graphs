@@ -31,7 +31,7 @@
 #define ABSTRACT_MODEL_H
 
 
-#include "document/document.h"
+#include "document/documentreader.h"
 
 #include "axistype.h"
 

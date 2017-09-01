@@ -28,32 +28,32 @@
 
 #include "csvdocument.h"
 
-CsvDocument::CsvDocument(const std::string &filename)
+CsvDocumentReader::CsvDocumentReader(const std::string &filename)
 {
 
 }
 
-iDocument::AxisType CsvDocument::get_x_axis_type()
+iDocument::AxisType CsvDocumentReader::get_x_axis_type()
 {
     return TYPE_NUM;
 }
 
-size_t CsvDocument::get_columns_number()
+size_t CsvDocumentReader::get_columns_number()
 {
     return 0;
 }
 
-size_t CsvDocument::get_rows_number()
+size_t CsvDocumentReader::get_rows_number()
 {
     return 0;
 }
 
-std::vector<std::string> CsvDocument::get_headers()
+std::vector<std::string> CsvDocumentReader::get_headers()
 {
     return std::vector<std::string> ();
 }
 
-double CsvDocument::get_item(size_t row, size_t column)
+double CsvDocumentReader::get_item(size_t row, size_t column)
 {
     return 0.0;
 }

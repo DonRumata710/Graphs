@@ -21,8 +21,9 @@ INCLUDEPATH += ../include/ \
     ../include/excel/
 
 HEADERS += \
-    ../include/excel/exceldocument.h \
-    excelfile.h
+    excelfile.h \
+    ../include/excel/exceldocumentreader.h \
+    ../include/excel/exceldocumentwriter.h
 
 DESTDIR = $${OUT_PWD}
 

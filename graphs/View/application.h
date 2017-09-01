@@ -81,7 +81,6 @@ private:
     void redraw ();
 
     void open_file (QString);
-    void load_data (QString);
     void save_doc (QString filename);
 
     QString m_filename;

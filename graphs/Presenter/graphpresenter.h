@@ -51,7 +51,7 @@ class GraphPresenter : public TabPresenter
     Q_OBJECT
 
 public:
-    GraphPresenter (QTabWidget* parent, pDocument);
+    GraphPresenter (QTabWidget* parent, pDocumentReader);
     GraphPresenter (QTabWidget* parent, GraphModel*);
 
     void add_multy_graph_tools (MultyGraphTools*);

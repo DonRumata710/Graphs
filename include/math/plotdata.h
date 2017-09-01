@@ -29,7 +29,7 @@
 #pragma once
 
 
-#include "document/document.h"
+#include "document/documentreader.h"
 
 #include <functional>
 #include <vector>
@@ -49,8 +49,8 @@ public:
     PlotData (const PlotData&);
     PlotData (pDocument);
 
-    void load_data (pDocument doc);
-    void save_data (pDocument doc);
+    void load_data (pDocumentReader doc);
+    void save_data (pDocumentReader doc);
 
     PlotData& operator= (const PlotData& plotData);
 

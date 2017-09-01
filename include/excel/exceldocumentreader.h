@@ -27,47 +27,35 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
+#ifndef EXCELDOCUMENT_H
+#define EXCELDOCUMENT_H
 
 
 #include "document/documentreader.h"
 
-#include "waveletinitparams.h"
-#include "intervals.h"
-
-#include <vector>
-#include <memory>
-#include <complex>
+#include <string>
 
 
-class Row;
-class WaveletProducer;
-
-
-class WaveletData
+class ExcelDocumentReader final : public iDocumentReader
 {
 public:
-    WaveletData (const std::vector<double>& x, const std::vector<double>& y, const WaveletInitParams&);
+    explicit ExcelDocumentReader(const std::string& filename);
+    virtual ~ExcelDocumentReader ();
 
-    const WaveletProducer& get_producer () const;
+    virtual AxisType get_x_axis_type () override;
 
-    void save_data (pDocumentReader document);
+    virtual size_t get_columns_number () override;
+    virtual size_t get_rows_number () override;
+
+    virtual std::vector<std::string> get_headers () override;
+    virtual double get_item (size_t row, size_t column) override;
 
 private:
-    /*
-     * void m_haaf_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_french_hat_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_morlet_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_calc_morlet_factors (const int num_points, const int min_points, std::vector<std::complex<double>>& data);
-     */
+    ExcelDocumentReader(const ExcelDocumentReader&) = delete;
 
-    std::vector<double> wavelet;
-    size_t columns = 0;
-
-    Intervals m_intervals;
-
-    std::unique_ptr<WaveletProducer> data;
-
-    bool m_isFrenchHat = false;
-
-    static size_t m_numThreads;
+    struct PrivateData;
+    PrivateData* data;
 };
+
+
+#endif // EXCELDOCUMENT_H

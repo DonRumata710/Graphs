@@ -26,6 +26,7 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #include "Presenter/graphpresenter.h"
 #include "math/graphmodel.h"
 
@@ -47,17 +48,15 @@ void PlotManager::set_tab (QTabWidget* _tab)
 }
 
 
-void PlotManager::load_data (pDocument document)
+void PlotManager::load_data (const std::string& filename)
 {
-    /*
     size_t index (tab->count ());
     m_pages.push_back (pPresenter (new GraphPresenter (tab, workbook)));
 
     tab->setCurrentIndex (index);
-    */
 }
 
-void PlotManager::save_data (pDocument document)
+void PlotManager::save_data (const std::string& filename)
 {
     //QAxObject* sheet (sheets->querySubObject ("Item (const QVariant&)", QVariant (1)));
     //

@@ -21,7 +21,9 @@ INCLUDEPATH += ../include/ \
 
 HEADERS += document.h \
     csvdocument.h \
-    ../include/document/document.h
+    ../include/document/documentwriter.h \
+    ../include/document/axittype.h \
+    ../include/document/documentreader.h
 
 DESTDIR = $${OUT_PWD}
 

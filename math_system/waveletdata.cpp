@@ -70,7 +70,7 @@ const WaveletProducer& WaveletData::get_producer () const
     return *data;
 }
 
-void WaveletData::save_data (pDocument document)
+void WaveletData::save_data (pDocumentReader document)
 {
     /*
     if (wavelet.empty ()) return;

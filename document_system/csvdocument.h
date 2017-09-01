@@ -28,13 +28,13 @@
 
 #pragma once
 
-#include "document.h"
+#include "documentreader.h"
 
 
-class CsvDocument : public iDocument
+class CsvDocumentReader : public iDocumentReader
 {
 public:
-    explicit CsvDocument (const std::string& filename);
+    explicit CsvDocumentReader (const std::string& filename);
 
     virtual AxisType get_x_axis_type () override;
 

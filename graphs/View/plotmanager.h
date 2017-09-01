@@ -29,8 +29,6 @@
 #pragma once
 
 
-#include "document/document.h"
-
 #include <QtCore>
 #include <QtWidgets>
 
@@ -53,8 +51,8 @@ public:
 
     void set_tab (QTabWidget*);
 
-    void load_data (pDocument document);
-    void save_data (pDocument document);
+    void load_data (const std::string& document);
+    void save_data (const std::string& document);
 
 public slots:
     void remove_spaces ();

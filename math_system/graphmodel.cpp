@@ -45,12 +45,12 @@ GraphModel* GraphModel::get_power () const
     return new GraphModel (m_source.get_power ());
 }
 
-void GraphModel::save_data(pDocument document) const
+void GraphModel::save_data(pDocumentReader document) const
 {
 
 }
 
-void GraphModel::load_data(pDocument document)
+void GraphModel::load_data(pDocumentWriter document)
 {
 
 }

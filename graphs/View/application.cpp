@@ -108,6 +108,8 @@ void Application::open_file (QString filename)
 
     // prepare data
     load_data (filename);
+    m_filename = filename;
+    m_manager.load_data (filename);
 
     //m_spectr.add_data (std::make_shared<PlotData> (
     //    m_source.get_data (tr ("Source row")).get_relative_sp (m_grid.sbBegin->value (), m_grid.sbEnd->value (), m_grid.sbStep->value ())
@@ -133,33 +135,6 @@ void Application::open_file (QString filename)
         connect (m_grid.aCloseGraph,    SIGNAL (triggered ()), &m_manager, SLOT (close_graph ()));
         flag = false;
     }
-}
-
-void Application::load_data (QString filename)
-{
-    /*
-    m_filename = filename;
-    unique_ptr<QAxObject> mExcel (new QAxObject ("Excel.Application", this));
-    unique_ptr<QAxObject> workbooks (mExcel->querySubObject ("Workbooks"));
-    unique_ptr<QAxObject> workbook (workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename)));
-    //unique_ptr<QAxObject> mSheets (workbook->querySubObject ("Sheets"));
-    //unique_ptr<QAxObject> StatSheet (mSheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
-
-    try
-    {
-        m_manager.load_data (workbook.get ());
-    }
-    catch (...)
-    {
-        mExcel->setProperty ("DisplayAlerts", QVariant ("False"));
-        workbook->dynamicCall ("Close()");
-        mExcel->dynamicCall ("Quit()");
-    }
-
-    mExcel->setProperty ("DisplayAlerts", QVariant ("False"));
-    workbook->dynamicCall ("Close()");
-    mExcel->dynamicCall ("Quit()");
-    */
 }
 
 void Application::save_doc (QString filename)
