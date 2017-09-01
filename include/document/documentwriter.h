@@ -35,6 +35,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 
 class iDocumentWriter
@@ -44,9 +45,12 @@ public:
 
     virtual bool set_x_axis_type () = 0;
 
-    virtual bool write_headers (const std::vector<std::string>& headers);
-    virtual bool write_row (const std::vector<double>& row);
+    virtual bool write_headers (const std::vector<std::string>& headers) = 0;
+    virtual bool write_row (const std::vector<double>& row) = 0;
 };
+
+
+typedef std::unique_ptr<iDocumentWriter> pDocumentWriter;
 
 
 #endif // DOCUMENTWRITER_H

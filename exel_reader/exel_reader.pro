@@ -14,8 +14,9 @@ CONFIG += staticlib
 DEFINES += EXELREADER_LIBRARY
 
 SOURCES += \
-    exceldocument.cpp \
-    excelfile.cpp
+    excelfile.cpp \
+    exceldocumentwriter.cpp \
+    exceldocumentreader.cpp
 
 INCLUDEPATH += ../include/ \
     ../include/excel/

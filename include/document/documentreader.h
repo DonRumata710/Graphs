@@ -52,7 +52,7 @@ public:
     virtual double get_item (size_t row, size_t column) = 0;
 };
 
-typedef std::shared_ptr<iDocument> pDocumentReader;
+typedef std::unique_ptr<iDocumentReader> pDocumentReader;
 
 
 #endif // DOCUMENT_H

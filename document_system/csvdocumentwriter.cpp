@@ -26,24 +26,29 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
-#ifndef EXCELDOCUMENTWRITER_H
-#define EXCELDOCUMENTWRITER_H
+
+#include "csvdocumentwriter.h"
 
 
-#include "document/documentwriter.h"
+ADD_DOCUMENT_WRITER(CsvDocumentWriter, "csv")
 
 
-class ExcelDocumentWriter : public iDocumentWriter
+pDocumentWriter CsvDocumentWriter::create(const std::string &filename)
 {
-public:
-    static pDocumentWriter create (const std::string& filename);
+    return pDocumentWriter (new CsvDocumentWriter (filename));
+}
 
-    virtual bool set_x_axis_type () override;
+bool CsvDocumentWriter::set_x_axis_type()
+{
+    return true;
+}
 
-    virtual bool write_headers (const std::vector<std::string>& headers) override;
-    virtual bool write_row (const std::vector<double>& row) override;
-};
+bool CsvDocumentWriter::write_headers(const std::vector<std::string> &headers)
+{
+    return true;
+}
 
-
-#endif // EXCELDOCUMENTWRITER_H
+bool CsvDocumentWriter::write_row(const std::vector<double> &row)
+{
+    return true;
+}

@@ -26,21 +26,43 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
-
-#include "documentreader.h"
+#include "csvdocumentreader.h"
 
 
-class CsvDocumentReader : public iDocumentReader
+ADD_DOCUMENT_READER(CsvDocumentReader, "csv")
+
+
+pDocumentReader CsvDocumentReader::create(const std::string& filename)
 {
-public:
-    explicit CsvDocumentReader (const std::string& filename);
+    return pDocumentReader(new CsvDocumentReader (filename));
+}
 
-    virtual AxisType get_x_axis_type () override;
+AxisType CsvDocumentReader::get_x_axis_type()
+{
+    return TYPE_NUM;
+}
 
-    virtual size_t get_columns_number () override;
-    virtual size_t get_rows_number () override;
+size_t CsvDocumentReader::get_columns_number()
+{
+    return 0;
+}
 
-    virtual std::vector<std::string> get_headers () override;
-    virtual double get_item (size_t row, size_t column) override;
-};
+size_t CsvDocumentReader::get_rows_number()
+{
+    return 0;
+}
+
+std::vector<std::string> CsvDocumentReader::get_headers()
+{
+    return std::vector<std::string> ();
+}
+
+double CsvDocumentReader::get_item(size_t row, size_t column)
+{
+    return 0.0;
+}
+
+CsvDocumentReader::CsvDocumentReader(const std::string& filename)
+{
+
+}

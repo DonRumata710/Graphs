@@ -33,13 +33,12 @@
 
 #include "document/documentreader.h"
 
-#include <string>
-
 
 class ExcelDocumentReader final : public iDocumentReader
 {
 public:
-    explicit ExcelDocumentReader(const std::string& filename);
+    static pDocumentReader Create (const std::string& filename);
+
     virtual ~ExcelDocumentReader ();
 
     virtual AxisType get_x_axis_type () override;
@@ -51,8 +50,10 @@ public:
     virtual double get_item (size_t row, size_t column) override;
 
 private:
+    explicit ExcelDocumentReader(const std::string& filename);
     ExcelDocumentReader(const ExcelDocumentReader&) = delete;
 
+private:
     struct PrivateData;
     PrivateData* data;
 };

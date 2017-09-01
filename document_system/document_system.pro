@@ -13,17 +13,22 @@ CONFIG += staticlib
 
 DEFINES += DOCUMENT_SYSTEM_LIBRARY
 
-SOURCES += csvdocument.cpp
+SOURCES += \
+    documentcreator.cpp \
+    csvdocumentreader.cpp \
+    csvdocumentwriter.cpp
 
 INCLUDEPATH += ../include/ \
     ../include/document \
     .
 
 HEADERS += document.h \
-    csvdocument.h \
     ../include/document/documentwriter.h \
     ../include/document/axittype.h \
-    ../include/document/documentreader.h
+    ../include/document/documentreader.h \
+    ../include/document/documentcreator.h \
+    csvdocumentreader.h \
+    csvdocumentwriter.h
 
 DESTDIR = $${OUT_PWD}
 

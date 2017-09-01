@@ -27,49 +27,25 @@
 /////////////////////////////////////////////////////////////////////
 
 
-#include "exceldocument.h"
-#include "excelfile.h"
+#include "documentcreator.h"
 
 
-struct ExcelDocumentReader::PrivateData
+void DocumentCreator::add_readable_extention(const std::string& extention, pDocumentReader (*instance_creator)(const std::string&))
 {
-    PrivateData (const std::string& filename) : file (filename)
-    {}
-
-    ExcelFile file;
-};
-
-
-ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :
-    data (new PrivateData (filename))
-{}
-
-ExcelDocumentReader::~ExcelDocumentReader()
-{
-    delete data;
+    m_reader_creators[extention] = instance_creator;
 }
 
-iDocument::AxisType ExcelDocumentReader::get_x_axis_type()
+void DocumentCreator::add_writable_extention(const std::string& extention, pDocumentWriter (*instance_creator)(const std::string&))
 {
-    return TYPE_NUM;
+    m_writer_creators[extention] = instance_creator;
 }
 
-size_t ExcelDocumentReader::get_columns_number()
+pDocumentReader DocumentCreator::get_document_reader(const std::string& filename)
 {
-    return 0;
+    return m_reader_creators[filename.substr(filename.find_last_of('.'))](filename);
 }
 
-size_t ExcelDocumentReader::get_rows_number()
+pDocumentWriter DocumentCreator::get_document_writer(const std::string& filename)
 {
-    return 0;
-}
-
-std::vector<std::string> ExcelDocumentReader::get_headers()
-{
-    return std::vector<std::string> ();
-}
-
-double ExcelDocumentReader::get_item(size_t row, size_t column)
-{
-    return 0.0;
+    return m_writer_creators[filename.substr(filename.find_last_of('.'))](filename);
 }

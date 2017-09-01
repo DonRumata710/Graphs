@@ -26,24 +26,55 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
-#ifndef EXCELDOCUMENTWRITER_H
-#define EXCELDOCUMENTWRITER_H
+
+#include "exceldocumentreader.h"
+#include "excelfile.h"
 
 
-#include "document/documentwriter.h"
-
-
-class ExcelDocumentWriter : public iDocumentWriter
+struct ExcelDocumentReader::PrivateData
 {
-public:
-    static pDocumentWriter create (const std::string& filename);
+    PrivateData (const std::string& filename) : file (filename)
+    {}
 
-    virtual bool set_x_axis_type () override;
-
-    virtual bool write_headers (const std::vector<std::string>& headers) override;
-    virtual bool write_row (const std::vector<double>& row) override;
+    ExcelFile file;
 };
 
 
-#endif // EXCELDOCUMENTWRITER_H
+pDocumentReader ExcelDocumentReader::Create(const std::string &filename)
+{
+    return pDocumentReader (new ExcelDocumentReader (filename));
+}
+
+ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :
+    data (new PrivateData (filename))
+{}
+
+ExcelDocumentReader::~ExcelDocumentReader()
+{
+    delete data;
+}
+
+iDocument::AxisType ExcelDocumentReader::get_x_axis_type()
+{
+    return TYPE_NUM;
+}
+
+size_t ExcelDocumentReader::get_columns_number()
+{
+    return 0;
+}
+
+size_t ExcelDocumentReader::get_rows_number()
+{
+    return 0;
+}
+
+std::vector<std::string> ExcelDocumentReader::get_headers()
+{
+    return std::vector<std::string> ();
+}
+
+double ExcelDocumentReader::get_item(size_t row, size_t column)
+{
+    return 0.0;
+}

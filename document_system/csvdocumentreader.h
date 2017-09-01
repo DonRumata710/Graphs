@@ -27,23 +27,24 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELDOCUMENTWRITER_H
-#define EXCELDOCUMENTWRITER_H
 
 
-#include "document/documentwriter.h"
+#include "documentcreator.h"
 
 
-class ExcelDocumentWriter : public iDocumentWriter
+class CsvDocumentReader : public iDocumentReader
 {
 public:
-    static pDocumentWriter create (const std::string& filename);
+    static pDocumentReader create (const std::string& filename);
 
-    virtual bool set_x_axis_type () override;
+    virtual AxisType get_x_axis_type () override;
 
-    virtual bool write_headers (const std::vector<std::string>& headers) override;
-    virtual bool write_row (const std::vector<double>& row) override;
+    virtual size_t get_columns_number () override;
+    virtual size_t get_rows_number () override;
+
+    virtual std::vector<std::string> get_headers () override;
+    virtual double get_item (size_t row, size_t column) override;
+
+private:
+    explicit CsvDocumentReader (const std::string& filename);
 };
-
-
-#endif // EXCELDOCUMENTWRITER_H

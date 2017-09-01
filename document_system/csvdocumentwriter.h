@@ -27,14 +27,14 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELDOCUMENTWRITER_H
-#define EXCELDOCUMENTWRITER_H
+#ifndef CSVDOCUMENTWRITER_H
+#define CSVDOCUMENTWRITER_H
 
 
-#include "document/documentwriter.h"
+#include "documentcreator.h"
 
 
-class ExcelDocumentWriter : public iDocumentWriter
+class CsvDocumentWriter : public iDocumentWriter
 {
 public:
     static pDocumentWriter create (const std::string& filename);
@@ -46,4 +46,4 @@ public:
 };
 
 
-#endif // EXCELDOCUMENTWRITER_H
+#endif // CSVDOCUMENTWRITER_H

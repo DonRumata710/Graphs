@@ -26,34 +26,29 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#include "csvdocument.h"
 
-CsvDocumentReader::CsvDocumentReader(const std::string &filename)
+#include "exceldocumentwriter.h"
+
+
+ADD_DOCUMENT_WRITER(ExcelDocumentWriter, "xls")
+
+
+pDocumentWriter ExcelDocumentWriter::create(const std::string &filename)
 {
-
+    return pDocumentWriter (new ExcelDocumentWriter (filename));
 }
 
-iDocument::AxisType CsvDocumentReader::get_x_axis_type()
+bool ExcelDocumentWriter::set_x_axis_type()
 {
-    return TYPE_NUM;
+    return true;
 }
 
-size_t CsvDocumentReader::get_columns_number()
+bool ExcelDocumentWriter::write_headers(const std::vector<std::string> &headers)
 {
-    return 0;
+    return true;
 }
 
-size_t CsvDocumentReader::get_rows_number()
+bool ExcelDocumentWriter::write_row(const std::vector<double> &row)
 {
-    return 0;
-}
-
-std::vector<std::string> CsvDocumentReader::get_headers()
-{
-    return std::vector<std::string> ();
-}
-
-double CsvDocumentReader::get_item(size_t row, size_t column)
-{
-    return 0.0;
+    return true;
 }
