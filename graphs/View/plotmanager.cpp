@@ -53,11 +53,14 @@ void PlotManager::set_tab (QTabWidget* _tab)
 void PlotManager::load_data (const std::string& filename)
 {
     size_t index (tab->count ());
-    m_pages.push_back (pPresenter (
-         new GraphPresenter (tab, DocumentCreator::get_document_reader(filename))
-    ));
 
-    tab->setCurrentIndex (index);
+    std::unique_ptr<iDocumentReader> document (DocumentCreator::get_document_reader(filename));
+
+    if (document != nullptr)
+    {
+        m_pages.push_back (pPresenter (new GraphPresenter (tab, document.get ())));
+        tab->setCurrentIndex (index);
+    }
 }
 
 void PlotManager::save_data (const std::string& filename)
@@ -73,11 +76,14 @@ void PlotManager::save_data (const std::string& filename)
 
     std::unique_ptr<iDocumentWriter> document (DocumentCreator::get_document_writer(filename));
 
-    for (pPresenter page : m_pages)
+    if (document != nullptr)
     {
-        TabPresenter* source = qobject_cast<TabPresenter*> (page);
-        if (source)
-            source->get_model()->save_data(document.get ());
+        for (pPresenter page : m_pages)
+        {
+            TabPresenter* source = qobject_cast<TabPresenter*> (page);
+            if (source)
+                source->get_model()->save_data(document.get ());
+        }
     }
 }
 

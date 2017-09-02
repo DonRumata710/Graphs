@@ -10,6 +10,7 @@ TARGET = ExelReader
 TEMPLATE = lib
 
 CONFIG += staticlib
+CONFIG += c++14
 
 DEFINES += EXELREADER_LIBRARY
 

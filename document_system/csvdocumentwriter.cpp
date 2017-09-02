@@ -33,7 +33,7 @@
 ADD_DOCUMENT_WRITER(CsvDocumentWriter, "csv")
 
 
-pDocumentWriter CsvDocumentWriter::create(const std::string &filename)
+pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
 {
     return pDocumentWriter (new CsvDocumentWriter (filename));
 }

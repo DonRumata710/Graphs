@@ -10,6 +10,7 @@ TARGET = MathSystem
 TEMPLATE = lib
 
 CONFIG += staticlib
+CONFIG += c++14
 
 DEFINES += MATH_SYSTEM_LIBRARY
 
@@ -55,3 +56,6 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+QMAKE_CXXFLAGS+= -openmp
+QMAKE_LFLAGS +=  -openmp

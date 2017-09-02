@@ -31,6 +31,9 @@
 #include "excelfile.h"
 
 
+ADD_DOCUMENT_READER(ExcelDocumentReader, "xls")
+
+
 struct ExcelDocumentReader::PrivateData
 {
     PrivateData (const std::string& filename) : file (filename)
@@ -40,7 +43,7 @@ struct ExcelDocumentReader::PrivateData
 };
 
 
-pDocumentReader ExcelDocumentReader::Create(const std::string &filename)
+pDocumentReader ExcelDocumentReader::create(const std::string &filename)
 {
     return pDocumentReader (new ExcelDocumentReader (filename));
 }

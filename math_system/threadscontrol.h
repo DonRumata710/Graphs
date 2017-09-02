@@ -27,8 +27,14 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
+#ifndef THREADS_CONTROL_H
+#define THREADS_CONTROL_H
+
 
 #include <omp.h>
 
 
 int prepare_threads ();
+
+
+#endif

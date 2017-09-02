@@ -46,10 +46,18 @@ void DocumentCreator::add_writable_extention(const std::string& extention, pDocu
 
 pDocumentReader DocumentCreator::get_document_reader(const std::string& filename)
 {
-    return m_reader_creators[filename.substr(filename.find_last_of('.'))](filename);
+    auto creator = m_reader_creators.find (filename);
+    if (creator != m_reader_creators.end ())
+        return creator->second(filename);
+    else
+        return nullptr;
 }
 
 pDocumentWriter DocumentCreator::get_document_writer(const std::string& filename)
 {
-    return m_writer_creators[filename.substr(filename.find_last_of('.'))](filename);
+    auto creator = m_writer_creators.find (filename);
+    if (creator != m_writer_creators.end ())
+        return creator->second(filename);
+    else
+        return nullptr;
 }

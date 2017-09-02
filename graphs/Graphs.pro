@@ -6,6 +6,8 @@ OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc
 DESTDIR =     $${OUT_PWD}/../bin
 
+CONFIG += c++14
+
 QT += core svg axcontainer widgets gui printsupport concurrent
 DEFINES += WIN64 QT_DLL QT_WIDGETS_LIB QT_SVG_LIB QT_PRINTSUPPORT_LIB QT_CONCURRENT_LIB
 FORMS += \
@@ -107,3 +109,17 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+
+QMAKE_CXXFLAGS+= -openmp
+QMAKE_LFLAGS +=  -openmp
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+
+win32:!win32-g++: QMAKE_CXXFLAGS+= -openmp
+else: QMAKE_CXXFLAGS+= -fopenmp
+
+win32:!win32-g++: QMAKE_LFLAGS +=  -openmp
+else: QMAKE_LFLAGS +=  -fopenmp

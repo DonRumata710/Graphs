@@ -29,6 +29,9 @@
 #pragma once
 
 
+#include <cstdint>
+
+
 enum class WaveletStep : size_t
 {
     ONE = 1,

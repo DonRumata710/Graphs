@@ -31,13 +31,13 @@
 #define EXCELDOCUMENT_H
 
 
-#include "document/documentreader.h"
+#include "document/documentcreator.h"
 
 
 class ExcelDocumentReader final : public iDocumentReader
 {
 public:
-    static pDocumentReader Create (const std::string& filename);
+    static pDocumentReader create (const std::string& filename);
 
     virtual ~ExcelDocumentReader ();
 
