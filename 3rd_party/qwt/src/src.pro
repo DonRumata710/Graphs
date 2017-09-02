@@ -12,23 +12,15 @@
 QWT_ROOT = $${PWD}/..
 include( $${QWT_ROOT}/qwtconfig.pri )
 include( $${QWT_ROOT}/qwtbuild.pri )
-include( $${QWT_ROOT}/qwtfunctions.pri )
-
-QWT_OUT_ROOT = $${OUT_PWD}/..
 
 TEMPLATE          = lib
-TARGET            = $$qwtLibraryTarget(qwt)
+TARGET            = qwt
 
-DESTDIR           = $${QWT_OUT_ROOT}/lib
+OBJECTS_DIR = $${OUT_PWD}/../../../temp/obj
+MOC_DIR =     $${OUT_PWD}/../../../temp/moc
+DESTDIR =     $${OUT_PWD}/../../../lib
 
-contains(QWT_CONFIG, QwtDll) {
-
-    CONFIG += dll
-    win32|symbian: DEFINES += QT_DLL QWT_DLL QWT_MAKEDLL
-}
-else {
-    CONFIG += staticlib
-} 
+CONFIG += staticlib
 
 contains(QWT_CONFIG, QwtFramework) {
 
@@ -38,9 +30,6 @@ contains(QWT_CONFIG, QwtFramework) {
 include ( $${PWD}/src.pri )
 
 # Install directives
-
-target.path    = $${QWT_INSTALL_LIBS}
-INSTALLS       = target 
 
 CONFIG(lib_bundle) {
 

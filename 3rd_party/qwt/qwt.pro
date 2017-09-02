@@ -12,24 +12,5 @@ include( qwtconfig.pri )
 TEMPLATE = subdirs
 CONFIG   += ordered
 
-SUBDIRS = \
-    src \
-    textengines
-
-contains(QWT_CONFIG, QwtDesigner ) {
-    SUBDIRS += designer 
-}
-
-contains(QWT_CONFIG, QwtExamples ) {
-    SUBDIRS += examples 
-}
-
-contains(QWT_CONFIG, QwtPlayground ) {
-    SUBDIRS += playground 
-}
- 
-qwtspec.files  = qwtconfig.pri qwtfunctions.pri qwt.prf
-qwtspec.path  = $${QWT_INSTALL_FEATURES}
-
-INSTALLS += qwtspec
+SUBDIRS = src
 

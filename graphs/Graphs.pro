@@ -1,7 +1,11 @@
 
 TEMPLATE = app
 TARGET = Graphs
-DESTDIR = ./bin
+
+OBJECTS_DIR = $${OUT_PWD}/../temp/obj
+MOC_DIR =     $${OUT_PWD}/../temp/moc
+DESTDIR =     $${OUT_PWD}/../bin
+
 QT += core svg axcontainer widgets gui printsupport concurrent
 DEFINES += WIN64 QT_DLL QT_WIDGETS_LIB QT_SVG_LIB QT_PRINTSUPPORT_LIB QT_CONCURRENT_LIB
 FORMS += \
@@ -57,49 +61,49 @@ SOURCES += \
 
 INCLUDEPATH += $$PWD/../include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../3rd_party/qwt/lib/ -lqwt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../3rd_party/qwt/lib/ -lqwtd
-else:unix:!macx: LIBS += -L$$OUT_PWD/../3rd_party/qwt/lib/ -lqwt
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lqwt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lqwt
+else:unix:!macx: LIBS += -L$$OUT_PWD/../lib/ -lqwt
 
 INCLUDEPATH += $$PWD/../3rd_party/qwt/src
 DEPENDPATH += $$PWD/../3rd_party/qwt/src
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/lib/libqwt.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/lib/libqwtd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/lib/qwt.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/lib/qwtd.lib
-else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../3rd_party/qwt/src/libqwt.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libqwt.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libqwt.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/qwt.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/qwt.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libqwt.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../exel_reader/ -lExelReader
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../exel_reader/ -lExelReader
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lExelReader
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lExelReader
 
 DEPENDPATH += $$PWD/../exel_reader
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/libExelReader.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/libExelReader.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/ExelReader.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../exel_reader/ExelReader.lib
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libExelReader.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libExelReader.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/ExelReader.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/ExelReader.lib
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../math_system/ -lMathSystem
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../math_system/ -lMathSystem
-else:unix:!macx: LIBS += -L$$OUT_PWD/../math_system/ -lMathSystem
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lMathSystem
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lMathSystem
+else:unix:!macx: LIBS += -L$$OUT_PWD/../lib/ -lMathSystem
 
 DEPENDPATH += $$PWD/../math_system
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/MathSystem.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../math_system/MathSystem.lib
-else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../math_system/libMathSystem.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libMathSystem.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libMathSystem.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/MathSystem.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/MathSystem.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libMathSystem.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
-else:unix:!macx: LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lDocumentSystem
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lDocumentSystem
+else:unix:!macx: LIBS += -L$$OUT_PWD/../lib/ -lDocumentSystem
 
 DEPENDPATH += $$PWD/../document_system
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/libDocumentSystem.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/libDocumentSystem.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/DocumentSystem.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../document_system/DocumentSystem.lib
-else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../document_system/libDocumentSystem.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a

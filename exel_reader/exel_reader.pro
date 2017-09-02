@@ -26,7 +26,9 @@ HEADERS += \
     ../include/excel/exceldocumentreader.h \
     ../include/excel/exceldocumentwriter.h
 
-DESTDIR = $${OUT_PWD}
+OBJECTS_DIR = $${OUT_PWD}/../temp/obj
+MOC_DIR =     $${OUT_PWD}/../temp/moc
+DESTDIR =     $${OUT_PWD}/../lib
 
 unix {
     target.path = /usr/lib

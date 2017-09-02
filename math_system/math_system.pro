@@ -47,7 +47,9 @@ HEADERS += \
     ../include/math/intervals.h \
     ../include/math/plotdata.h
 
-DESTDIR = $${OUT_PWD}
+OBJECTS_DIR = $${OUT_PWD}/../temp/obj
+MOC_DIR =     $${OUT_PWD}/../temp/moc
+DESTDIR =     $${OUT_PWD}/../lib
 
 unix {
     target.path = /usr/lib
