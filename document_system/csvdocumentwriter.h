@@ -31,10 +31,10 @@
 #define CSVDOCUMENTWRITER_H
 
 
-#include "documentcreator.h"
+#include "documentwriter.h"
 
 
-class CsvDocumentWriter : public iDocumentWriter
+class CsvDocumentWriter final : public iDocumentWriter
 {
 public:
     static pDocumentWriter create (const std::string& filename);

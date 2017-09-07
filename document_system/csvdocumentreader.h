@@ -29,10 +29,10 @@
 #pragma once
 
 
-#include "documentcreator.h"
+#include "documentreader.h"
 
 
-class CsvDocumentReader : public iDocumentReader
+class CsvDocumentReader final : public iDocumentReader
 {
 public:
     static pDocumentReader create (const std::string& filename);

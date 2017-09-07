@@ -28,25 +28,28 @@
 
 
 #include "documentcreator.h"
+#include "csvdocumentreader.h"
+#include "csvdocumentwriter.h"
+
+#ifdef WIN32
+#include <excel/exceldocumentreader.h>
+#include <excel/exceldocumentwriter.h>
+#endif
 
 
-std::unordered_map<std::string, pDocumentReader (*)(const std::string&)> DocumentCreator::m_reader_creators;
-std::unordered_map<std::string, pDocumentWriter (*)(const std::string&)> DocumentCreator::m_writer_creators;
-
-
-void DocumentCreator::add_readable_extention(const std::string& extention, pDocumentReader (*instance_creator)(const std::string&))
+DocumentCreator::DocumentCreator ()
 {
-    m_reader_creators[extention] = instance_creator;
-}
-
-void DocumentCreator::add_writable_extention(const std::string& extention, pDocumentWriter (*instance_creator)(const std::string&))
-{
-    m_writer_creators[extention] = instance_creator;
+    m_reader_creators.insert ({ "csv", CsvDocumentReader::create });
+    m_writer_creators.insert ({ "csv", CsvDocumentWriter::create });
+#ifdef WIN32
+    m_reader_creators.insert ({ "xls", ExcelDocumentReader::create });
+    m_writer_creators.insert ({ "xls", ExcelDocumentWriter::create });
+#endif
 }
 
 pDocumentReader DocumentCreator::get_document_reader(const std::string& filename)
 {
-    auto creator = m_reader_creators.find (filename);
+    auto creator = m_reader_creators.find (filename.substr(filename.find_last_of('.') + 1));
     if (creator != m_reader_creators.end ())
         return creator->second(filename);
     else
@@ -55,7 +58,7 @@ pDocumentReader DocumentCreator::get_document_reader(const std::string& filename
 
 pDocumentWriter DocumentCreator::get_document_writer(const std::string& filename)
 {
-    auto creator = m_writer_creators.find (filename);
+    auto creator = m_writer_creators.find (filename.substr(filename.find_last_of('.') + 1));
     if (creator != m_writer_creators.end ())
         return creator->second(filename);
     else

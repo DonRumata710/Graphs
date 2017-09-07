@@ -27,8 +27,8 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
+#ifndef DOCUMENT_READER_H
+#define DOCUMENT_READER_H
 
 
 #include "axistype.h"

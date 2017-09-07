@@ -31,10 +31,10 @@
 #define EXCELDOCUMENTWRITER_H
 
 
-#include "document/documentcreator.h"
+#include "document/documentwriter.h"
 
 
-class ExcelDocumentWriter : public iDocumentWriter
+class ExcelDocumentWriter final : public iDocumentWriter
 {
 public:
     static pDocumentWriter create (const std::string& filename);

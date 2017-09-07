@@ -40,6 +40,8 @@
 
 #include "document/documentcreator.h"
 
+#include <iostream>
+
 
 PlotManager::PlotManager () {}
 
@@ -54,7 +56,8 @@ void PlotManager::load_data (const std::string& filename)
 {
     size_t index (tab->count ());
 
-    std::unique_ptr<iDocumentReader> document (DocumentCreator::get_document_reader(filename));
+    DocumentCreator creator;
+    std::unique_ptr<iDocumentReader> document (creator.get_document_reader(filename));
 
     if (document != nullptr)
     {
@@ -74,7 +77,8 @@ void PlotManager::save_data (const std::string& filename)
     //    sheet = sheets->querySubObject ("Item (const QVariant&)", QVariant (1));
     //}
 
-    std::unique_ptr<iDocumentWriter> document (DocumentCreator::get_document_writer(filename));
+    DocumentCreator creator;
+    std::unique_ptr<iDocumentWriter> document (creator.get_document_writer(filename));
 
     if (document != nullptr)
     {

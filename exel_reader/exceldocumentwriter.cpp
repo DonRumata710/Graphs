@@ -30,10 +30,7 @@
 #include "exceldocumentwriter.h"
 
 
-ADD_DOCUMENT_WRITER(ExcelDocumentWriter, "xls")
-
-
-pDocumentWriter ExcelDocumentWriter::create(const std::string &filename)
+pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
 {
     return pDocumentWriter (new ExcelDocumentWriter (filename));
 }

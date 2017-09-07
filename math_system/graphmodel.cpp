@@ -47,12 +47,12 @@ GraphModel* GraphModel::get_power () const
 
 void GraphModel::load_data(pDocumentReader document)
 {
-
+    set_type(document->get_x_axis_type ());
+    m_source.load_data (document);
 }
 
 void GraphModel::save_data(pDocumentWriter document) const
 {
-
 }
 
 /*

@@ -30,8 +30,64 @@
 #include "exceldocumentreader.h"
 #include "excelfile.h"
 
+#include <QVariant>
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
 
-ADD_DOCUMENT_READER(ExcelDocumentReader, "xls")
+
+AxisType get_str_type (const std::string& str)
+{
+    auto s (str.begin ());
+    unsigned i (1);
+    QChar sep = '\n';
+    int lng[5] = { 0 };
+    bool lettersLong (false);
+    bool letters (false);
+    if (!isdigit(*s)) return TYPE_NUM;
+    ++s;
+    //if (!(*s++).isDigit ())
+    while (s != str.end ())
+    {
+        if (isdigit(*s)) i++;
+        else
+        {
+            if (isalpha(*s))
+            {
+                if (letters && lettersLong)
+                    return TYPE_NUM;
+                else
+                {
+                    unsigned j (0);
+                    while (isalpha(*s) && s++ != str.end ())
+                        ++j;
+                    if (j > 2 && !lettersLong)
+                        lettersLong = TYPE_TIME;
+                    else if (!letters)
+                        letters = TYPE_TIME;
+                    else
+                        return TYPE_NUM;
+                }
+            }
+            else if (sep == *s || *s == ',') sep = '\n';
+            else if (sep == '\n') sep = *s;
+            else return TYPE_NUM;
+            if (i > 4) return TYPE_NUM;
+            ++lng[i];
+            i = 0;
+        }
+        ++s;
+    }
+    if (lng[4] < 2 && lng[2] != 0 &&
+        ((lng[1] + lng[2] + lng[4] > 1 && lettersLong && lng[1] + lng[2] + lng[4] < 5) ||
+        (lng[1] + lng[2] + lng[4] > 2 && !lettersLong && lng[1] + lng[2] + lng[4] < 6)))
+        return TYPE_TIME;
+    return TYPE_NUM;
+}
+
+bool is_text (QString str)
+{
+    return !(str.begin ()->isDigit () && (str.end () - 1)->isDigit ());
+}
 
 
 struct ExcelDocumentReader::PrivateData
@@ -43,7 +99,7 @@ struct ExcelDocumentReader::PrivateData
 };
 
 
-pDocumentReader ExcelDocumentReader::create(const std::string &filename)
+pDocumentReader ExcelDocumentReader::create(const std::string& filename)
 {
     return pDocumentReader (new ExcelDocumentReader (filename));
 }
@@ -59,7 +115,8 @@ ExcelDocumentReader::~ExcelDocumentReader()
 
 AxisType ExcelDocumentReader::get_x_axis_type()
 {
-    return TYPE_NUM;
+    std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(QVariant,QVariant)", QVariant (2), QVariant (1)));
+    return get_str_type (cell->property ("Value").toString ().toStdString ());
 }
 
 size_t ExcelDocumentReader::get_columns_number()
