@@ -75,6 +75,22 @@ PlotData::PlotData () : m_data (new PrivateData ()) {}
 PlotData::PlotData (PlotData::pPrivateData data) : m_data (data) {}
 PlotData::PlotData (const PlotData& data) : m_data (data.m_data) {}
 
+void PlotData::load_data(pDocumentReader doc)
+{
+    const size_t data_size (doc->get_rows_number ());
+
+    const auto& headers (doc->get_headers());
+    for (const std::string& header : headers)
+    {
+        get_series ().push_back (Row (header, data_size, 0.0));
+    }
+}
+
+void PlotData::save_data(pDocumentWriter doc)
+{
+
+}
+
 PlotData& PlotData::operator= (const PlotData& plotData)
 {
     m_data = plotData.m_data;

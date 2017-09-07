@@ -8,7 +8,7 @@ DESTDIR =     $${OUT_PWD}/../bin
 
 CONFIG += c++14
 
-QT += core svg axcontainer widgets gui printsupport concurrent
+QT += core svg widgets gui printsupport concurrent
 DEFINES += WIN64 QT_DLL QT_WIDGETS_LIB QT_SVG_LIB QT_PRINTSUPPORT_LIB QT_CONCURRENT_LIB
 FORMS += \
     approximation.ui \
@@ -76,16 +76,6 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/qwt.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libqwt.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lExelReader
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lExelReader
-
-DEPENDPATH += $$PWD/../exel_reader
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libExelReader.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libExelReader.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/ExelReader.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/ExelReader.lib
-
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lMathSystem
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lMathSystem
 else:unix:!macx: LIBS += -L$$OUT_PWD/../lib/ -lMathSystem
@@ -110,13 +100,19 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
 
-QMAKE_CXXFLAGS+= -openmp
-QMAKE_LFLAGS +=  -openmp
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/DocumentSystem.lib
-else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/libDocumentSystem.a
+win32 {
+    QT += axcontainer
+
+    CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lExelReader
+    else:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/ -lExelReader
+
+    DEPENDPATH += $$PWD/../exel_reader
+
+    win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libExelReader.a
+    else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/libExelReader.a
+    else:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/ExelReader.lib
+    else:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../lib/ExelReader.lib
+}
 
 win32:!win32-g++: QMAKE_CXXFLAGS+= -openmp
 else: QMAKE_CXXFLAGS+= -fopenmp

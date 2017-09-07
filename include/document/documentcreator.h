@@ -42,38 +42,15 @@
 class DocumentCreator
 {
 public:
-    static void add_readable_extention (const std::string& extention, pDocumentReader (*instance_creator)(const std::string&));
-    static void add_writable_extention (const std::string& extention, pDocumentWriter (*instance_creator)(const std::string&));
+    DocumentCreator ();
 
-    static pDocumentReader get_document_reader (const std::string& filename);
-    static pDocumentWriter get_document_writer (const std::string& filename);
+    pDocumentReader get_document_reader (const std::string& filename);
+    pDocumentWriter get_document_writer (const std::string& filename);
 
 private:
-    static std::unordered_map<std::string, pDocumentReader (*)(const std::string&)> m_reader_creators;
-    static std::unordered_map<std::string, pDocumentWriter (*)(const std::string&)> m_writer_creators;
+    std::unordered_map<std::string, pDocumentReader (*)(const std::string&)> m_reader_creators;
+    std::unordered_map<std::string, pDocumentWriter (*)(const std::string&)> m_writer_creators;
 };
-
-
-#define ADD_DOCUMENT_READER(reader, extention)                                  \
-    class reader ## _reg                                                        \
-    {                                                                           \
-    public:                                                                     \
-        reader ## _reg ()                                                       \
-        {                                                                       \
-            DocumentCreator::add_readable_extention(extention, reader::create); \
-        }                                                                       \
-    } reader ## _reg_instance;
-
-
-#define ADD_DOCUMENT_WRITER(writer, extention)                                  \
-    class writer ## _reg                                                        \
-    {                                                                           \
-    public:                                                                     \
-        writer ## _reg ()                                                       \
-        {                                                                       \
-            DocumentCreator::add_writable_extention(extention, writer::create); \
-        }                                                                       \
-    } writer ## _reg_instance;
 
 
 #endif // DOCUMENTCREATOR_H

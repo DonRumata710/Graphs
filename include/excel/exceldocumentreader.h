@@ -27,11 +27,11 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELDOCUMENT_H
-#define EXCELDOCUMENT_H
+#ifndef EXCELDOCUMENT_READER_H
+#define EXCELDOCUMENT_READER_H
 
 
-#include "document/documentcreator.h"
+#include "document/documentreader.h"
 
 
 class ExcelDocumentReader final : public iDocumentReader
@@ -59,4 +59,4 @@ private:
 };
 
 
-#endif // EXCELDOCUMENT_H
+#endif // EXCELDOCUMENT_READER_H

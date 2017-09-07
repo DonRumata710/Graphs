@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
+QT -= gui
+QT += core axcontainer
 
 TARGET = ExelReader
 TEMPLATE = lib
@@ -31,13 +32,4 @@ OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc
 DESTDIR =     $${OUT_PWD}/../lib
 
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../document_system/ -lDocumentSystem
-
 INCLUDEPATH += $$PWD/../document_system
-DEPENDPATH += $$PWD/../document_system

@@ -26,10 +26,8 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+
 #include "csvdocumentreader.h"
-
-
-ADD_DOCUMENT_READER(CsvDocumentReader, "csv")
 
 
 pDocumentReader CsvDocumentReader::create(const std::string& filename)
