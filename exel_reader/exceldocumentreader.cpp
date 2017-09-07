@@ -95,7 +95,25 @@ struct ExcelDocumentReader::PrivateData
     PrivateData (const std::string& filename) : file (filename)
     {}
 
+    void load_data ()
+    {
+        if (!num_columns && !num_rows)
+            return;
+
+        QAxObject* top_left_cell (StatSheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
+        QAxObject* bottom_right_cell (StatSheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (num_rows), QVariant (num_columns)));
+        QAxObject* range (StatSheet->querySubObject (
+            "Range(const QVariant&,const QVariant&)", top_left_cell->asVariant (), bottom_right_cell->asVariant ()
+        ));
+        range->setProperty ("NumberFormat", QVariant ("Double"));
+
+        cache = range->property ("Value").toList ();
+    }
+
     ExcelFile file;
+    size_t num_columns = 0;
+    size_t num_rows = 0;
+    QList<QVariant> cache;
 };
 
 
@@ -115,26 +133,48 @@ ExcelDocumentReader::~ExcelDocumentReader()
 
 AxisType ExcelDocumentReader::get_x_axis_type()
 {
-    std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(QVariant,QVariant)", QVariant (2), QVariant (1)));
+    std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject (
+        "Cells(QVariant,QVariant)", QVariant (2), QVariant (1)
+    ));
     return get_str_type (cell->property ("Value").toString ().toStdString ());
 }
 
 size_t ExcelDocumentReader::get_columns_number()
 {
-    return 0;
+    if (!data->numColumns)
+    {
+        std::unique_ptr<QAxObject> cell (StatSheet->querySubObject ("Cells(QVariant,Columns.Count)", QVariant (1)));
+        std::unique_ptr<QAxObject> numColumnsEx = cell->querySubObject ("End (xlToRight)");
+        data->numColumns = numColumnsEx->property ("Column").toInt ();
+    }
+    return data->numColumns;
 }
 
 size_t ExcelDocumentReader::get_rows_number()
 {
-    return 0;
+    if (!data->num_rows)
+    {
+        std::unique_ptr<QAxObject> cell (StatSheet->querySubObject ("Cells(Rows.Count,QVariant)", QVariant (1)));
+        std::unique_ptr<QAxObject> numRowsEx (cell->querySubObject ("End (xlDown)"));
+        data->numRows = numRowsEx->property ("Row").toInt ();
+    }
+    return data->numRows;
 }
 
 std::vector<std::string> ExcelDocumentReader::get_headers()
 {
+    if (cache.isEmpty ())
+        data->load_data ();
+
     return std::vector<std::string> ();
 }
 
-double ExcelDocumentReader::get_item(size_t row, size_t column)
+void ExcelDocumentReader::get_data(std::vector<double>* const data)
 {
-    return 0.0;
+    for (unsigned row = 0; row < data->num_rows - (noHeader ? 0 : 1); ++row)
+    {
+        QList<QVariant> rowList (list[row].toList ());
+        for (unsigned col = 0; col < numColumns; ++col)
+            get_series ()[col][row] = rowList[col].toDouble ();
+    }
 }

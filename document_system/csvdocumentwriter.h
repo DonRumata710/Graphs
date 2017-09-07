@@ -39,7 +39,7 @@ class CsvDocumentWriter final : public iDocumentWriter
 public:
     static pDocumentWriter create (const std::string& filename);
 
-    virtual bool set_x_axis_type () override;
+    virtual bool set_x_axis_type (AxisType type) override;
 
     virtual bool write_headers (const std::vector<std::string>& headers) override;
     virtual bool write_row (const std::vector<double>& row) override;

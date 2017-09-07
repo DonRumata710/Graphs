@@ -47,8 +47,8 @@ public:
     virtual size_t get_columns_number () = 0;
     virtual size_t get_rows_number () = 0;
 
-    virtual std::vector<std::string> get_headers () = 0;
-    virtual double get_item (size_t row, size_t column) = 0;
+    virtual void get_headers (std::vector<std::string>* const) = 0;
+    virtual void get_data (std::vector<double>* const) = 0;
 };
 
 typedef iDocumentReader* pDocumentReader;

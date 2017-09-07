@@ -35,7 +35,7 @@ pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
     return pDocumentWriter (new ExcelDocumentWriter (filename));
 }
 
-bool ExcelDocumentWriter::set_x_axis_type()
+bool ExcelDocumentWriter::set_x_axis_type(AxisType type)
 {
     return true;
 }

@@ -35,7 +35,7 @@ pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
     return pDocumentWriter (new CsvDocumentWriter (filename));
 }
 
-bool CsvDocumentWriter::set_x_axis_type()
+bool CsvDocumentWriter::set_x_axis_type(AxisType type)
 {
     return true;
 }
