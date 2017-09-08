@@ -43,7 +43,7 @@ public:
     virtual size_t get_rows_number () override;
 
     virtual void get_headers (std::vector<std::string>* const) override;
-    virtual void get_data (std::vector<double>* const) override;
+    virtual void get_data (size_t row, std::vector<double>* const) override;
 
 private:
     explicit CsvDocumentReader (const std::string& filename);

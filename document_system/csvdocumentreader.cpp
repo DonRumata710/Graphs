@@ -50,14 +50,12 @@ size_t CsvDocumentReader::get_rows_number()
     return 0;
 }
 
-std::vector<std::string> CsvDocumentReader::get_headers()
+void CsvDocumentReader::get_headers(std::vector<std::string>* const)
 {
-    return std::vector<std::string> ();
 }
 
-double CsvDocumentReader::get_item(size_t row, size_t column)
+void CsvDocumentReader::get_data(size_t row, std::vector<double>* const)
 {
-    return 0.0;
 }
 
 CsvDocumentReader::CsvDocumentReader(const std::string& filename)

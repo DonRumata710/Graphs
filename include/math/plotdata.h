@@ -51,7 +51,7 @@ public:
     PlotData (pDocumentReader);
 
     void load_data (pDocumentReader doc);
-    void save_data (pDocumentWriter doc);
+    void save_data (pDocumentWriter doc) const;
 
     PlotData& operator= (const PlotData& plotData);
 

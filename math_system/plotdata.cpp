@@ -79,14 +79,16 @@ void PlotData::load_data(pDocumentReader doc)
 {
     const size_t data_size (doc->get_rows_number ());
 
-    const auto& headers (doc->get_headers());
+    std::vector<std::string> headers;
+    doc->get_headers (&headers);
     for (const std::string& header : headers)
     {
         get_series ().push_back (Row (header, data_size, 0.0));
+        doc->get_data (get_series().size () - 1, &get_series().back ());
     }
 }
 
-void PlotData::save_data(pDocumentWriter doc)
+void PlotData::save_data(pDocumentWriter doc) const
 {
 
 }
