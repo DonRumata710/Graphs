@@ -40,16 +40,6 @@ AxisType CsvDocumentReader::get_x_axis_type()
     return TYPE_NUM;
 }
 
-size_t CsvDocumentReader::get_columns_number()
-{
-    return 0;
-}
-
-size_t CsvDocumentReader::get_rows_number()
-{
-    return 0;
-}
-
 void CsvDocumentReader::get_headers(std::vector<std::string>* const)
 {
 }

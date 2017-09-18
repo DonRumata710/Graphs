@@ -44,9 +44,6 @@ public:
 
     virtual AxisType get_x_axis_type () = 0;
 
-    virtual size_t get_columns_number () = 0;
-    virtual size_t get_rows_number () = 0;
-
     virtual void get_headers (std::vector<std::string>* const) = 0;
     virtual void get_data (size_t row, std::vector<double>* const) = 0;
 

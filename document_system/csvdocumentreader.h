@@ -39,9 +39,6 @@ public:
 
     virtual AxisType get_x_axis_type () override;
 
-    virtual size_t get_columns_number () override;
-    virtual size_t get_rows_number () override;
-
     virtual void get_headers (std::vector<std::string>* const) override;
     virtual void get_data (size_t row, std::vector<double>* const) override;
 

@@ -86,7 +86,6 @@ private:
 
     PlotData (pPrivateData data);
 
-    std::vector<Row>& get_series () const;
     std::vector<double> get_smoothed (const std::vector<double>&) const;
     iterRow find_column (const std::string&) const;
 
