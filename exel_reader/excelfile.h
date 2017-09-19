@@ -40,7 +40,7 @@
 class QAxObject;
 
 
-class ExcelFile : public QObject
+class ExcelFile final : public QObject
 {
     Q_OBJECT
 

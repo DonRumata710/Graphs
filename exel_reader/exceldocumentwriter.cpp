@@ -28,6 +28,17 @@
 
 
 #include "exceldocumentwriter.h"
+#include "excelfile.h"
+#include "excelpage.h"
+
+
+struct ExcelDocumentWriter::PrivateData
+{
+    PrivateData (const std::string& filename) : file (filename)
+    {}
+
+    ExcelFile file;
+};
 
 
 pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
@@ -35,22 +46,16 @@ pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
     return pDocumentWriter (new ExcelDocumentWriter (filename));
 }
 
-bool ExcelDocumentWriter::set_x_axis_type(AxisType type)
+ExcelDocumentWriter::~ExcelDocumentWriter()
 {
-    return true;
+    delete data;
 }
 
-bool ExcelDocumentWriter::write_headers(const std::vector<std::string> &headers)
+pPage ExcelDocumentWriter::get_page() const
 {
-    return true;
+    return std::unique_ptr<ExcelPage> (new ExcelPage(&data->file));
 }
 
-bool ExcelDocumentWriter::write_row(const std::vector<double> &row)
-{
-    return true;
-}
-
-ExcelDocumentWriter::ExcelDocumentWriter(const std::string& filename)
-{
-
-}
+ExcelDocumentWriter::ExcelDocumentWriter(const std::string& filename) :
+    data (new PrivateData (filename))
+{}

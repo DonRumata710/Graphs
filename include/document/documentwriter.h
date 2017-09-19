@@ -31,7 +31,7 @@
 #define DOCUMENTWRITER_H
 
 
-#include "axistype.h"
+#include "page.h"
 
 #include <vector>
 #include <string>
@@ -42,11 +42,7 @@ class iDocumentWriter
 {
 public:
     virtual ~iDocumentWriter () {}
-
-    virtual bool set_x_axis_type (AxisType type) = 0;
-
-    virtual bool write_headers (const std::vector<std::string>& headers) = 0;
-    virtual bool write_row (const std::vector<double>& row) = 0;
+    virtual pPage get_page () const = 0;
 };
 
 

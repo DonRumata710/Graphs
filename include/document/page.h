@@ -26,21 +26,30 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+#pragma once
 
-#include "csvdocumentwriter.h"
+#ifndef PAGE_H
+#define PAGE_H
 
 
-pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
+#include "axistype.h"
+
+#include <string>
+#include <vector>
+#include <memory>
+
+
+class iPage
 {
-    return pDocumentWriter (new CsvDocumentWriter (filename));
-}
+public:
+    virtual ~iPage () {}
 
-pPage CsvDocumentWriter::get_page() const
-{
-    return nullptr;
-}
+    virtual bool set_x_axis_type (AxisType type) = 0;
+    virtual bool save_data (const std::string& name, const std::vector<double>& data) = 0;
+};
 
-CsvDocumentWriter::CsvDocumentWriter(const std::string& filename)
-{
 
-}
+typedef std::unique_ptr<iPage> pPage;
+
+
+#endif

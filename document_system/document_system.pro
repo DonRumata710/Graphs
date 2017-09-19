@@ -28,7 +28,8 @@ HEADERS += document.h \
     ../include/document/documentreader.h \
     ../include/document/documentcreator.h \
     csvdocumentreader.h \
-    csvdocumentwriter.h
+    csvdocumentwriter.h \
+    ../include/document/page.h
 
 OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc

@@ -26,21 +26,30 @@
 //
 /////////////////////////////////////////////////////////////////////
 
+#pragma once
 
-#include "csvdocumentwriter.h"
+#ifndef EXCELPAGE_H
+#define EXCELPAGE_H
 
 
-pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
+#include "document/page.h"
+#include "excelfile.h"
+
+
+class ExcelPage final : public iPage
 {
-    return pDocumentWriter (new CsvDocumentWriter (filename));
-}
+    friend class ExcelDocumentWriter;
 
-pPage CsvDocumentWriter::get_page() const
-{
-    return nullptr;
-}
+public:
+    virtual bool set_x_axis_type (AxisType type) override;
+    virtual bool save_data (const std::string& name, const std::vector<double>& data) override;
 
-CsvDocumentWriter::CsvDocumentWriter(const std::string& filename)
-{
+private:
+    ExcelPage (ExcelFile* file);
 
-}
+private:
+    ExcelFile* m_file;
+};
+
+
+#endif // EXCELPAGE_H

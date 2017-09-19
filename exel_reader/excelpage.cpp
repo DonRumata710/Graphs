@@ -27,20 +27,19 @@
 /////////////////////////////////////////////////////////////////////
 
 
-#include "csvdocumentwriter.h"
+#include "excelpage.h"
+#include "exceldocumentwriter.h"
 
 
-pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
+bool ExcelPage::set_x_axis_type(AxisType type)
 {
-    return pDocumentWriter (new CsvDocumentWriter (filename));
+    return true;
 }
 
-pPage CsvDocumentWriter::get_page() const
+bool ExcelPage::save_data(const std::string& name, const std::vector<double>& data)
 {
-    return nullptr;
+    return true;
 }
 
-CsvDocumentWriter::CsvDocumentWriter(const std::string& filename)
-{
-
-}
+ExcelPage::ExcelPage(ExcelFile *file) : m_file (file)
+{}

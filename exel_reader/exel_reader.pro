@@ -18,7 +18,8 @@ DEFINES += EXELREADER_LIBRARY
 SOURCES += \
     excelfile.cpp \
     exceldocumentwriter.cpp \
-    exceldocumentreader.cpp
+    exceldocumentreader.cpp \
+    excelpage.cpp
 
 INCLUDEPATH += ../include/ \
     ../include/excel/
@@ -26,7 +27,8 @@ INCLUDEPATH += ../include/ \
 HEADERS += \
     excelfile.h \
     ../include/excel/exceldocumentreader.h \
-    ../include/excel/exceldocumentwriter.h
+    ../include/excel/exceldocumentwriter.h \
+    excelpage.h
 
 OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc

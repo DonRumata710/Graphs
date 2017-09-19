@@ -53,7 +53,8 @@ void GraphModel::load_data(pDocumentReader document)
 
 void GraphModel::save_data(pDocumentWriter document) const
 {
-    document->set_x_axis_type(get_type ());
+    pPage page (document->get_page ());
+    page->set_x_axis_type(get_type ());
     m_source.save_data (document);
 }
 
