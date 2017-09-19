@@ -85,6 +85,7 @@ void PlotData::load_data(pDocumentReader doc)
         m_data->series.push_back (Row (header));
         doc->get_data (m_data->series.size () - 1, &m_data->series.back ());
     }
+    std::sort (m_data->series.begin () + 1, m_data->series.end ());
 }
 
 void PlotData::save_data(pDocumentWriter doc) const
@@ -384,9 +385,9 @@ PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& en
 {
     const iterRow mid (begin + std::distance(begin, end) / 2);
 
-    if (mid->get_name () < col)
+    if (mid->get_name () > col)
         return quick_search (begin, mid, col);
-    else if (mid->get_name () > col)
+    else if (mid->get_name () < col)
         return quick_search (mid, end, col);
     else
         return mid;
