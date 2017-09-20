@@ -39,7 +39,7 @@ class CsvDocumentWriter final : public iDocumentWriter
 public:
     static pDocumentWriter create (const std::string& filename);
 
-    virtual pPage get_page () const override;
+    virtual pPage get_page (const std::string& name) const override;
 
 private:
     CsvDocumentWriter (const std::string& filename);

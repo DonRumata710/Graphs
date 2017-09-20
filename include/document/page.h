@@ -49,7 +49,7 @@ public:
 };
 
 
-typedef std::unique_ptr<iPage> pPage;
+typedef std::shared_ptr<iPage> pPage;
 
 
 #endif

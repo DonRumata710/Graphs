@@ -42,7 +42,7 @@ class iDocumentWriter
 {
 public:
     virtual ~iDocumentWriter () {}
-    virtual pPage get_page () const = 0;
+    virtual pPage get_page (const std::string& name) const = 0;
 };
 
 

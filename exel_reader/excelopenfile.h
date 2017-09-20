@@ -28,33 +28,18 @@
 
 #pragma once
 
-#ifndef EXCELPAGE_H
-#define EXCELPAGE_H
+#ifndef EXCELOPENFILE_H
+#define EXCELOPENFILE_H
 
 
-#include "document/page.h"
 #include "excelfile.h"
-#include "exceldocumentwriter.h"
 
 
-class ExcelPage final : public iPage
+class ExcelOpenFile final : public ExcelFile
 {
-    friend class ExcelDocumentWriter;
-
 public:
-    virtual ~ExcelPage ();
-
-    virtual bool set_x_axis_type (AxisType type) override;
-    virtual bool save_data (const std::string& name, const std::vector<double>& data) override;
-
-private:
-    ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
-
-private:
-    std::shared_ptr<ExcelFile> m_file;
-    QAxObject* m_table = nullptr;
-    QList<QVariant> m_cache;
+    ExcelOpenFile(const std::string& filename);
 };
 
 
-#endif // EXCELPAGE_H
+#endif // EXCELOPENFILE_H

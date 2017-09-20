@@ -41,7 +41,7 @@ public:
 
     ~ExcelDocumentWriter ();
 
-    virtual pPage get_page () const override;
+    virtual pPage get_page (const std::string& name) const override;
 
 private:
     ExcelDocumentWriter (const std::string& filename);

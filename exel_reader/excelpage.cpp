@@ -30,6 +30,35 @@
 #include "excelpage.h"
 #include "exceldocumentwriter.h"
 
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
+
+
+ExcelPage::~ExcelPage()
+{
+    try
+    {
+        std::unique_ptr<QAxObject> first_cell (m_table->querySubObject (
+            "Cells(QVariant&,QVariant&)",
+            QVariant (1),
+            QVariant (1)
+        ));
+        std::unique_ptr<QAxObject> second_cell (m_table->querySubObject (
+            "Cells(QVariant&,QVariant&)",
+            QVariant (m_cache[0].toList ().size () + 1),
+            QVariant (m_cache.size ())
+        ));
+        std::unique_ptr<QAxObject> range (m_table->querySubObject (
+            "Range(const QVariant&,const QVariant&)",
+            first_cell->asVariant (),
+            second_cell->asVariant ()
+        ));
+
+        range->setProperty ("Value", QVariant (m_cache));
+    }
+    catch (...)
+    {}
+}
 
 bool ExcelPage::set_x_axis_type(AxisType type)
 {
@@ -38,8 +67,23 @@ bool ExcelPage::set_x_axis_type(AxisType type)
 
 bool ExcelPage::save_data(const std::string& name, const std::vector<double>& data)
 {
+    if (m_cache.size () < data.size ())
+    {
+        for (size_t i = 0; i <= data.size (); ++i)
+            m_cache.push_back(QList<QVariant> ());
+    }
+
+    m_cache[0].toList () << name.c_str ();
+    QList<QVariant>::iterator iter = ++m_cache.begin ();
+    for (size_t i = 0; i < data.size (); ++i)
+    {
+        (*iter++).toList () << data[i];
+    }
+
     return true;
 }
 
-ExcelPage::ExcelPage(ExcelFile *file) : m_file (file)
+ExcelPage::ExcelPage(std::shared_ptr<ExcelFile> file, QAxObject* table) :
+    m_file (file),
+    m_table (table)
 {}

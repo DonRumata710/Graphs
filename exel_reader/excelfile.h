@@ -38,24 +38,26 @@
 
 
 class QAxObject;
+class ExcelPage;
 
 
-class ExcelFile final : public QObject
+class ExcelFile : public QObject
 {
     Q_OBJECT
 
 public:
-    ExcelFile(const std::string& filename);
+    ExcelFile();
     ~ExcelFile();
 
     QAxObject* get_table () const;
+    QAxObject* create_page(const std::string& name);
 
-private:
+protected:
     std::unique_ptr<QAxObject> m_excel;
     std::unique_ptr<QAxObject> m_workbooks;
     std::unique_ptr<QAxObject> m_workbook;
     std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_stat_sheets;
+    std::unique_ptr<QAxObject> m_sheet;
 };
 
 #endif // EXCELFILE_H

@@ -28,6 +28,7 @@
 
 
 #include "excelfile.h"
+#include "excelpage.h"
 
 #include <ActiveQt/qaxobject.h>
 #include <ActiveQt/qaxbase.h>
@@ -37,14 +38,10 @@ using std::unique_ptr;
 using std::shared_ptr;
 
 
-ExcelFile::ExcelFile(const std::string &filename)
-{
-    m_excel = std::make_unique<QAxObject> ("Excel.Application", this);
-    m_workbooks.reset (m_excel->querySubObject ("Workbooks"));
-    m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
-    m_sheets.reset (m_workbook->querySubObject ("Sheets"));
-    m_stat_sheets.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
-}
+ExcelFile::ExcelFile() :
+    m_excel     (std::make_unique<QAxObject> ("Excel.Application", this)),
+    m_workbooks (m_excel->querySubObject ("Workbooks"))
+{}
 
 ExcelFile::~ExcelFile()
 {
@@ -55,5 +52,23 @@ ExcelFile::~ExcelFile()
 
 QAxObject* ExcelFile::get_table() const
 {
-    return m_stat_sheets.get ();
+    return m_sheet.get ();
+}
+
+QAxObject* ExcelFile::create_page(const std::string& name)
+{
+    QAxObject* new_stat_sheets (nullptr);
+
+    try
+    {
+        std::unique_ptr<QAxObject> sheet_to_copy (m_sheet->querySubObject ("Worksheets(const QVariant&)", 1));
+        sheet_to_copy->dynamicCall ("Copy(const QVariant&)", sheet_to_copy->asVariant ());
+
+        new_stat_sheets = m_sheet->querySubObject ("Worksheets(const QVariant&)", 1);
+        new_stat_sheets->setProperty ("Name", QString(name.c_str ()));
+    }
+    catch(...)
+    {}
+
+    return new_stat_sheets;
 }

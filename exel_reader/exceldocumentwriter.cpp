@@ -28,16 +28,19 @@
 
 
 #include "exceldocumentwriter.h"
-#include "excelfile.h"
+#include "excelsavefile.h"
 #include "excelpage.h"
+
+#include <memory>
 
 
 struct ExcelDocumentWriter::PrivateData
 {
-    PrivateData (const std::string& filename) : file (filename)
+    PrivateData (const std::string& filename) :
+        file (std::make_shared<ExcelSaveFile> (filename))
     {}
 
-    ExcelFile file;
+    std::shared_ptr<ExcelSaveFile> file;
 };
 
 
@@ -51,9 +54,9 @@ ExcelDocumentWriter::~ExcelDocumentWriter()
     delete data;
 }
 
-pPage ExcelDocumentWriter::get_page() const
+pPage ExcelDocumentWriter::get_page(const std::__cxx11::string &name) const
 {
-    return std::unique_ptr<ExcelPage> (new ExcelPage(&data->file));
+    return std::unique_ptr<ExcelPage> (new ExcelPage (data->file, data->file->create_page (name)));
 }
 
 ExcelDocumentWriter::ExcelDocumentWriter(const std::string& filename) :

@@ -28,7 +28,7 @@
 
 
 #include "exceldocumentreader.h"
-#include "excelfile.h"
+#include "excelopenfile.h"
 
 #include <QVariant>
 #include <ActiveQt/qaxobject.h>
@@ -40,7 +40,7 @@ struct ExcelDocumentReader::PrivateData
     PrivateData (const std::string& filename) : file (filename)
     {}
 
-    ExcelFile file;
+    ExcelOpenFile file;
     size_t num_columns = 0;
     size_t num_points = 0;
     bool have_headers = false;

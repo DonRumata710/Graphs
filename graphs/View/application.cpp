@@ -73,9 +73,10 @@ void Application::set_filename (const QString filename)
 
 void Application::open ()
 {
-    QString filename = QFileDialog::getOpenFileName (this, tr ("Load"));
+    QString filename = QFileDialog::getOpenFileName (this, tr ("Load"), ".", tr ("Excel files (*.xls);;CSV files (*.csv)"));
 
-    if (!filename.isEmpty ()) open_file (filename);
+    if (!filename.isEmpty ())
+        open_file (filename);
 }
 
 void Application::save ()
@@ -85,8 +86,9 @@ void Application::save ()
 
 void Application::save_as ()
 {
-    QString filename = QFileDialog::getSaveFileName (this, tr ("Save as"));
-    if (!filename.isEmpty ()) save_doc (filename);
+    QString filename = QFileDialog::getSaveFileName (this, tr ("Save as"), ".", tr ("Excel files (*.xls);;CSV files (*.csv)"));
+    if (!filename.isEmpty ())
+        save_doc (filename);
 }
 
 void Application::close ()
@@ -138,26 +140,7 @@ void Application::open_file (QString filename)
 
 void Application::save_doc (QString filename)
 {
-    /*
-    unique_ptr<QAxObject> mExcel (new QAxObject ("Excel.Application", this));
-    unique_ptr<QAxObject> workbooks (mExcel->querySubObject ("Workbooks"));
-    unique_ptr<QAxObject> workbook (workbooks->querySubObject ("Open(const QVariant&)", QVariant (m_filename)));
-
-    try
-    {
-        m_manager.save_data (workbook.get ());
-    }
-    catch (...)
-    {
-        workbook->dynamicCall ("SaveAs(const QVariant&)", QVariant (filename));
-        workbook->dynamicCall ("Close()");
-        mExcel->dynamicCall ("Quit()");
-    }
-
-    workbook->dynamicCall ("SaveAs(const QVariant&)", QVariant (filename));
-    workbook->dynamicCall ("Close()");
-    mExcel->dynamicCall ("Quit()");
-    */
+    m_manager.save_data (filename.toStdString ());
 }
 
 

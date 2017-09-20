@@ -19,7 +19,9 @@ SOURCES += \
     excelfile.cpp \
     exceldocumentwriter.cpp \
     exceldocumentreader.cpp \
-    excelpage.cpp
+    excelpage.cpp \
+    excelsavefile.cpp \
+    excelopenfile.cpp
 
 INCLUDEPATH += ../include/ \
     ../include/excel/
@@ -28,7 +30,9 @@ HEADERS += \
     excelfile.h \
     ../include/excel/exceldocumentreader.h \
     ../include/excel/exceldocumentwriter.h \
-    excelpage.h
+    excelpage.h \
+    excelsavefile.h \
+    excelopenfile.h
 
 OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc

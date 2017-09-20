@@ -88,9 +88,10 @@ void PlotData::load_data(pDocumentReader doc)
     std::sort (m_data->series.begin () + 1, m_data->series.end ());
 }
 
-void PlotData::save_data(pDocumentWriter doc) const
+void PlotData::save_data(pPage page) const
 {
-
+    for (Row row : m_data->series)
+        page->save_data (row.get_name(), row);
 }
 
 PlotData& PlotData::operator= (const PlotData& plotData)

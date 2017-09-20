@@ -26,35 +26,16 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 
-#ifndef EXCELPAGE_H
-#define EXCELPAGE_H
+#include "excelopenfile.h"
 
-
-#include "document/page.h"
-#include "excelfile.h"
-#include "exceldocumentwriter.h"
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
 
 
-class ExcelPage final : public iPage
+ExcelOpenFile::ExcelOpenFile(const std::string& filename)
 {
-    friend class ExcelDocumentWriter;
-
-public:
-    virtual ~ExcelPage ();
-
-    virtual bool set_x_axis_type (AxisType type) override;
-    virtual bool save_data (const std::string& name, const std::vector<double>& data) override;
-
-private:
-    ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
-
-private:
-    std::shared_ptr<ExcelFile> m_file;
-    QAxObject* m_table = nullptr;
-    QList<QVariant> m_cache;
-};
-
-
-#endif // EXCELPAGE_H
+    m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
+    m_sheets.reset (m_workbook->querySubObject ("Sheets"));
+    m_sheet.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
+}
