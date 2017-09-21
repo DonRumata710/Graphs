@@ -39,3 +39,8 @@ ExcelOpenFile::ExcelOpenFile(const std::string& filename)
     m_sheets.reset (m_workbook->querySubObject ("Sheets"));
     m_sheet.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
 }
+
+QAxObject* ExcelOpenFile::get_table() const
+{
+    return m_sheet.get ();
+}

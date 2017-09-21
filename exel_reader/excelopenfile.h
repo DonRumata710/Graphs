@@ -39,6 +39,12 @@ class ExcelOpenFile final : public ExcelFile
 {
 public:
     ExcelOpenFile(const std::string& filename);
+
+    QAxObject* get_table() const;
+
+private:
+    std::unique_ptr<QAxObject> m_sheets;
+    std::unique_ptr<QAxObject> m_sheet;
 };
 
 

@@ -37,8 +37,6 @@ ExcelSaveFile::ExcelSaveFile(const std::string& filename) :
     m_filename (filename)
 {
     m_workbook.reset (m_workbooks->querySubObject ("Add"));
-    m_sheets.reset   (m_workbook->querySubObject ("Sheets"));
-    m_sheet.reset    (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
 }
 
 ExcelSaveFile::~ExcelSaveFile()

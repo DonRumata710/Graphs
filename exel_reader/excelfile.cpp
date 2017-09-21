@@ -34,25 +34,11 @@
 #include <ActiveQt/qaxbase.h>
 
 
-using std::unique_ptr;
-using std::shared_ptr;
-
-
-ExcelFile::ExcelFile() :
-    m_excel     (std::make_unique<QAxObject> ("Excel.Application", this)),
-    m_workbooks (m_excel->querySubObject ("Workbooks"))
-{}
-
 ExcelFile::~ExcelFile()
 {
     m_excel->setProperty ("DisplayAlerts", QVariant ("False"));
     m_workbook->dynamicCall ("Close()");
     m_excel->dynamicCall ("Quit()");
-}
-
-QAxObject* ExcelFile::get_table() const
-{
-    return m_sheet.get ();
 }
 
 QAxObject* ExcelFile::create_page(const std::string& name)
@@ -61,10 +47,10 @@ QAxObject* ExcelFile::create_page(const std::string& name)
 
     try
     {
-        std::unique_ptr<QAxObject> sheet_to_copy (m_sheet->querySubObject ("Worksheets(const QVariant&)", 1));
+        std::unique_ptr<QAxObject> sheet_to_copy (m_workbook->querySubObject ("Worksheets(const QVariant&)", 1));
         sheet_to_copy->dynamicCall ("Copy(const QVariant&)", sheet_to_copy->asVariant ());
-
-        new_stat_sheets = m_sheet->querySubObject ("Worksheets(const QVariant&)", 1);
+        sheet_to_copy.reset ();
+        new_stat_sheets = m_workbook->querySubObject ("Worksheets(const QVariant&)", 1);
         new_stat_sheets->setProperty ("Name", QString(name.c_str ()));
     }
     catch(...)
@@ -72,3 +58,8 @@ QAxObject* ExcelFile::create_page(const std::string& name)
 
     return new_stat_sheets;
 }
+
+ExcelFile::ExcelFile() :
+    m_excel     (std::make_unique<QAxObject> ("Excel.Application", this)),
+    m_workbooks (m_excel->querySubObject ("Workbooks"))
+{}
