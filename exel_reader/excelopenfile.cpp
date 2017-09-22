@@ -36,8 +36,22 @@
 ExcelOpenFile::ExcelOpenFile(const std::string& filename)
 {
     m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
+    if (!m_workbook)
+        return;
+    QObject::connect(m_workbook.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+
     m_sheets.reset (m_workbook->querySubObject ("Sheets"));
+    if (!m_sheets)
+        return;
+    QObject::connect(m_sheets.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+
     m_sheet.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
+    if (!m_sheet)
+        return;
+    QObject::connect(m_sheet.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
 }
 
 QAxObject* ExcelOpenFile::get_table() const

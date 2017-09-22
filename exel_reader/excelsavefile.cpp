@@ -37,6 +37,10 @@ ExcelSaveFile::ExcelSaveFile(const std::string& filename) :
     m_filename (filename)
 {
     m_workbook.reset (m_workbooks->querySubObject ("Add"));
+    if (!m_workbook)
+        return;
+    QObject::connect(m_workbook.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
 }
 
 ExcelSaveFile::~ExcelSaveFile()

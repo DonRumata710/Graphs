@@ -32,6 +32,7 @@
 
 #include <ActiveQt/qaxobject.h>
 #include <ActiveQt/qaxbase.h>
+#include <QDebug>
 
 
 ExcelFile::~ExcelFile()
@@ -59,7 +60,17 @@ QAxObject* ExcelFile::create_page(const std::string& name)
     return new_stat_sheets;
 }
 
+void ExcelFile::saveLastError(int, QString source, QString description, QString help)
+{
+    qDebug() << source << description << help;
+}
+
 ExcelFile::ExcelFile() :
     m_excel     (std::make_unique<QAxObject> ("Excel.Application", this)),
     m_workbooks (m_excel->querySubObject ("Workbooks"))
-{}
+{
+    QObject::connect(m_excel.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+    QObject::connect(m_workbooks.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+}
