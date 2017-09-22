@@ -53,7 +53,7 @@ private:
 private:
     std::shared_ptr<ExcelFile> m_file;
     QAxObject* m_table = nullptr;
-    QList<QVariant> m_cache;
+    std::vector<QList<QVariant>> m_cache;
 };
 
 

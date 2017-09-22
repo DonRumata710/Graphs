@@ -45,8 +45,8 @@ ExcelPage::~ExcelPage()
         ));
         std::unique_ptr<QAxObject> second_cell (m_table->querySubObject (
             "Cells(QVariant&,QVariant&)",
-            QVariant (m_cache[0].toList ().size () + 1),
-            QVariant (m_cache.size ())
+            QVariant (m_cache[0].size () + 1),
+            QVariant (m_cache.size () + 1)
         ));
         std::unique_ptr<QAxObject> range (m_table->querySubObject (
             "Range(const QVariant&,const QVariant&)",
@@ -54,7 +54,11 @@ ExcelPage::~ExcelPage()
             second_cell->asVariant ()
         ));
 
-        range->setProperty ("Value", QVariant (m_cache));
+        QList<QVariant> result;
+        for (QList<QVariant> list : m_cache)
+            result.push_back (list);
+
+        range->setProperty ("Value", QVariant (result));
     }
     catch (...)
     {}
@@ -68,16 +72,12 @@ bool ExcelPage::set_x_axis_type(AxisType type)
 bool ExcelPage::save_data(const std::string& name, const std::vector<double>& data)
 {
     if (m_cache.size () < data.size ())
-    {
-        for (size_t i = 0; i <= data.size (); ++i)
-            m_cache.push_back(QList<QVariant> ());
-    }
+        m_cache.assign(data.size () + 1, QList<QVariant> ());
 
-    m_cache[0].toList () << name.c_str ();
-    QList<QVariant>::iterator iter = ++m_cache.begin ();
+    m_cache[0] << name.c_str ();
     for (size_t i = 0; i < data.size (); ++i)
     {
-        (*iter++).toList () << data[i];
+        m_cache[i + 1] << data[i];
     }
 
     return true;
