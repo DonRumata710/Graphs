@@ -49,10 +49,11 @@ public:
 
 private:
     ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
+    ExcelPage (std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject>&& table);
 
 private:
     std::shared_ptr<ExcelFile> m_file;
-    QAxObject* m_table = nullptr;
+    std::unique_ptr<QAxObject> m_table;
     std::vector<QList<QVariant>> m_cache;
 };
 

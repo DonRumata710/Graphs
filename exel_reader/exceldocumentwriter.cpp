@@ -31,6 +31,9 @@
 #include "excelsavefile.h"
 #include "excelpage.h"
 
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
+
 #include <memory>
 
 
@@ -54,7 +57,7 @@ ExcelDocumentWriter::~ExcelDocumentWriter()
     delete data;
 }
 
-pPage ExcelDocumentWriter::get_page(const std::__cxx11::string &name) const
+pPage ExcelDocumentWriter::get_page(const std::string& name) const
 {
     return std::unique_ptr<ExcelPage> (new ExcelPage (data->file, data->file->create_page (name)));
 }

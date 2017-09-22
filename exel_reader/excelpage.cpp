@@ -87,3 +87,8 @@ ExcelPage::ExcelPage(std::shared_ptr<ExcelFile> file, QAxObject* table) :
     m_file (file),
     m_table (table)
 {}
+
+ExcelPage::ExcelPage(std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject> &&table) :
+    m_file (file),
+    m_table (std::move (table))
+{}

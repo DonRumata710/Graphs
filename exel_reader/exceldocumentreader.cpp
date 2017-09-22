@@ -131,9 +131,9 @@ size_t ExcelDocumentReader::get_points_number()
 bool ExcelDocumentReader::load_data ()
 {
     QAxObject* stat_sheet (data->file.get_table ());
-    QAxObject* top_left_cell (stat_sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
-    QAxObject* bottom_right_cell (stat_sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (get_points_number ()), QVariant (get_rows_number ())));
-    QAxObject* range (stat_sheet->querySubObject (
+    std::unique_ptr<QAxObject> top_left_cell (stat_sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
+    std::unique_ptr<QAxObject> bottom_right_cell (stat_sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (get_points_number ()), QVariant (get_rows_number ())));
+    std::unique_ptr<QAxObject> range (stat_sheet->querySubObject (
         "Range(const QVariant&,const QVariant&)", top_left_cell->asVariant (), bottom_right_cell->asVariant ()
     ));
     range->setProperty ("NumberFormat", QVariant ("Double"));

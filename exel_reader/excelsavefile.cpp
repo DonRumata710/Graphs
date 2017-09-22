@@ -45,5 +45,5 @@ ExcelSaveFile::ExcelSaveFile(const std::string& filename) :
 
 ExcelSaveFile::~ExcelSaveFile()
 {
-    m_workbook->dynamicCall ("SaveAs(const QVariant&)", m_filename.c_str ());
+    m_workbook->dynamicCall ("SaveAs(const QVariant&)", QString (m_filename.c_str ()));
 }

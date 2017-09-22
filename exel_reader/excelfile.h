@@ -49,7 +49,7 @@ public:
     ~ExcelFile();
 
     QAxObject* get_table () const;
-    QAxObject* create_page(const std::string& name);
+    std::unique_ptr<QAxObject> create_page(const std::string& name);
 
 public slots:
     void saveLastError(int, QString, QString, QString);

@@ -42,7 +42,7 @@ ExcelFile::~ExcelFile()
     m_excel->dynamicCall ("Quit()");
 }
 
-QAxObject* ExcelFile::create_page(const std::string& name)
+std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
 {
     QAxObject* new_stat_sheets (nullptr);
 
@@ -50,19 +50,19 @@ QAxObject* ExcelFile::create_page(const std::string& name)
     {
         std::unique_ptr<QAxObject> sheet_to_copy (m_workbook->querySubObject ("Worksheets(const QVariant&)", 1));
         sheet_to_copy->dynamicCall ("Copy(const QVariant&)", sheet_to_copy->asVariant ());
-        sheet_to_copy.reset ();
+
         new_stat_sheets = m_workbook->querySubObject ("Worksheets(const QVariant&)", 1);
         new_stat_sheets->setProperty ("Name", QString(name.c_str ()));
     }
     catch(...)
     {}
 
-    return new_stat_sheets;
+    return std::unique_ptr<QAxObject> (new_stat_sheets);
 }
 
-void ExcelFile::saveLastError(int, QString source, QString description, QString help)
+void ExcelFile::saveLastError(int err_code, QString source, QString description, QString help)
 {
-    qDebug() << source << description << help;
+    qDebug() << err_code << source << description << help;
 }
 
 ExcelFile::ExcelFile() :
