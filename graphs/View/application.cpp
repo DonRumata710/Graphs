@@ -94,6 +94,7 @@ void Application::save_as ()
 void Application::close ()
 {
     m_filename.clear ();
+    m_manager.close_graph();
 }
 
 

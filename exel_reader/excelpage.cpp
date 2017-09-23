@@ -48,8 +48,8 @@ ExcelPage::~ExcelPage()
         ));
         std::unique_ptr<QAxObject> second_cell (m_table->querySubObject (
             "Cells(QVariant&,QVariant&)",
-            QVariant (m_cache[0].size () + 1),
-            QVariant (m_cache.size () + 1)
+            QVariant (m_cache.size ()),
+            QVariant (m_cache[0].size ())
         ));
 
         if (!first_cell || !second_cell)
