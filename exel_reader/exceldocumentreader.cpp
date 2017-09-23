@@ -41,8 +41,8 @@ struct ExcelDocumentReader::PrivateData
     {}
 
     ExcelOpenFile file;
-    size_t num_columns = 0;
-    size_t num_points = 0;
+    size_t columns_num = 0;
+    size_t points_num = 0;
     bool have_headers = false;
     QList<QVariant> cache;
 };
@@ -75,7 +75,7 @@ void ExcelDocumentReader::get_headers(std::vector<std::string>* const headers)
     }
 
     headers->clear ();
-    headers->reserve(data->num_columns);
+    headers->reserve(data->columns_num);
 
     QList<QVariant> header_list (data->cache.front ().toList ());
     QList<QVariant>::iterator iter (header_list.begin ());
@@ -95,7 +95,7 @@ void ExcelDocumentReader::get_data(size_t index, std::vector<double>* const row)
         return;
 
     row->clear ();
-    row->reserve(data->num_points - (data->have_headers ? 1 : 0));
+    row->reserve(data->points_num - (data->have_headers ? 1 : 0));
 
     QList<QVariant>::iterator iter (data->cache.begin () + (data->have_headers ? 1 : 0));
     while (iter!= data->cache.end ())
@@ -108,34 +108,54 @@ ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :
 
 size_t ExcelDocumentReader::get_rows_number()
 {
-    if (!data->num_columns)
+    if (!data->columns_num)
     {
         std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(QVariant,Columns.Count)", QVariant (1)));
-        std::unique_ptr<QAxObject> numColumnsEx (cell->querySubObject ("End (xlToRight)"));
-        data->num_columns = numColumnsEx->property ("Column").toInt ();
+        if (!cell)
+            return 0;
+        std::unique_ptr<QAxObject> columns_num (cell->querySubObject ("End (xlToRight)"));
+        if (!columns_num)
+            return 0;
+        data->columns_num = columns_num->property ("Column").toInt ();
     }
-    return data->num_columns;
+    return data->columns_num;
 }
 
 size_t ExcelDocumentReader::get_points_number()
 {
-    if (!data->num_points)
+    if (!data->points_num)
     {
         std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(Rows.Count,QVariant)", QVariant (1)));
+        if (!cell)
+            return 0;
         std::unique_ptr<QAxObject> numRowsEx (cell->querySubObject ("End (xlDown)"));
-        data->num_points = numRowsEx->property ("Row").toInt ();
+        if (!numRowsEx)
+            return 0;
+        data->points_num = numRowsEx->property ("Row").toInt ();
     }
-    return data->num_points;
+    return data->points_num;
 }
 
 bool ExcelDocumentReader::load_data ()
 {
-    QAxObject* stat_sheet (data->file.get_table ());
-    std::unique_ptr<QAxObject> top_left_cell (stat_sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
-    std::unique_ptr<QAxObject> bottom_right_cell (stat_sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (get_points_number ()), QVariant (get_rows_number ())));
-    std::unique_ptr<QAxObject> range (stat_sheet->querySubObject (
+    QAxObject* sheet (data->file.get_table ());
+
+    if (!sheet)
+        return false;
+
+    std::unique_ptr<QAxObject> top_left_cell (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
+    std::unique_ptr<QAxObject> bottom_right_cell (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (get_points_number ()), QVariant (get_rows_number ())));
+
+    if (!top_left_cell || !bottom_right_cell)
+        return false;
+
+    std::unique_ptr<QAxObject> range (sheet->querySubObject (
         "Range(const QVariant&,const QVariant&)", top_left_cell->asVariant (), bottom_right_cell->asVariant ()
     ));
+
+    if (!range)
+        return false;
+
     range->setProperty ("NumberFormat", QVariant ("Double"));
 
     data->cache = range->property ("Value").toList ();

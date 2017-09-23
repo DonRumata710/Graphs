@@ -38,6 +38,9 @@ ExcelPage::~ExcelPage()
 {
     try
     {
+        if (!m_table)
+            return;
+
         std::unique_ptr<QAxObject> first_cell (m_table->querySubObject (
             "Cells(QVariant&,QVariant&)",
             QVariant (1),
@@ -48,11 +51,18 @@ ExcelPage::~ExcelPage()
             QVariant (m_cache[0].size () + 1),
             QVariant (m_cache.size () + 1)
         ));
+
+        if (!first_cell || !second_cell)
+            return;
+
         std::unique_ptr<QAxObject> range (m_table->querySubObject (
             "Range(const QVariant&,const QVariant&)",
             first_cell->asVariant (),
             second_cell->asVariant ()
         ));
+
+        if (!range)
+            return;
 
         QList<QVariant> result;
         for (QList<QVariant> list : m_cache)
