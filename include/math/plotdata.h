@@ -51,7 +51,7 @@ public:
     PlotData (pDocumentReader);
 
     void load_data (pDocumentReader doc);
-    void save_data (pDocumentWriter doc);
+    void save_data (pPage page) const;
 
     PlotData& operator= (const PlotData& plotData);
 
@@ -86,7 +86,6 @@ private:
 
     PlotData (pPrivateData data);
 
-    std::vector<Row>& get_series () const;
     std::vector<double> get_smoothed (const std::vector<double>&) const;
     iterRow find_column (const std::string&) const;
 

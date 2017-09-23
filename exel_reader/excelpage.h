@@ -27,40 +27,35 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
+
+#ifndef EXCELPAGE_H
+#define EXCELPAGE_H
 
 
-#include <qobject.h>
-
-#include <memory>
-#include <string>
-
-
-class QAxObject;
-class ExcelPage;
+#include "document/page.h"
+#include "excelfile.h"
+#include "exceldocumentwriter.h"
 
 
-class ExcelFile : public QObject
+class ExcelPage final : public iPage
 {
-    Q_OBJECT
+    friend class ExcelDocumentWriter;
 
 public:
-    ~ExcelFile();
+    virtual ~ExcelPage ();
 
-    QAxObject* get_table () const;
-    std::unique_ptr<QAxObject> create_page(const std::string& name);
+    virtual bool set_x_axis_type (AxisType type) override;
+    virtual bool save_data (const std::string& name, const std::vector<double>& data) override;
 
-public slots:
-    void saveLastError(int, QString, QString, QString);
+private:
+    ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
+    ExcelPage (std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject>&& table);
 
-protected:
-    ExcelFile();
-
-protected:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
+private:
+    std::shared_ptr<ExcelFile> m_file;
+    std::unique_ptr<QAxObject> m_table;
+    std::vector<QList<QVariant>> m_cache;
 };
 
-#endif // EXCELFILE_H
+
+#endif // EXCELPAGE_H

@@ -28,32 +28,60 @@
 
 
 #include "excelfile.h"
+#include "excelpage.h"
 
 #include <ActiveQt/qaxobject.h>
 #include <ActiveQt/qaxbase.h>
+#include <QDebug>
 
-
-using std::unique_ptr;
-using std::shared_ptr;
-
-
-ExcelFile::ExcelFile(const std::string &filename)
-{
-    m_excel = std::make_unique<QAxObject> ("Excel.Application", this);
-    m_workbooks.reset (m_excel->querySubObject ("Workbooks"));
-    m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
-    m_sheets.reset (m_workbook->querySubObject ("Sheets"));
-    m_stat_sheets.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
-}
 
 ExcelFile::~ExcelFile()
 {
+    if (!m_excel)
+        return;
+
     m_excel->setProperty ("DisplayAlerts", QVariant ("False"));
-    m_workbook->dynamicCall ("Close()");
+
+    if (m_workbook)
+        m_workbook->dynamicCall ("Close()");
+
     m_excel->dynamicCall ("Quit()");
 }
 
-QAxObject* ExcelFile::get_table() const
+std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
 {
-    return m_stat_sheets.get ();
+    if (!m_workbook)
+        return nullptr;
+
+    QAxObject* new_stat_sheets (nullptr);
+
+    try
+    {
+        std::unique_ptr<QAxObject> sheet_to_copy (m_workbook->querySubObject ("Worksheets(const QVariant&)", 1));
+        if (sheet_to_copy)
+            sheet_to_copy->dynamicCall ("Copy(const QVariant&)", sheet_to_copy->asVariant ());
+
+        new_stat_sheets = m_workbook->querySubObject ("Worksheets(const QVariant&)", 1);
+        if (new_stat_sheets)
+            new_stat_sheets->setProperty ("Name", QString(name.c_str ()));
+    }
+    catch(...)
+    {}
+
+    return std::unique_ptr<QAxObject> (new_stat_sheets);
+}
+
+void ExcelFile::saveLastError(int err_code, QString source, QString description, QString help)
+{
+    qDebug() << err_code << source << description << help;
+}
+
+ExcelFile::ExcelFile() :
+    m_excel     (std::make_unique<QAxObject> ("Excel.Application", this)),
+    m_workbooks (m_excel ? m_excel->querySubObject ("Workbooks") : nullptr)
+{
+    QObject::connect(m_excel.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+    QObject::connect(m_workbooks.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
 }

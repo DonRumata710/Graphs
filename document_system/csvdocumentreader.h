@@ -39,11 +39,8 @@ public:
 
     virtual AxisType get_x_axis_type () override;
 
-    virtual size_t get_columns_number () override;
-    virtual size_t get_rows_number () override;
-
-    virtual std::vector<std::string> get_headers () override;
-    virtual double get_item (size_t row, size_t column) override;
+    virtual void get_headers (std::vector<std::string>* const) override;
+    virtual void get_data (size_t row, std::vector<double>* const) override;
 
 private:
     explicit CsvDocumentReader (const std::string& filename);

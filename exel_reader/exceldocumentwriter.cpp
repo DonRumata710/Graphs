@@ -28,6 +28,23 @@
 
 
 #include "exceldocumentwriter.h"
+#include "excelsavefile.h"
+#include "excelpage.h"
+
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
+
+#include <memory>
+
+
+struct ExcelDocumentWriter::PrivateData
+{
+    PrivateData (const std::string& filename) :
+        file (std::make_shared<ExcelSaveFile> (filename))
+    {}
+
+    std::shared_ptr<ExcelSaveFile> file;
+};
 
 
 pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
@@ -35,22 +52,16 @@ pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
     return pDocumentWriter (new ExcelDocumentWriter (filename));
 }
 
-bool ExcelDocumentWriter::set_x_axis_type()
+ExcelDocumentWriter::~ExcelDocumentWriter()
 {
-    return true;
+    delete data;
 }
 
-bool ExcelDocumentWriter::write_headers(const std::vector<std::string> &headers)
+pPage ExcelDocumentWriter::get_page(const std::string& name) const
 {
-    return true;
+    return std::unique_ptr<ExcelPage> (new ExcelPage (data->file, data->file->create_page (name)));
 }
 
-bool ExcelDocumentWriter::write_row(const std::vector<double> &row)
-{
-    return true;
-}
-
-ExcelDocumentWriter::ExcelDocumentWriter(const std::string& filename)
-{
-
-}
+ExcelDocumentWriter::ExcelDocumentWriter(const std::string& filename) :
+    data (new PrivateData (filename))
+{}

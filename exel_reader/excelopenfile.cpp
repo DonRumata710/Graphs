@@ -26,41 +26,35 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
+
+#include "excelopenfile.h"
+
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
 
 
-#include <qobject.h>
-
-#include <memory>
-#include <string>
-
-
-class QAxObject;
-class ExcelPage;
-
-
-class ExcelFile : public QObject
+ExcelOpenFile::ExcelOpenFile(const std::string& filename)
 {
-    Q_OBJECT
+    m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
+    if (!m_workbook)
+        return;
+    QObject::connect(m_workbook.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
 
-public:
-    ~ExcelFile();
+    m_sheets.reset (m_workbook->querySubObject ("Sheets"));
+    if (!m_sheets)
+        return;
+    QObject::connect(m_sheets.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
 
-    QAxObject* get_table () const;
-    std::unique_ptr<QAxObject> create_page(const std::string& name);
+    m_sheet.reset (m_sheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
+    if (!m_sheet)
+        return;
+    QObject::connect(m_sheet.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+}
 
-public slots:
-    void saveLastError(int, QString, QString, QString);
-
-protected:
-    ExcelFile();
-
-protected:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-};
-
-#endif // EXCELFILE_H
+QAxObject* ExcelOpenFile::get_table() const
+{
+    return m_sheet.get ();
+}

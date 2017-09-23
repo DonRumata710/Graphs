@@ -37,9 +37,12 @@ class Row : public std::vector<double>
 {
 public:
     explicit Row (const std::string& name);
-    Row (const std::string& name, size_t size, double val);
+    Row (const std::string& name, size_t size);
+    Row (const std::string& name, size_t size, double value);
+    Row (const std::string& name, const std::vector<double>& data);
+    Row (const std::string& name, std::vector<double>&& data);
     Row (const Row& values);
-    Row (const Row&& values);
+    Row (Row&& values);
 
     Row& operator= (const Row& values);
 

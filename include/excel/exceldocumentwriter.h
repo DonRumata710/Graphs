@@ -39,13 +39,16 @@ class ExcelDocumentWriter final : public iDocumentWriter
 public:
     static pDocumentWriter create (const std::string& filename);
 
-    virtual bool set_x_axis_type () override;
+    ~ExcelDocumentWriter ();
 
-    virtual bool write_headers (const std::vector<std::string>& headers) override;
-    virtual bool write_row (const std::vector<double>& row) override;
+    virtual pPage get_page (const std::string& name) const override;
 
 private:
     ExcelDocumentWriter (const std::string& filename);
+
+private:
+    struct PrivateData;
+    PrivateData* data;
 };
 
 

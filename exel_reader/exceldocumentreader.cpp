@@ -28,66 +28,11 @@
 
 
 #include "exceldocumentreader.h"
-#include "excelfile.h"
+#include "excelopenfile.h"
 
 #include <QVariant>
 #include <ActiveQt/qaxobject.h>
 #include <ActiveQt/qaxbase.h>
-
-
-AxisType get_str_type (const std::string& str)
-{
-    auto s (str.begin ());
-    unsigned i (1);
-    QChar sep = '\n';
-    int lng[5] = { 0 };
-    bool lettersLong (false);
-    bool letters (false);
-    if (!isdigit(*s)) return TYPE_NUM;
-    ++s;
-    //if (!(*s++).isDigit ())
-    while (s != str.end ())
-    {
-        if (isdigit(*s)) i++;
-        else
-        {
-            if (isalpha(*s))
-            {
-                if (letters && lettersLong)
-                    return TYPE_NUM;
-                else
-                {
-                    unsigned j (0);
-                    while (isalpha(*s) && s++ != str.end ())
-                        ++j;
-                    if (j > 2 && !lettersLong)
-                        lettersLong = TYPE_TIME;
-                    else if (!letters)
-                        letters = TYPE_TIME;
-                    else
-                        return TYPE_NUM;
-                }
-            }
-            else if (sep == *s || *s == ',') sep = '\n';
-            else if (sep == '\n') sep = *s;
-            else return TYPE_NUM;
-            if (i > 4) return TYPE_NUM;
-            ++lng[i];
-            i = 0;
-        }
-        ++s;
-    }
-    if (lng[4] < 2 && lng[2] != 0 &&
-        ((lng[1] + lng[2] + lng[4] > 1 && lettersLong && lng[1] + lng[2] + lng[4] < 5) ||
-        (lng[1] + lng[2] + lng[4] > 2 && !lettersLong && lng[1] + lng[2] + lng[4] < 6)))
-        return TYPE_TIME;
-    return TYPE_NUM;
-}
-
-bool is_text (QString str)
-{
-    return !(str.begin ()->isDigit () && (str.end () - 1)->isDigit ());
-}
 
 
 struct ExcelDocumentReader::PrivateData
@@ -95,7 +40,11 @@ struct ExcelDocumentReader::PrivateData
     PrivateData (const std::string& filename) : file (filename)
     {}
 
-    ExcelFile file;
+    ExcelOpenFile file;
+    size_t columns_num = 0;
+    size_t points_num = 0;
+    bool have_headers = false;
+    QList<QVariant> cache;
 };
 
 
@@ -104,10 +53,6 @@ pDocumentReader ExcelDocumentReader::create(const std::string& filename)
     return pDocumentReader (new ExcelDocumentReader (filename));
 }
 
-ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :
-    data (new PrivateData (filename))
-{}
-
 ExcelDocumentReader::~ExcelDocumentReader()
 {
     delete data;
@@ -115,26 +60,114 @@ ExcelDocumentReader::~ExcelDocumentReader()
 
 AxisType ExcelDocumentReader::get_x_axis_type()
 {
-    std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(QVariant,QVariant)", QVariant (2), QVariant (1)));
+    std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject (
+        "Cells(QVariant,QVariant)", QVariant (2), QVariant (1)
+    ));
     return get_str_type (cell->property ("Value").toString ().toStdString ());
 }
 
-size_t ExcelDocumentReader::get_columns_number()
+void ExcelDocumentReader::get_headers(std::vector<std::string>* const headers)
 {
-    return 0;
+    if (data->cache.isEmpty ())
+    {
+        if (!load_data ())
+            return;
+    }
+
+    headers->clear ();
+    headers->reserve(data->columns_num);
+
+    if (data->have_headers)
+    {
+        QList<QVariant> header_list (data->cache.front ().toList ());
+        QList<QVariant>::iterator iter (header_list.begin ());
+        while (iter != header_list.end ())
+            headers->push_back ((iter++)->toString ().toStdString ());
+    }
+    else
+    {
+        for (size_t i = 0; i < data->columns_num; ++i)
+            headers->push_back (std::to_string (i));
+    }
 }
+
+void ExcelDocumentReader::get_data(size_t index, std::vector<double>* const row)
+{
+    if (data->cache.isEmpty ())
+    {
+        if (!load_data ())
+            return;
+    }
+
+    if (index > data->cache.size ())
+        return;
+
+    row->clear ();
+    row->reserve(data->points_num - (data->have_headers ? 1 : 0));
+
+    QList<QVariant>::iterator iter (data->cache.begin () + (data->have_headers ? 1 : 0));
+    while (iter!= data->cache.end ())
+        row->push_back ((iter++)->toList ().at (index).toDouble ());
+}
+
+ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :
+    data (new PrivateData (filename))
+{}
 
 size_t ExcelDocumentReader::get_rows_number()
 {
-    return 0;
+    if (!data->columns_num)
+    {
+        std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(QVariant,Columns.Count)", QVariant (1)));
+        if (!cell)
+            return 0;
+        std::unique_ptr<QAxObject> columns_num (cell->querySubObject ("End (xlToRight)"));
+        if (!columns_num)
+            return 0;
+        data->columns_num = columns_num->property ("Column").toInt ();
+    }
+    return data->columns_num;
 }
 
-std::vector<std::string> ExcelDocumentReader::get_headers()
+size_t ExcelDocumentReader::get_points_number()
 {
-    return std::vector<std::string> ();
+    if (!data->points_num)
+    {
+        std::unique_ptr<QAxObject> cell (data->file.get_table ()->querySubObject ("Cells(Rows.Count,QVariant)", QVariant (1)));
+        if (!cell)
+            return 0;
+        std::unique_ptr<QAxObject> numRowsEx (cell->querySubObject ("End (xlDown)"));
+        if (!numRowsEx)
+            return 0;
+        data->points_num = numRowsEx->property ("Row").toInt ();
+    }
+    return data->points_num;
 }
 
-double ExcelDocumentReader::get_item(size_t row, size_t column)
+bool ExcelDocumentReader::load_data ()
 {
-    return 0.0;
+    QAxObject* sheet (data->file.get_table ());
+
+    if (!sheet)
+        return false;
+
+    std::unique_ptr<QAxObject> top_left_cell (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
+    std::unique_ptr<QAxObject> bottom_right_cell (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (get_points_number ()), QVariant (get_rows_number ())));
+
+    if (!top_left_cell || !bottom_right_cell)
+        return false;
+
+    std::unique_ptr<QAxObject> range (sheet->querySubObject (
+        "Range(const QVariant&,const QVariant&)", top_left_cell->asVariant (), bottom_right_cell->asVariant ()
+    ));
+
+    if (!range)
+        return false;
+
+    range->setProperty ("NumberFormat", QVariant ("Double"));
+
+    data->cache = range->property ("Value").toList ();
+
+    data->have_headers = is_text (data->cache.at (0).toList ().at (1).toString ().toStdString ());
+    return true;
 }

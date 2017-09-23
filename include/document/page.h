@@ -27,40 +27,29 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
+
+#ifndef PAGE_H
+#define PAGE_H
 
 
-#include <qobject.h>
+#include "axistype.h"
 
-#include <memory>
 #include <string>
+#include <vector>
+#include <memory>
 
 
-class QAxObject;
-class ExcelPage;
-
-
-class ExcelFile : public QObject
+class iPage
 {
-    Q_OBJECT
-
 public:
-    ~ExcelFile();
+    virtual ~iPage () {}
 
-    QAxObject* get_table () const;
-    std::unique_ptr<QAxObject> create_page(const std::string& name);
-
-public slots:
-    void saveLastError(int, QString, QString, QString);
-
-protected:
-    ExcelFile();
-
-protected:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
+    virtual bool set_x_axis_type (AxisType type) = 0;
+    virtual bool save_data (const std::string& name, const std::vector<double>& data) = 0;
 };
 
-#endif // EXCELFILE_H
+
+typedef std::shared_ptr<iPage> pPage;
+
+
+#endif

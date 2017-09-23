@@ -26,41 +26,25 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
+
+#include "excelsavefile.h"
+
+#include <ActiveQt/qaxobject.h>
+#include <ActiveQt/qaxbase.h>
 
 
-#include <qobject.h>
-
-#include <memory>
-#include <string>
-
-
-class QAxObject;
-class ExcelPage;
-
-
-class ExcelFile : public QObject
+ExcelSaveFile::ExcelSaveFile(const std::string& filename) :
+    m_filename (filename)
 {
-    Q_OBJECT
+    m_workbook.reset (m_workbooks->querySubObject ("Add"));
+    if (!m_workbook)
+        return;
+    QObject::connect(m_workbook.get (), SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(saveLastError (int, QString, QString, QString)));
+}
 
-public:
-    ~ExcelFile();
-
-    QAxObject* get_table () const;
-    std::unique_ptr<QAxObject> create_page(const std::string& name);
-
-public slots:
-    void saveLastError(int, QString, QString, QString);
-
-protected:
-    ExcelFile();
-
-protected:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
-};
-
-#endif // EXCELFILE_H
+ExcelSaveFile::~ExcelSaveFile()
+{
+    if (m_workbook)
+        m_workbook->dynamicCall ("SaveCopyAs(const QVariant&)", QVariant (QString (m_filename.c_str ())));
+}

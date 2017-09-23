@@ -35,19 +35,9 @@ pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
     return pDocumentWriter (new CsvDocumentWriter (filename));
 }
 
-bool CsvDocumentWriter::set_x_axis_type()
+pPage CsvDocumentWriter::get_page(const std::string& name) const
 {
-    return true;
-}
-
-bool CsvDocumentWriter::write_headers(const std::vector<std::string> &headers)
-{
-    return true;
-}
-
-bool CsvDocumentWriter::write_row(const std::vector<double> &row)
-{
-    return true;
+    return nullptr;
 }
 
 CsvDocumentWriter::CsvDocumentWriter(const std::string& filename)

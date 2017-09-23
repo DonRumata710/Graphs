@@ -27,40 +27,25 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef EXCELFILE_H
-#define EXCELFILE_H
+
+#ifndef EXCELOPENFILE_H
+#define EXCELOPENFILE_H
 
 
-#include <qobject.h>
-
-#include <memory>
-#include <string>
+#include "excelfile.h"
 
 
-class QAxObject;
-class ExcelPage;
-
-
-class ExcelFile : public QObject
+class ExcelOpenFile final : public ExcelFile
 {
-    Q_OBJECT
-
 public:
-    ~ExcelFile();
+    ExcelOpenFile(const std::string& filename);
 
-    QAxObject* get_table () const;
-    std::unique_ptr<QAxObject> create_page(const std::string& name);
+    QAxObject* get_table() const;
 
-public slots:
-    void saveLastError(int, QString, QString, QString);
-
-protected:
-    ExcelFile();
-
-protected:
-    std::unique_ptr<QAxObject> m_excel;
-    std::unique_ptr<QAxObject> m_workbooks;
-    std::unique_ptr<QAxObject> m_workbook;
+private:
+    std::unique_ptr<QAxObject> m_sheets;
+    std::unique_ptr<QAxObject> m_sheet;
 };
 
-#endif // EXCELFILE_H
+
+#endif // EXCELOPENFILE_H

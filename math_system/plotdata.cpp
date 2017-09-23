@@ -77,18 +77,21 @@ PlotData::PlotData (const PlotData& data) : m_data (data.m_data) {}
 
 void PlotData::load_data(pDocumentReader doc)
 {
-    const size_t data_size (doc->get_rows_number ());
-
-    const auto& headers (doc->get_headers());
+    std::vector<std::string> headers;
+    doc->get_headers (&headers);
+    m_data->series.reserve (headers.size ());
     for (const std::string& header : headers)
     {
-        get_series ().push_back (Row (header, data_size, 0.0));
+        m_data->series.push_back (Row (header));
+        doc->get_data (m_data->series.size () - 1, &m_data->series.back ());
     }
+    std::sort (m_data->series.begin () + 1, m_data->series.end ());
 }
 
-void PlotData::save_data(pDocumentWriter doc)
+void PlotData::save_data(pPage page) const
 {
-
+    for (Row row : m_data->series)
+        page->save_data (row.get_name(), row);
 }
 
 PlotData& PlotData::operator= (const PlotData& plotData)
@@ -211,8 +214,8 @@ StringList PlotData::get_headers () const
 PlotData PlotData::get_approx () const
 {
     pPrivateData newdata (std::make_shared<PrivateData> ());
-    newdata->series.reserve (get_series ().size ());
-    newdata->series.push_back (Row (m_data->series[0].get_name (), 2, 0.0));
+    newdata->series.reserve (m_data->series.size ());
+    newdata->series.push_back (Row (m_data->series[0].get_name (), 2));
     newdata->series[0][0] = m_data->series[0][0];
     newdata->series[0][1] = m_data->series[0][m_data->series[0].size () - 1];
 
@@ -244,11 +247,11 @@ PlotData PlotData::get_approx () const
         double a ((n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX));
         double b ((sumY - a * sumX) / n);
 
-        newdata->series[numrow] = Row (curve.get_name (), 2, 0.0);
-        Row& newRow = newdata->series[newdata->series.size () - 1];
+        newdata->series[numrow] = Row (curve.get_name (), 2);
+        Row& newRow = newdata->series.back ();
 
-        newRow[0] = a * (*axisX.begin ()) +  b;
-        newRow[1] = a * (*axisX.rbegin ()) + b;
+        newRow.push_back (a * (*axisX.begin ()) +  b);
+        newRow.push_back (a * (*axisX.rbegin ()) + b);
     }
 
     return newdata;
@@ -257,8 +260,8 @@ PlotData PlotData::get_approx () const
 PlotData PlotData::get_smoothing (int points) const
 {
     pPrivateData d (std::make_shared<PrivateData> ());
-    d->series.reserve (get_series ().size ());
-    d->series.push_back(get_series ()[0]);
+    d->series.reserve (m_data->series.size ());
+    d->series.push_back(m_data->series[0]);
 
     prepare_threads ();
 
@@ -297,22 +300,22 @@ PlotData PlotData::get_smoothing (int points) const
 PlotData PlotData::get_deviations () const
 {
     pPrivateData d (std::make_shared<PrivateData> ());
-    d->series.reserve (get_series ().size ());
-    d->series.push_back (get_series ()[0]);
+    d->series.reserve (m_data->series.size ());
+    d->series.push_back (m_data->series[0]);
 
     prepare_threads ();
 
     #pragma omp parallel for
-    for (int col = 1; col < get_series ().size (); ++col)
+    for (int col = 1; col < m_data->series.size (); ++col)
     {
         double medium (0.0);
 
-        for (unsigned i = 0; i < get_series ()[col].size (); ++i)
-            medium += get_series ()[col][i];
-        medium /= get_series ()[col].size ();
+        for (unsigned i = 0; i < m_data->series[col].size (); ++i)
+            medium += m_data->series[col][i];
+        medium /= m_data->series[col].size ();
 
-        d->series[col] = Row (get_series ()[col].get_name (), get_series ()[0].size (), 0.0);
-        for (unsigned i = 0; i < get_series ()[col].size (); ++i) d->series[col][i] = get_series ()[col][i] - medium;
+        d->series[col] = Row (m_data->series[col].get_name (), m_data->series[0].size (), 0.0);
+        for (unsigned i = 0; i < m_data->series[col].size (); ++i) d->series[col][i] = m_data->series[col][i] - medium;
     }
     d->name = "Deviations row";
 
@@ -370,10 +373,6 @@ void PlotData::remove_spaces ()
 
 
 ////////////////////////////////////////////////////
-std::vector<Row>& PlotData::get_series () const
-{
-    return m_data->series;
-}
 
 std::vector<Row>::iterator PlotData::find_column (const std::string& col) const
 {
@@ -387,9 +386,9 @@ PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& en
 {
     const iterRow mid (begin + std::distance(begin, end) / 2);
 
-    if (mid->get_name () < col)
+    if (mid->get_name () > col)
         return quick_search (begin, mid, col);
-    else if (mid->get_name () > col)
+    else if (mid->get_name () < col)
         return quick_search (mid, end, col);
     else
         return mid;
@@ -433,8 +432,8 @@ PlotData PlotData::get_relative_sp (double fromLin, double toLin, unsigned numst
 
         sp->series.push_back (Row (name, sp->series[0].size (), 0.0));
         Row& row (sp->series[sp->series.size () - 1]);
-        const std::vector<double>& fRow (get_series ()[rowFst]);
-        const std::vector<double>& sRow (get_series ()[rowSnd]);
+        const std::vector<double>& fRow (m_data->series[rowFst]);
+        const std::vector<double>& sRow (m_data->series[rowSnd]);
 
         #pragma omp parallel for
         for (int i = 0; i < sp->series[0].size (); ++i)
@@ -494,7 +493,7 @@ PlotData PlotData::get_correlations (double from, double to, unsigned numstep) c
     double max (to + step / 4.0);
 
     pPrivateData corr (std::make_shared<PrivateData> ());
-    corr->series.reserve ((get_series ().size () - 1) * (get_series ().size () - 1) / 2);
+    corr->series.reserve ((m_data->series.size () - 1) * (m_data->series.size () - 1) / 2);
     corr->series.push_back (Row ("Friquency"));
     Row& friquency (corr->series[0]);
 
@@ -502,13 +501,13 @@ PlotData PlotData::get_correlations (double from, double to, unsigned numstep) c
 
     const size_t count (m_data->series[0].size ());
 
-    for (unsigned rowFst = 1; rowFst < get_series ().size (); ++rowFst)
-    for (unsigned rowSnd = rowFst + 1; rowSnd < get_series ().size (); ++rowSnd)
+    for (unsigned rowFst = 1; rowFst < m_data->series.size (); ++rowFst)
+    for (unsigned rowSnd = rowFst + 1; rowSnd < m_data->series.size (); ++rowSnd)
     {
-        const std::vector<double>& fRow (get_series ()[rowFst]);
-        const std::vector<double>& sRow (get_series ()[rowSnd]);
+        const std::vector<double>& fRow (m_data->series[rowFst]);
+        const std::vector<double>& sRow (m_data->series[rowSnd]);
 
-        corr->series.push_back (Row (get_series ()[rowFst].get_name () + "-" + get_series ()[rowSnd].get_name (), corr->series[0].size (), 0.0));
+        corr->series.push_back (Row (m_data->series[rowFst].get_name () + "-" + m_data->series[rowSnd].get_name (), corr->series[0].size (), 0.0));
         std::vector<double>& row (corr->series[1]);
 
         #pragma omp parallel for
@@ -528,11 +527,11 @@ PlotData PlotData::get_correlations (double from, double to, unsigned numstep) c
 
             for (unsigned j = 0; j < count; ++j)
             {
-                a += fRow[j] * fSin (get_series ()[0][j]);
-                b += fRow[j] * fCos (get_series ()[0][j]);
+                a += fRow[j] * fSin (m_data->series[0][j]);
+                b += fRow[j] * fCos (m_data->series[0][j]);
 
-                c += sRow[j] * fSin (get_series ()[0][j]);
-                d += sRow[j] * fCos (get_series ()[0][j]);
+                c += sRow[j] * fSin (m_data->series[0][j]);
+                d += sRow[j] * fCos (m_data->series[0][j]);
             }
 
             row[i] = ((a * c + b * d) / (count * count)) /
@@ -548,7 +547,7 @@ PlotData PlotData::get_power () const
 {
     pPrivateData pow (std::make_shared<PrivateData> ());
 
-    pow->series = get_series ();
+    pow->series = m_data->series;
 
     for (int i = 1; i < pow->series.size (); ++i)
         for (size_t j = 0; j < pow->series[0].size (); ++j)

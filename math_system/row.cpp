@@ -33,8 +33,23 @@
 Row::Row(const std::string& name) : m_name (name)
 {}
 
-Row::Row(const std::string& name, size_t size, double val) :
-    std::vector<double> (size, val),
+Row::Row(const std::string& name, size_t size) :
+    std::vector<double> (size),
+    m_name (name)
+{}
+
+Row::Row(const std::string& name, size_t size, double value) :
+    std::vector<double> (size, value),
+    m_name (name)
+{}
+
+Row::Row(const std::string& name, const std::vector<double>& data) :
+    std::vector<double> (data),
+    m_name (name)
+{}
+
+Row::Row(const std::string& name, std::vector<double>&& data) :
+    std::vector<double> (std::move (data)),
     m_name (name)
 {}
 
@@ -43,7 +58,7 @@ Row::Row (const Row& values) :
     m_name (values.m_name)
 {}
 
-Row::Row (const Row&& values) :
+Row::Row (Row&& values) :
     std::vector<double> (std::move (values)),
     m_name (std::move (values.m_name))
 {}
