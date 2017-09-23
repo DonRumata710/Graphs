@@ -77,10 +77,18 @@ void ExcelDocumentReader::get_headers(std::vector<std::string>* const headers)
     headers->clear ();
     headers->reserve(data->columns_num);
 
-    QList<QVariant> header_list (data->cache.front ().toList ());
-    QList<QVariant>::iterator iter (header_list.begin ());
-    while (iter != header_list.end ())
-        headers->push_back ((iter++)->toString ().toStdString ());
+    if (data->have_headers)
+    {
+        QList<QVariant> header_list (data->cache.front ().toList ());
+        QList<QVariant>::iterator iter (header_list.begin ());
+        while (iter != header_list.end ())
+            headers->push_back ((iter++)->toString ().toStdString ());
+    }
+    else
+    {
+        for (size_t i = 0; i < data->columns_num; ++i)
+            headers->push_back (std::to_string (i));
+    }
 }
 
 void ExcelDocumentReader::get_data(size_t index, std::vector<double>* const row)

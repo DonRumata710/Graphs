@@ -37,10 +37,15 @@
 
 ExcelFile::~ExcelFile()
 {
+    if (!m_excel)
+        return;
+
+    m_excel->setProperty ("DisplayAlerts", QVariant ("False"));
+
     if (m_workbook)
         m_workbook->dynamicCall ("Close()");
-    if (m_excel)
-        m_excel->dynamicCall ("Quit()");
+
+    m_excel->dynamicCall ("Quit()");
 }
 
 std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
