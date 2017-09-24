@@ -36,38 +36,39 @@
 #include <qlayout.h>
 
 
-TabPresenter::TabPresenter (QTabWidget* parent, AbstractModel* model) :
-    m_model (model), m_tab (parent), m_thread (this)
+TabPresenter::TabPresenter() : m_thread (this)
 {
-    if (parent)
-    {
-        QHBoxLayout* hl = new QHBoxLayout ();
-        QVBoxLayout* vl = new QVBoxLayout ();
-        vl->addLayout (hl);
+    QHBoxLayout* hl = new QHBoxLayout ();
+    QVBoxLayout* vl = new QVBoxLayout ();
+    vl->addLayout (hl);
 
-        this->resize (1041, 791);
-        QLabel* label = new QLabel (this);
-        label->setObjectName (QStringLiteral ("label"));
-        label->setGeometry (QRect (10, 10, 91, 21));
-        label->setText (tr ("Row: "));
-        hl->addWidget (label);
+    this->resize (1041, 791);
+    QLabel* label = new QLabel (this);
+    label->setObjectName (QStringLiteral ("label"));
+    label->setGeometry (QRect (10, 10, 91, 21));
+    label->setText (tr ("Row: "));
+    hl->addWidget (label);
 
-        m_source = new QComboBox (this);
-        m_source->setObjectName (QStringLiteral ("cbSourceRow"));
-        m_source->setGeometry (QRect (100, 10, 231, 22));
-        hl->addWidget (m_source, 1);
+    m_source = new QComboBox (this);
+    m_source->setObjectName (QStringLiteral ("cbSourceRow"));
+    m_source->setGeometry (QRect (100, 10, 231, 22));
+    hl->addWidget (m_source, 1);
 
-        m_plot = new QwtPlot (this);
-        m_plot->setObjectName (QStringLiteral ("qwtPlot"));
-        m_plot->setGeometry (QRect (0, 40, 1041, 751));
-        m_plot->setCanvasBackground (QColor (Qt::GlobalColor::white));
-        m_plot->setSizePolicy (QSizePolicy (QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding));
-        vl->addWidget (m_plot, 1);
+    m_plot = new QwtPlot (this);
+    m_plot->setObjectName (QStringLiteral ("qwtPlot"));
+    m_plot->setGeometry (QRect (0, 40, 1041, 751));
+    m_plot->setCanvasBackground (QColor (Qt::GlobalColor::white));
+    m_plot->setSizePolicy (QSizePolicy (QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding));
+    vl->addWidget (m_plot, 1);
 
-        this->setLayout (vl);
-    }
+    this->setLayout (vl);
 }
 
+void TabPresenter::init (QTabWidget* parent, AbstractModel* model)
+{
+    m_model = model;
+    m_tab = parent;
+}
 
 void TabPresenter::save_picture (QString filename)
 {
@@ -82,6 +83,13 @@ AbstractModel* TabPresenter::get_model() const
 
 void TabPresenter::loading_complete ()
 {
+    QStringList list;
+    for (std::string str : m_model->get_headers ())
+        list << QString (str.c_str ());
+
+    m_source->addItems (list);
+    set_x_format (m_model->get_type ());
+
     prepare_tab ();
 }
 

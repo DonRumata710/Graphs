@@ -50,7 +50,9 @@ class TabPresenter : public QWidget
     Q_OBJECT
 
 public:
-    TabPresenter (QTabWidget*, AbstractModel*);
+    TabPresenter ();
+
+    virtual void init (QTabWidget*, AbstractModel*);
 
     void save_picture (QString);
 
@@ -58,6 +60,7 @@ public:
 
 public slots:
     void loading_complete ();
+
     void set_grid ();
     void set_scale_toolbar (LogScale*);
 

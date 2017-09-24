@@ -83,7 +83,7 @@ public:
 
 
 private:
-    GraphModel (PlotData plotData) : m_source (plotData) {}
+    GraphModel (const PlotData& plotData) : m_source (plotData) {}
 
     PlotData m_source;
     PlotData m_approx;

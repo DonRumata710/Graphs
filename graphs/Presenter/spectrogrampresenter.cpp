@@ -71,11 +71,12 @@ public:
 
 
 SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params) :
-    TabPresenter (parent, new WaveletModel),
     m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(wavelet_init_params.type.c_str ()) + "\" " + QString(graph->get_name ().c_str())))
 {
     if (parent)
     {
+        TabPresenter::init (parent, new WaveletModel);
+
         m_thread.set_func([=](){
             dynamic_cast<WaveletModel*> (get_model ())->calc_wavelet(graph, wavelet_init_params);
         });
@@ -101,7 +102,10 @@ GraphPresenter* SpectrogramPresenter::get_local_wavlet ()
         for (Row& line : wavletLines)
             model->add_row (line);
 
-        return new GraphPresenter (qobject_cast<QTabWidget*> (parent ()), model);
+        GraphPresenter* slice (new GraphPresenter);
+        slice->init (qobject_cast<QTabWidget*> (parent ()), model);
+
+        return slice;
     }
     else throw ChoiseException ();
 }

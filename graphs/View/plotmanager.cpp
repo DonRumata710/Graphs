@@ -139,7 +139,7 @@ void PlotManager::create_deviations ()
     {
         GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (source)
-            source->get_deviations ();
+            source->create_deviations_row ();
     }
     catch (ChoiseException) {}
 }
@@ -151,7 +151,7 @@ void PlotManager::create_smoothing ()
         GraphPresenter* source (qobject_cast<GraphPresenter*> (m_tab->currentWidget ()));
         if (!source)
             return;
-        source->get_smoothing ();
+        source->create_smoothing ();
     }
     catch (ChoiseException) {}
 }
@@ -163,7 +163,7 @@ void PlotManager::create_spectr ()
         GraphPresenter* source (qobject_cast<GraphPresenter*> (m_tab->currentWidget ()));
         if (!source)
             return;
-        source->get_spectr ();
+        source->create_spectr ();
     }
     catch (ChoiseException) {}
 }
@@ -175,7 +175,7 @@ void PlotManager::create_correlation ()
         GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (!source)
             return;
-        source->get_correlations ();
+        source->create_correlations ();
     }
     catch (ChoiseException) {}
 }
@@ -187,7 +187,7 @@ void PlotManager::create_wavelet ()
         GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (!source)
             return;
-        source->get_wavelet ();
+        source->create_wavelet ();
     }
     catch (ChoiseException) {}
 }
@@ -197,7 +197,7 @@ void PlotManager::create_power ()
     GraphPresenter* spectr = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
     if (!spectr)
         return;
-    spectr->get_power ();
+    spectr->create_power_spectr ();
 }
 
 

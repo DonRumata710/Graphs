@@ -52,21 +52,21 @@ class GraphPresenter : public TabPresenter
     Q_OBJECT
 
 public:
+    GraphPresenter ();
     GraphPresenter (QTabWidget* parent, const std::string&);
-    GraphPresenter (QTabWidget* parent, GraphModel*);
 
     void add_multy_graph_tools (MultyGraphTools*);
 
     GraphModel* get_model () const;
 
-    GraphPresenter* get_deviations () const;
-    GraphPresenter* get_smoothing () const;
-    GraphPresenter* get_spectr () const;
-    GraphPresenter* get_correlations () const;
+    void create_deviations_row () const;
+    void create_smoothing() const;
+    void create_spectr () const;
+    void create_correlations() const;
 
-    GraphPresenter* get_power () const;
+    GraphPresenter* create_power_spectr () const;
 
-    SpectrogramPresenter* get_wavelet () const;
+    void create_wavelet() const;
 
 public slots:
     void set_current_curve (const QString&);

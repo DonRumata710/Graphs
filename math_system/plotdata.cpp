@@ -71,9 +71,17 @@ private:
 
 
 /////////////////////////////////////////////////////////////////////
-PlotData::PlotData () : m_data (new PrivateData ()) {}
-PlotData::PlotData (PlotData::pPrivateData data) : m_data (data) {}
-PlotData::PlotData (const PlotData& data) : m_data (data.m_data) {}
+PlotData::PlotData () :
+    m_data (new PrivateData ())
+{}
+
+PlotData::PlotData (PlotData::pPrivateData data) :
+    m_data (data)
+{}
+
+PlotData::PlotData (const PlotData& data) :
+    m_data (data.m_data)
+{}
 
 void PlotData::load_data(pDocumentReader doc)
 {
@@ -247,7 +255,7 @@ PlotData PlotData::get_approx () const
         double a ((n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX));
         double b ((sumY - a * sumX) / n);
 
-        newdata->series[numrow] = Row (curve.get_name (), 2);
+        newdata->series.push_back (Row (curve.get_name (), 2));
         Row& newRow = newdata->series.back ();
 
         newRow.push_back (a * (*axisX.begin ()) +  b);
@@ -268,7 +276,7 @@ PlotData PlotData::get_smoothing (int points) const
     #pragma omp parallel for
     for (int numrow = 1; numrow < m_data->series.size (); ++numrow)
     {
-        d->series[numrow] = Row (m_data->series[numrow].get_name (), m_data->series[numrow].size (), 0.0);
+        d->series.push_back (Row (m_data->series[numrow].get_name (), m_data->series[numrow].size (), 0.0));
         Row& row (d->series[numrow]);
         int branch (points / 2);
         int fullpoints (branch * 2 + 1);
@@ -384,6 +392,9 @@ std::vector<Row>::iterator PlotData::find_column (const std::string& col) const
 
 PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& end, const std::string& col) const
 {
+    if (begin == end)
+        return begin;
+
     const iterRow mid (begin + std::distance(begin, end) / 2);
 
     if (mid->get_name () > col)
