@@ -52,7 +52,7 @@ class GraphPresenter : public TabPresenter
     Q_OBJECT
 
 public:
-    GraphPresenter (QTabWidget* parent, pDocumentReader);
+    GraphPresenter (QTabWidget* parent, const std::string&);
     GraphPresenter (QTabWidget* parent, GraphModel*);
 
     void add_multy_graph_tools (MultyGraphTools*);
@@ -78,8 +78,10 @@ public slots:
     void clear ();
 
 private:
+    void prepare_tab ();
     void add_curve (const vector<double>& axis, const vector<double>& source, const QString);
 
+private:
     vector<pCurve> m_curves;
     QString m_current;
 

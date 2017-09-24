@@ -34,7 +34,7 @@
 using std::unique_ptr;
 
 
-WaveletModel::WaveletModel (GraphModel* graph, const WaveletInitParams& wavelet_init_params)
+void WaveletModel::calc_wavelet(const GraphModel* const graph, const WaveletInitParams& wavelet_init_params)
 {
     m_name = "Wavelet " + graph->get_name ();
 
@@ -42,17 +42,15 @@ WaveletModel::WaveletModel (GraphModel* graph, const WaveletInitParams& wavelet_
     StringList slist (graph->get_headers ());
     set_type (graph->get_type ());
 
-    for (string name : slist)
+    for (std::string name : slist)
     {
         const Row* row (graph->get_source (name));
         if (row)
             add_data (name, new WaveletData (axis, *graph->get_source (name), wavelet_init_params));
         else
-            throw string ("There were not found any row with such name!");
+            throw std::string ("There were not found any row with such name!");
     }
 }
-
-WaveletModel::~WaveletModel () {}
 
 void WaveletModel::save_data (pDocumentWriter document) const
 {
@@ -68,12 +66,12 @@ void WaveletModel::save_data (pDocumentWriter document) const
     */
 }
 
-const WaveletProducer& WaveletModel::get_data (const string& name)
+const WaveletProducer& WaveletModel::get_data (const std::string& name)
 {
     return m_data[name]->get_producer ();
 }
 
-void WaveletModel::add_data (const string name, WaveletData* data)
+void WaveletModel::add_data (const std::string name, WaveletData* data)
 {
     m_data[name] = data;
 }
@@ -81,12 +79,12 @@ void WaveletModel::add_data (const string name, WaveletData* data)
 StringList WaveletModel::get_headers () const
 {
     StringList headers;
-    for (const std::pair<string, WaveletData*>& pair : m_data)
+    for (const std::pair<std::string, WaveletData*>& pair : m_data)
         headers.push_back(pair.first);
     return headers;
 }
 
-string WaveletModel::get_name () const
+std::string WaveletModel::get_name () const
 {
     return m_name;
 }

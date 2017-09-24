@@ -71,32 +71,16 @@ public:
 
 
 SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params) :
-    TabPresenter (parent, new WaveletModel (graph, wavelet_init_params)),
+    TabPresenter (parent, new WaveletModel),
     m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(wavelet_init_params.type.c_str ()) + "\" " + QString(graph->get_name ().c_str())))
 {
     if (parent)
     {
-        connect (get_headers (), SIGNAL (currentTextChanged (const QString&)), SLOT (attach_raster (const QString&)));
-        parent->addTab (this, tr ("Wavelet") + " \"" + QString(wavelet_init_params.type.c_str ()) + "\" "+ QString(graph->get_name ().c_str ()));
-
-        QwtPlotCanvas *canvas = new QwtPlotCanvas (get_plot ());
-        canvas->setPalette (Qt::darkGray);
-        canvas->setBorderRadius (10);
-
-        get_plot ()->setCanvas (canvas);
-        get_plot ()->plotLayout ()->setAlignCanvasToScales (true);
-
-        QwtPlotZoomer* zoomer = new Zoomer (canvas);
-        connect (this, SIGNAL (update_zoomer ()), zoomer, SLOT (update_zoomer ()));
-
-        QwtPlotPanner *panner = new QwtPlotPanner (canvas);
-        panner->setMouseButton (Qt::MidButton);
-
-        const QFontMetrics fm (get_plot ()->axisWidget (QwtPlot::yLeft)->font ());
-        QwtScaleDraw* sd = get_plot ()->axisScaleDraw (QwtPlot::yLeft);
-        sd->setMinimumExtent (fm.width ("100.00"));
-
-        attach_raster (get_headers ()->itemText (0));
+        m_thread.set_func([=](){
+            dynamic_cast<WaveletModel*> (get_model ())->calc_wavelet(graph, wavelet_init_params);
+        });
+        connect (&m_thread, SIGNAL(completed()), SLOT(loading_complete()));
+        m_thread.start ();
     }
 }
 
@@ -121,7 +105,6 @@ GraphPresenter* SpectrogramPresenter::get_local_wavlet ()
     }
     else throw ChoiseException ();
 }
-
 
 void SpectrogramPresenter::attach_raster (const QString& name)
 {
@@ -150,4 +133,29 @@ void SpectrogramPresenter::clear ()
 {
     m_spectrogram->detach ();
     get_plot ()->replot ();
+}
+
+void SpectrogramPresenter::prepare_tab()
+{
+    connect (get_headers (), SIGNAL (currentTextChanged (const QString&)), SLOT (attach_raster (const QString&)));
+    get_tab ()->addTab (this, m_spectrogram->title ().text ());
+
+    QwtPlotCanvas *canvas = new QwtPlotCanvas (get_plot ());
+    canvas->setPalette (Qt::darkGray);
+    canvas->setBorderRadius (10);
+
+    get_plot ()->setCanvas (canvas);
+    get_plot ()->plotLayout ()->setAlignCanvasToScales (true);
+
+    QwtPlotZoomer* zoomer = new Zoomer (canvas);
+    connect (this, SIGNAL (update_zoomer ()), zoomer, SLOT (update_zoomer ()));
+
+    QwtPlotPanner *panner = new QwtPlotPanner (canvas);
+    panner->setMouseButton (Qt::MidButton);
+
+    const QFontMetrics fm (get_plot ()->axisWidget (QwtPlot::yLeft)->font ());
+    QwtScaleDraw* sd = get_plot ()->axisScaleDraw (QwtPlot::yLeft);
+    sd->setMinimumExtent (fm.width ("100.00"));
+
+    attach_raster (get_headers ()->itemText (0));
 }

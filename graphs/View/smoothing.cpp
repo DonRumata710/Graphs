@@ -35,7 +35,7 @@ Smoothing::Smoothing (QWidget *parent) : QDialog (parent)
     m_smooth.setupUi (this);
 }
 
-int Smoothing::get_value ()
+int Smoothing::get_value () const
 {
     return m_smooth.sbCount->value ();
 }

@@ -58,6 +58,9 @@ public slots:
 signals:
     void update_zoomer ();
 
-protected:
+private:
+    void prepare_tab ();
+
+private:
     QwtPlotSpectrogram* m_spectrogram;
 };

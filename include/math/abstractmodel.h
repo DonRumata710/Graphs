@@ -37,10 +37,9 @@
 
 #include <string>
 #include <vector>
-using std::string;
 
 
-typedef std::vector<string> StringList;
+typedef std::vector<std::string> StringList;
 
 
 
@@ -54,7 +53,7 @@ public:
     virtual void save_data (pDocumentWriter document) const = 0;
 
     virtual StringList get_headers () const = 0;
-    virtual string get_name () const = 0;
+    virtual std::string get_name () const = 0;
 
 protected:
     void set_type (AxisType type) { m_type = type; }

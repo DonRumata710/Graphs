@@ -29,6 +29,8 @@
 #include "graphpresenter.h"
 #include "spectrogrampresenter.h"
 
+#include "document/documentcreator.h"
+
 #include "math/row.h"
 #include "math/graphmodel.h"
 #include "math/wavelemodel.h"
@@ -42,18 +44,29 @@
 #include "qwt_plot.h"
 
 
-GraphPresenter::GraphPresenter (QTabWidget* parent, pDocumentReader doc) :
-    TabPresenter (parent, new GraphModel (doc))
+GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename) :
+    TabPresenter (parent, new GraphModel)
 {
     if (parent)
     {
-        connect (
-            get_headers (),
-            SIGNAL (currentTextChanged (const QString&)),
-            SLOT (attach_curve (const QString&))
-        );
-        parent->addTab (this, QString(get_model()->get_name ().c_str()));
-        attach_curve (get_headers ()->currentText ());
+        m_thread.set_func ([=](){
+            DocumentCreator creator;
+            std::unique_ptr<iDocumentReader> document (creator.get_document_reader(filename));
+
+            if (!document)
+                return;
+
+            get_model ()->load_data (document.get ());
+
+            QStringList list;
+            for (std::string str : get_model ()->get_headers ())
+                list << QString (str.c_str ());
+
+            m_source->addItems (list);
+            set_x_format (get_model ()->get_type ());
+        });
+        connect (&m_thread, SIGNAL(completed()), SLOT(loading_complete()));
+        m_thread.start ();
     }
 }
 
@@ -61,15 +74,7 @@ GraphPresenter::GraphPresenter (QTabWidget* parent, GraphModel* data) :
     TabPresenter (parent, data)
 {
     if (parent)
-    {
-        connect (
-            get_headers (),
-            SIGNAL (currentTextChanged (const QString&)),
-            SLOT (attach_curve (const QString&))
-            );
-        parent->addTab (this, QString(get_model()->get_name ().c_str()));
-        attach_curve (get_headers ()->currentText ());
-    }
+        loading_complete ();
 }
 
 
@@ -92,12 +97,13 @@ GraphPresenter* GraphPresenter::get_deviations () const
 GraphPresenter* GraphPresenter::get_smoothing () const
 {
     Smoothing smoothing;
-
     if (smoothing.exec () == QDialog::Accepted)
-        return new GraphPresenter (
-            get_tab (),
-            get_model ()->get_smoothing (smoothing.get_value ())
-        );
+    {
+        int value = smoothing.get_value ();
+        m_thread.set_func ([=](){
+            new GraphPresenter (get_tab (), get_model ()->get_smoothing (value));
+        });
+    }
 
     throw ChoiseException ();
 }
@@ -151,6 +157,17 @@ SpectrogramPresenter* GraphPresenter::get_wavelet () const
     );
 
     return wavelet;
+}
+
+void GraphPresenter::prepare_tab()
+{
+    connect (
+        get_headers (),
+        SIGNAL (currentTextChanged (const QString&)),
+        SLOT (attach_curve (const QString&))
+    );
+    attach_curve (get_headers ()->currentText ());
+    get_tab ()->addTab (this, QString(get_model()->get_name ().c_str()));
 }
 
 void GraphPresenter::set_current_curve (const QString& cur)

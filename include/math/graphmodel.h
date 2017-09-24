@@ -37,11 +37,6 @@ class GraphModel : public AbstractModel
 public:
     GraphModel () {}
 
-    GraphModel (pDocumentReader doc)
-    {
-        load_data (doc);
-    }
-
     virtual ~GraphModel () {}
 
     void set_approximation ()
@@ -55,8 +50,8 @@ public:
         m_source.add_row (row);
     }
 
-    GraphModel* get_deviations () const { return new GraphModel (m_source.get_deviations ()); }
-    GraphModel* get_smoothing (int points) const { return new GraphModel (m_source.get_smoothing (points)); }
+    GraphModel* get_deviations () const;
+    GraphModel* get_smoothing (int points) const;
     GraphModel* get_correlations (double begin, double end, unsigned step) const;
     GraphModel* get_relative_sp (double begin, double end, unsigned step) const;
     GraphModel* get_power () const;
@@ -64,18 +59,14 @@ public:
     void load_data (pDocumentReader document);
     virtual void save_data (pDocumentWriter document) const override;
 
-    void remove_spaces ()
-    {
-        m_source.remove_spaces ();
-        m_approx.remove_spaces ();
-    }
+    void remove_spaces ();
     
     const Row& get_axis () const
     {
         return m_source.get_axis ();
     }
 
-    const Row* get_source (string name) const
+    const Row* get_source (std::string name) const
     {
         return m_source.get_row (name);
     }
@@ -85,14 +76,10 @@ public:
         return m_approx.get_axis ();
     }
 
-    const Row* get_approx (string name) const
-    {
-        if (m_approx.empty ()) return nullptr;
-        return m_approx.get_row (name);
-    }
+    const Row* get_approx (std::string name) const;
 
     virtual StringList get_headers () const override;
-    virtual string get_name () const override;
+    virtual std::string get_name () const override;
 
 
 private:

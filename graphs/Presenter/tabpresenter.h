@@ -29,6 +29,7 @@
 #pragma once
 
 
+#include "maththread.h"
 #include "math/abstractmodel.h"
 #include "View/grid.h"
 
@@ -56,6 +57,7 @@ public:
     AbstractModel* get_model () const;
 
 public slots:
+    void loading_complete ();
     void set_grid ();
     void set_scale_toolbar (LogScale*);
 
@@ -68,10 +70,16 @@ protected:
     QTabWidget* get_tab () const;
     QwtPlot* get_plot () const;
 
+protected:
+    mutable MathThread m_thread;
+    QComboBox* m_source;
+
+private:
+    virtual void prepare_tab () = 0;
+
 private:
     AbstractModel* m_model;
     QTabWidget* m_tab;
-    QComboBox* m_source;
     QwtPlot* m_plot;
     std::unique_ptr<Grid> m_grid;
 };

@@ -43,7 +43,8 @@ class MultyGraphTools;
 typedef TabPresenter* pPresenter;
 
 
-class PlotManager : public QObject {
+class PlotManager : public QObject
+{
     Q_OBJECT
 
 public:
@@ -78,7 +79,5 @@ public slots:
 private:
     PlotManager (const PlotManager&);
 
-    std::deque<pPresenter> m_pages;
-
-    QTabWidget* tab;
+    QTabWidget* m_tab;
 };

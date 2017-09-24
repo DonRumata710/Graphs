@@ -37,7 +37,7 @@
 
 
 TabPresenter::TabPresenter (QTabWidget* parent, AbstractModel* model) :
-    m_model (model), m_tab (parent)
+    m_model (model), m_tab (parent), m_thread (this)
 {
     if (parent)
     {
@@ -65,13 +65,6 @@ TabPresenter::TabPresenter (QTabWidget* parent, AbstractModel* model) :
         vl->addWidget (m_plot, 1);
 
         this->setLayout (vl);
-
-        QStringList list;
-        for (string str : m_model->get_headers ())
-            list << QString (str.c_str ());
-
-        m_source->addItems (list);
-        set_x_format (m_model->get_type ());
     }
 }
 
@@ -85,6 +78,11 @@ void TabPresenter::save_picture (QString filename)
 AbstractModel* TabPresenter::get_model() const
 {
     return m_model;
+}
+
+void TabPresenter::loading_complete ()
+{
+    prepare_tab ();
 }
 
 void TabPresenter::set_grid ()

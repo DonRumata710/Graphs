@@ -30,6 +30,16 @@
 #include "graphmodel.h"
 
 
+GraphModel *GraphModel::get_deviations() const
+{
+    return new GraphModel (m_source.get_deviations ());
+}
+
+GraphModel *GraphModel::get_smoothing(int points) const
+{
+    return new GraphModel (m_source.get_smoothing (points));
+}
+
 GraphModel* GraphModel::get_correlations (double begin, double end, unsigned step) const
 {
     return new GraphModel (m_source.get_correlations (begin, end, step));
@@ -56,6 +66,19 @@ void GraphModel::save_data(pDocumentWriter document) const
     pPage page (document->get_page (m_source.get_name ()));
     page->set_x_axis_type(get_type ());
     m_source.save_data (page);
+}
+
+void GraphModel::remove_spaces()
+{
+    m_source.remove_spaces ();
+    m_approx.remove_spaces ();
+}
+
+const Row *GraphModel::get_approx(std::__cxx11::string name) const
+{
+    if (m_approx.empty ())
+        return nullptr;
+    return m_approx.get_row (name);
 }
 
 /*
@@ -86,4 +109,4 @@ void GraphModel::load_data (QAxObject* workbook)
 
 StringList GraphModel::get_headers() const { return m_source.get_headers (); }
 
-string GraphModel::get_name () const { return m_source.get_name (); }
+std::string GraphModel::get_name () const { return m_source.get_name (); }
