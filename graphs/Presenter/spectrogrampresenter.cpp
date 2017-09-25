@@ -77,7 +77,7 @@ SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* grap
     {
         TabPresenter::init (parent, new WaveletModel);
 
-        m_thread.set_func([=](){
+        m_thread.set_func([=, wavelet_init_params](){
             dynamic_cast<WaveletModel*> (get_model ())->calc_wavelet(graph, wavelet_init_params);
         });
         connect (&m_thread, SIGNAL(completed()), SLOT(loading_complete()));

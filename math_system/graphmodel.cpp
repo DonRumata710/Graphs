@@ -81,32 +81,12 @@ const Row *GraphModel::get_approx(std::__cxx11::string name) const
     return m_approx.get_row (name);
 }
 
-/*
-void GraphModel::save_data (QAxObject* workbook) const
+StringList GraphModel::get_headers() const
 {
-    unique_ptr<QAxObject> sheetToCopy (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
-    sheetToCopy->dynamicCall ("Copy(const QVariant&)", sheetToCopy->asVariant ());
-    unique_ptr<QAxObject> newSheet (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
-    newSheet->setProperty ("Name", QString(m_source.get_name ().c_str ()));
-    m_source.save_data (newSheet.get ());
+    return m_source.get_headers ();
 }
 
-void GraphModel::load_data (QAxObject* workbook)
+std::string GraphModel::get_name () const
 {
-    //unique_ptr<QAxObject> mExcel (new QAxObject ("Excel.Application", this));
-    //unique_ptr<QAxObject> workbooks (mExcel->querySubObject ("Workbooks"));
-    //unique_ptr<QAxObject> workbook (workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename)));
-
-    unique_ptr<QAxObject> mSheets (workbook->querySubObject ("Sheets"));
-    unique_ptr<QAxObject> StatSheet (mSheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
-
-    unique_ptr<QAxObject> cell (StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (2), QVariant (1)));
-    set_type (get_str_type (cell->property ("Value").toString ().toStdString ()));
-
-    m_source.set_data (StatSheet.get ());
+    return m_source.get_name ();
 }
-*/
-
-StringList GraphModel::get_headers() const { return m_source.get_headers (); }
-
-std::string GraphModel::get_name () const { return m_source.get_name (); }

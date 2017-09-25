@@ -146,7 +146,7 @@ void GraphPresenter::create_correlations () const
     double end (spectr.get_end ());
     double steps (spectr.get_steps ());
 
-    m_thread.set_func ([&, begin, end, steps](){
+    m_thread.set_func ([this, presenter, begin, end, steps](){
         presenter->init (get_tab (), get_model ()->get_correlations (begin, end, steps));
     });
     m_thread.start ();

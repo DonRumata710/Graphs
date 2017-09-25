@@ -75,14 +75,14 @@ protected:
 
 protected:
     mutable MathThread m_thread;
-    QComboBox* m_source;
+    QComboBox* m_source = nullptr;
 
 private:
     virtual void prepare_tab () = 0;
 
 private:
-    AbstractModel* m_model;
-    QTabWidget* m_tab;
-    QwtPlot* m_plot;
+    AbstractModel* m_model = nullptr;
+    QTabWidget* m_tab = nullptr;
+    QwtPlot* m_plot = nullptr;
     std::unique_ptr<Grid> m_grid;
 };
