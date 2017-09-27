@@ -47,6 +47,11 @@ public:
     virtual bool set_x_axis_type (AxisType type) override;
     virtual bool push_data_back (const std::string& name, const std::vector<double>& data) override;
 
+    virtual AxisType get_x_axis_type () override;
+
+    virtual bool get_headers(std::vector<std::string>* const) override;
+    virtual bool get_data (size_t row, std::vector<double>* const) override;
+
 private:
     ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
     ExcelPage (std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject>&& table);

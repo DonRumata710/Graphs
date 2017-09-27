@@ -44,17 +44,16 @@ public:
 
     virtual AxisType get_x_axis_type () override;
 
-    virtual void get_headers (std::vector<std::string>* const) override;
-    virtual void get_data (size_t row, std::vector<double>* const) override;
+    virtual bool get_headers(std::vector<std::string>* const) override;
+    virtual bool get_data (size_t row, std::vector<double>* const) override;
 
 private:
-    bool read_data_to_cache();
+    bool read_file(char delimiter);
 
 private:
     std::string m_filename;
     std::fstream m_file;
-    std::vector<std::vector<double>> m_cache;
-    std::vector<std::string> m_headers;
+    std::vector<std::vector<std::string>> m_cache;
 };
 
 

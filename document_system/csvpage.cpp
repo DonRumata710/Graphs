@@ -38,26 +38,108 @@ bool CsvPage::set_x_axis_type(AxisType type)
     return true;
 }
 
-bool CsvPage::push_data_back(const std::string &name, const std::vector<double> &data)
+bool CsvPage::push_data_back(const std::string& name, const std::vector<double>& data)
 {
+    m_cache[0].push_back (name);
 
+    for (size_t i = 0; i != data.size (); ++i)
+        m_cache[i] = std::to_string (data[i]);
+
+    return true;
 }
 
 AxisType CsvPage::get_x_axis_type()
 {
-
+    return AxisType::TYPE_NUM;
 }
 
-void CsvPage::get_headers(std::vector<std::string> * const)
+bool CsvPage::get_headers(std::vector<std::string>* const headers)
 {
+    if (!headers)
+        return false;
 
+    headers->clear ();
+
+    if (m_cache.empty ())
+    {
+        if (!read_file (';'))
+            return false;
+    }
+
+    if (!is_text (m_cache[0].back ()))
+    {
+        for (size_t i = 0; i < data->columns_num; ++i)
+            headers.push_back (std::to_string (i));
+    }
+    else
+    {
+        headers = m_cache[0];
+    }
+
+    return true;
 }
 
-void CsvPage::get_data(size_t row, std::vector<double> * const)
+void CsvPage::get_data(size_t row, std::vector<double>* const data)
 {
+    if (!data)
+        return false;
 
+    data->clear ();
+
+    if (m_cache.empty ())
+    {
+        if (!read_file (';'))
+            return false;
+    }
+
+    for (double val : m_cache[0])
+        data->push_back (val);
 }
 
-bool CsvPage::read_data_to_cache()
+bool CsvPage::read_file (char delimiter)
 {
+    std::stringstream ss;
+    bool inquotes = false;
+
+    if (m_file.is_open ())
+        m_file.seekg (0, m_file.begin ());
+    else
+        m_file.open (m_filename);
+
+    if (!m_file.is_open ())
+        return false;
+
+    while (m_file.good ())
+    {
+        char c = m_file.get ();
+        if (!inquotes && c == '"')
+        {
+            inquotes = true;
+        }
+        else if (inquotes && c == '"')
+        {
+            if (m_file.peek () == '"')
+                ss << (char) m_file.get ();
+            else
+                inquotes = false;
+        }
+        else if (!inquotes && c == delimiter)
+        {
+            m_headers.push_back (ss.str ());
+            ss.str ("");
+        }
+        else if (!inquotes && (c == '\r' || c == '\n'))
+        {
+            if (m_file.peek ()=='\n')
+                m_file.get ();
+
+            m_headers.push_back (ss.str ());
+        }
+        else
+        {
+            ss << c;
+        }
+    }
+
+    return true;
 }
