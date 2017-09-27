@@ -32,6 +32,7 @@
 
 
 #include "document/documentreader.h"
+#include "document/page.h"
 
 
 class ExcelDocumentReader final : public iDocumentReader
@@ -40,11 +41,7 @@ public:
     static pDocumentReader create (const std::string& filename);
 
     virtual ~ExcelDocumentReader ();
-
-    virtual AxisType get_x_axis_type () override;
-
-    virtual void get_headers (std::vector<std::string>* const) override;
-    virtual void get_data (size_t row, std::vector<double>* const) override;
+    virtual pPage get_page (const std::string& name) const override;
 
 private:
     explicit ExcelDocumentReader(const std::string& filename);

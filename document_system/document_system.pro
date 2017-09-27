@@ -16,7 +16,8 @@ DEFINES += DOCUMENT_SYSTEM_LIBRARY
 SOURCES += \
     documentcreator.cpp \
     csvdocumentreader.cpp \
-    csvdocumentwriter.cpp
+    csvdocumentwriter.cpp \
+    csvpage.cpp
 
 INCLUDEPATH += ../include/ \
     ../include/document \
@@ -29,7 +30,8 @@ HEADERS += document.h \
     ../include/document/documentcreator.h \
     csvdocumentreader.h \
     csvdocumentwriter.h \
-    ../include/document/page.h
+    ../include/document/page.h \
+    csvpage.h
 
 OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc

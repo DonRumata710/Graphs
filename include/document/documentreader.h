@@ -41,11 +41,7 @@ class iDocumentReader
 {
 public:
     virtual ~iDocumentReader () {}
-
-    virtual AxisType get_x_axis_type () = 0;
-
-    virtual void get_headers (std::vector<std::string>* const) = 0;
-    virtual void get_data (size_t row, std::vector<double>* const) = 0;
+    virtual pPage get_page (const std::string& name) const = 0;
 
 protected:
     static AxisType get_str_type (const std::string& str)

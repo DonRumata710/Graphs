@@ -45,7 +45,7 @@ public:
     virtual ~ExcelPage ();
 
     virtual bool set_x_axis_type (AxisType type) override;
-    virtual bool save_data (const std::string& name, const std::vector<double>& data) override;
+    virtual bool push_data_back (const std::string& name, const std::vector<double>& data) override;
 
 private:
     ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);

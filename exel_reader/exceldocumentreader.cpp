@@ -68,6 +68,9 @@ AxisType ExcelDocumentReader::get_x_axis_type()
 
 void ExcelDocumentReader::get_headers(std::vector<std::string>* const headers)
 {
+    if (!headers)
+        return;
+
     if (data->cache.isEmpty ())
     {
         if (!load_data ())
@@ -93,6 +96,9 @@ void ExcelDocumentReader::get_headers(std::vector<std::string>* const headers)
 
 void ExcelDocumentReader::get_data(size_t index, std::vector<double>* const row)
 {
+    if (!row)
+        return;
+
     if (data->cache.isEmpty ())
     {
         if (!load_data ())

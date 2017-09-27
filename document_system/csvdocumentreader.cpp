@@ -50,5 +50,5 @@ void CsvDocumentReader::get_data(size_t row, std::vector<double>* const)
 
 CsvDocumentReader::CsvDocumentReader(const std::string& filename)
 {
-
+    m_input.open (filename);
 }

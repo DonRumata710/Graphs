@@ -40,7 +40,6 @@ public:
     static pDocumentWriter create (const std::string& filename);
 
     ~ExcelDocumentWriter ();
-
     virtual pPage get_page (const std::string& name) const override;
 
 private:

@@ -45,7 +45,12 @@ public:
     virtual ~iPage () {}
 
     virtual bool set_x_axis_type (AxisType type) = 0;
-    virtual bool save_data (const std::string& name, const std::vector<double>& data) = 0;
+    virtual bool push_data_back (const std::string& name, const std::vector<double>& data) = 0;
+
+    virtual AxisType get_x_axis_type () override;
+
+    virtual void get_headers (std::vector<std::string>* const) override;
+    virtual void get_data (size_t row, std::vector<double>* const) override;
 };
 
 

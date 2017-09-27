@@ -79,7 +79,7 @@ bool ExcelPage::set_x_axis_type(AxisType type)
     return true;
 }
 
-bool ExcelPage::save_data(const std::string& name, const std::vector<double>& data)
+bool ExcelPage::push_data_back(const std::string& name, const std::vector<double>& data)
 {
     if (m_cache.size () < data.size ())
         m_cache.assign(data.size () + 1, QList<QVariant> ());
