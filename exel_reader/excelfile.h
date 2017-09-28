@@ -46,16 +46,19 @@ class ExcelFile : public QObject
     Q_OBJECT
 
 public:
+    ExcelFile();
     ~ExcelFile();
 
-    QAxObject* get_table () const;
+    bool open_file (const std::string& filename);
+    bool create_file(const std::string& filename);
+
+    std::unique_ptr<QAxObject> get_page (uint32_t index) const;
     std::unique_ptr<QAxObject> create_page(const std::string& name);
 
-public slots:
-    void saveLastError(int, QString, QString, QString);
+    void save_as (const std::string& filename);
 
-protected:
-    ExcelFile();
+public slots:
+    void save_last_error(int, QString, QString, QString);
 
 protected:
     std::unique_ptr<QAxObject> m_excel;

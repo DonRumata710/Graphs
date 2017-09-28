@@ -40,6 +40,7 @@
 class ExcelPage final : public iPage
 {
     friend class ExcelDocumentWriter;
+    friend class ExcelDocumentReader;
 
 public:
     virtual ~ExcelPage ();
@@ -56,10 +57,18 @@ private:
     ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
     ExcelPage (std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject>&& table);
 
+    size_t get_rows_number ();
+    size_t get_points_number ();
+    bool load_data ();
+
 private:
     std::shared_ptr<ExcelFile> m_file;
     std::unique_ptr<QAxObject> m_table;
     std::vector<QList<QVariant>> m_cache;
+
+    size_t m_columns_num = 0;
+    size_t m_points_num = 0;
+    bool m_have_headers = false;
 };
 
 

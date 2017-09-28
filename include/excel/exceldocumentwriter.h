@@ -31,6 +31,7 @@
 #define EXCELDOCUMENTWRITER_H
 
 
+#include "excelfile.h"
 #include "document/documentwriter.h"
 
 
@@ -39,15 +40,13 @@ class ExcelDocumentWriter final : public iDocumentWriter
 public:
     static pDocumentWriter create (const std::string& filename);
 
-    ~ExcelDocumentWriter ();
     virtual pPage get_page (const std::string& name) const override;
 
 private:
     ExcelDocumentWriter (const std::string& filename);
 
 private:
-    struct PrivateData;
-    PrivateData* data;
+    std::shared_ptr<ExcelFile> m_file;
 };
 
 
