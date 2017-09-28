@@ -44,6 +44,7 @@ public:
     virtual pPage get_page (const std::string& name) const = 0;
 };
 
+
 typedef iDocumentReader* pDocumentReader;
 
 

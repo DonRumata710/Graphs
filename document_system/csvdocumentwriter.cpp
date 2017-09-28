@@ -28,6 +28,7 @@
 
 
 #include "csvdocumentwriter.h"
+#include "csvpage.h"
 
 
 pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
@@ -37,10 +38,8 @@ pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
 
 pPage CsvDocumentWriter::get_page(const std::string& name) const
 {
-    return nullptr;
+    return pPage (new CsvPage (name));
 }
 
-CsvDocumentWriter::CsvDocumentWriter(const std::string& filename)
-{
-
-}
+CsvDocumentWriter::CsvDocumentWriter(const std::string&)
+{}

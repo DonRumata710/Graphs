@@ -32,12 +32,13 @@
 
 
 #include "page.h"
+#include <fstream>
 
 
-class CsvPage : iPage
+class CsvPage : public iPage
 {
 public:
-    CsvPage (const std::string &filename);
+    CsvPage (const std::string& filename);
 
     virtual bool set_x_axis_type (AxisType type) override;
     virtual bool push_data_back (const std::string& name, const std::vector<double>& data) override;

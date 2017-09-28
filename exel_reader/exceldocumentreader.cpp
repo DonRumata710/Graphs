@@ -35,18 +35,35 @@
 #include <ActiveQt/qaxbase.h>
 
 
+struct ExcelDocumentReader::PrivateData
+{
+    std::shared_ptr<ExcelFile> file;
+
+    PrivateData (const std::string& filename) :
+        file (std::make_shared<ExcelFile> ())
+    {
+        file->open_file (filename);
+    }
+};
+
+
 pDocumentReader ExcelDocumentReader::create(const std::string& filename)
 {
     return pDocumentReader (new ExcelDocumentReader (filename));
 }
 
+ExcelDocumentReader::~ExcelDocumentReader ()
+{
+    if (data)
+        delete data;
+    data = nullptr;
+}
+
 pPage ExcelDocumentReader::get_page(const std::string &name) const
 {
-    return std::shared_ptr<ExcelPage> (new ExcelPage (m_file, m_file->create_page (name)));
+    return std::shared_ptr<ExcelPage> (new ExcelPage (data->file, data->file->create_page (name)));
 }
 
 ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :
-    m_file (std::make_shared<ExcelFile> ())
-{
-    m_file->open_file (filename);
-}
+    data (new PrivateData (filename))
+{}

@@ -31,7 +31,6 @@
 #define EXCELDOCUMENT_READER_H
 
 
-#include "excelfile.h"
 #include "document/documentreader.h"
 #include "document/page.h"
 
@@ -41,6 +40,8 @@ class ExcelDocumentReader final : public iDocumentReader
 public:
     static pDocumentReader create (const std::string& filename);
 
+    ~ExcelDocumentReader ();
+
     virtual pPage get_page (const std::string& name) const override;
 
 private:
@@ -48,7 +49,8 @@ private:
     ExcelDocumentReader(const ExcelDocumentReader&) = delete;
 
 private:
-    std::shared_ptr<ExcelFile> m_file;
+    struct PrivateData;
+    PrivateData* data;
 };
 
 
