@@ -39,6 +39,7 @@ public:
     static pDocumentReader create (const std::string& filename);
 
     virtual pPage get_page (const std::string& name) const override;
+    virtual pPage get_page (size_t index) const override;
 
 private:
     explicit CsvDocumentReader (const std::string&);

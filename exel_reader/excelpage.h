@@ -34,7 +34,6 @@
 
 #include "document/page.h"
 #include "excelfile.h"
-#include "exceldocumentwriter.h"
 
 
 class ExcelPage final : public iPage

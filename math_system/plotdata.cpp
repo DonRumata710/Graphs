@@ -27,7 +27,6 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "plotdata.h"
-
 #include "threadscontrol.h"
 
 #include <algorithm>
@@ -75,15 +74,15 @@ PlotData::PlotData () : m_data (new PrivateData ()) {}
 PlotData::PlotData (PlotData::pPrivateData data) : m_data (data) {}
 PlotData::PlotData (const PlotData& data) : m_data (data.m_data) {}
 
-void PlotData::load_data(pDocumentReader doc)
+void PlotData::load_data(pPage page)
 {
     std::vector<std::string> headers;
-    doc->get_headers (&headers);
+    page->get_headers (&headers);
     m_data->series.reserve (headers.size ());
     for (const std::string& header : headers)
     {
         m_data->series.push_back (Row (header));
-        doc->get_data (m_data->series.size () - 1, &m_data->series.back ());
+        page->get_data (m_data->series.size () - 1, &m_data->series.back ());
     }
     std::sort (m_data->series.begin () + 1, m_data->series.end ());
 }
@@ -91,7 +90,7 @@ void PlotData::load_data(pDocumentReader doc)
 void PlotData::save_data(pPage page) const
 {
     for (Row row : m_data->series)
-        page->save_data (row.get_name(), row);
+        page->push_data_back (row.get_name(), row);
 }
 
 PlotData& PlotData::operator= (const PlotData& plotData)

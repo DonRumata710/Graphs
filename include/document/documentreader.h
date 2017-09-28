@@ -42,6 +42,7 @@ class iDocumentReader
 public:
     virtual ~iDocumentReader () {}
     virtual pPage get_page (const std::string& name) const = 0;
+    virtual pPage get_page (size_t index) const = 0;
 };
 
 

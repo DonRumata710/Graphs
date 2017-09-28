@@ -32,10 +32,7 @@
 
 
 #include "page.h"
-
-#include <vector>
 #include <string>
-#include <memory>
 
 
 class iDocumentWriter

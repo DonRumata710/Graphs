@@ -52,7 +52,8 @@ public:
     bool open_file (const std::string& filename);
     bool create_file(const std::string& filename);
 
-    std::unique_ptr<QAxObject> get_page (uint32_t index) const;
+    std::unique_ptr<QAxObject> open_page (uint32_t index) const;
+    std::unique_ptr<QAxObject> open_page (const std::string& name) const;
     std::unique_ptr<QAxObject> create_page(const std::string& name);
 
     void save_as (const std::string& filename);

@@ -59,9 +59,14 @@ ExcelDocumentReader::~ExcelDocumentReader ()
     data = nullptr;
 }
 
-pPage ExcelDocumentReader::get_page(const std::string &name) const
+pPage ExcelDocumentReader::get_page(const std::string& name) const
 {
-    return std::shared_ptr<ExcelPage> (new ExcelPage (data->file, data->file->create_page (name)));
+    return std::shared_ptr<ExcelPage> (new ExcelPage (data->file, data->file->open_page (name)));
+}
+
+pPage ExcelDocumentReader::get_page(size_t index) const
+{
+    return std::shared_ptr<ExcelPage> (new ExcelPage (data->file, data->file->open_page (index)));
 }
 
 ExcelDocumentReader::ExcelDocumentReader(const std::string& filename) :

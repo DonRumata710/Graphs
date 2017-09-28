@@ -47,8 +47,9 @@ GraphModel* GraphModel::get_power () const
 
 void GraphModel::load_data(pDocumentReader document)
 {
-    set_type(document->get_x_axis_type ());
-    m_source.load_data (document);
+    pPage page (document->get_page (0));
+    set_type(page->get_x_axis_type ());
+    m_source.load_data (page);
 }
 
 void GraphModel::save_data(pDocumentWriter document) const
@@ -57,32 +58,6 @@ void GraphModel::save_data(pDocumentWriter document) const
     page->set_x_axis_type(get_type ());
     m_source.save_data (page);
 }
-
-/*
-void GraphModel::save_data (QAxObject* workbook) const
-{
-    unique_ptr<QAxObject> sheetToCopy (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
-    sheetToCopy->dynamicCall ("Copy(const QVariant&)", sheetToCopy->asVariant ());
-    unique_ptr<QAxObject> newSheet (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
-    newSheet->setProperty ("Name", QString(m_source.get_name ().c_str ()));
-    m_source.save_data (newSheet.get ());
-}
-
-void GraphModel::load_data (QAxObject* workbook)
-{
-    //unique_ptr<QAxObject> mExcel (new QAxObject ("Excel.Application", this));
-    //unique_ptr<QAxObject> workbooks (mExcel->querySubObject ("Workbooks"));
-    //unique_ptr<QAxObject> workbook (workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename)));
-
-    unique_ptr<QAxObject> mSheets (workbook->querySubObject ("Sheets"));
-    unique_ptr<QAxObject> StatSheet (mSheets->querySubObject ("Item(const QVariant&)", QVariant (1)));
-
-    unique_ptr<QAxObject> cell (StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (2), QVariant (1)));
-    set_type (get_str_type (cell->property ("Value").toString ().toStdString ()));
-
-    m_source.set_data (StatSheet.get ());
-}
-*/
 
 StringList GraphModel::get_headers() const { return m_source.get_headers (); }
 

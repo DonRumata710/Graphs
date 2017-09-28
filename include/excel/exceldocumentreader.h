@@ -38,11 +38,12 @@
 class ExcelDocumentReader final : public iDocumentReader
 {
 public:
-    static pDocumentReader create (const std::string& filename);
+    static pDocumentReader create(const std::string& filename);
 
     ~ExcelDocumentReader ();
 
-    virtual pPage get_page (const std::string& name) const override;
+    virtual pPage get_page (const std::string&) const override;
+    virtual pPage get_page (size_t index) const override;
 
 private:
     explicit ExcelDocumentReader(const std::string& filename);

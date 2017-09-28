@@ -77,12 +77,20 @@ bool ExcelFile::create_file(const std::string &filename)
     return true;
 }
 
-std::unique_ptr<QAxObject> ExcelFile::get_page(uint32_t index) const
+std::unique_ptr<QAxObject> ExcelFile::open_page(uint32_t index) const
 {
     if (!m_workbook)
         return nullptr;
 
     return std::make_unique<QAxObject> (m_workbook->querySubObject ("Worksheets(const QVariant&)", index));
+}
+
+std::unique_ptr<QAxObject> ExcelFile::open_page(const std::string& name) const
+{
+    if (!m_workbook)
+        return nullptr;
+
+    return std::make_unique<QAxObject> (m_workbook->querySubObject ("Worksheets(const QVariant&)", QVariant (name.c_str ())));
 }
 
 std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)

@@ -24,14 +24,14 @@ INCLUDEPATH += ../include/ \
     .
 
 HEADERS += document.h \
-    ../include/document/documentwriter.h \
     ../include/document/axittype.h \
-    ../include/document/documentreader.h \
     ../include/document/documentcreator.h \
     csvdocumentreader.h \
     csvdocumentwriter.h \
     ../include/document/page.h \
-    csvpage.h
+    csvpage.h \
+    ../include/document/documentreader.h \
+    ../include/document/documentwriter.h
 
 OBJECTS_DIR = $${OUT_PWD}/../temp/obj
 MOC_DIR =     $${OUT_PWD}/../temp/moc

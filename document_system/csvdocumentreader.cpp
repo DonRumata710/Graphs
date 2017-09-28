@@ -38,9 +38,15 @@ pDocumentReader CsvDocumentReader::create(const std::string& filename)
 
 pPage CsvDocumentReader::get_page(const std::string &name) const
 {
-    return pPage (new CsvPage (name));
+    return pPage (new CsvPage (m_filename));
 }
 
-CsvDocumentReader::CsvDocumentReader(const std::string&)
+pPage CsvDocumentReader::get_page(size_t index) const
+{
+    return pPage (new CsvPage (m_filename));
+}
+
+CsvDocumentReader::CsvDocumentReader(const std::string& filename) :
+    m_filename (filename)
 {}
 
