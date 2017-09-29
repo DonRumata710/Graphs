@@ -56,7 +56,10 @@ pDocumentWriter ExcelDocumentWriter::create(const std::string& filename)
 ExcelDocumentWriter::~ExcelDocumentWriter ()
 {
     if (data)
+    {
+        data->file->save();
         delete data;
+    }
     data = nullptr;
 }
 

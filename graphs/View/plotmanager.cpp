@@ -68,15 +68,6 @@ void PlotManager::load_data (const std::string& filename)
 
 void PlotManager::save_data (const std::string& filename)
 {
-    //QAxObject* sheet (sheets->querySubObject ("Item (const QVariant&)", QVariant (1)));
-    //
-    //while (sheet)
-    //{
-    //    sheet->dynamicCall ("Delete");
-    //    delete sheet;
-    //    sheet = sheets->querySubObject ("Item (const QVariant&)", QVariant (1));
-    //}
-
     DocumentCreator creator;
     std::unique_ptr<iDocumentWriter> document (creator.get_document_writer(filename));
 

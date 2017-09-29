@@ -56,12 +56,14 @@ public:
     std::unique_ptr<QAxObject> open_page (const std::string& name) const;
     std::unique_ptr<QAxObject> create_page(const std::string& name);
 
-    void save_as (const std::string& filename);
+    void save();
+    void save_as(const std::string &filename);
 
 public slots:
     void save_last_error(int, QString, QString, QString);
 
 protected:
+    std::string m_filename;
     std::unique_ptr<QAxObject> m_excel;
     std::unique_ptr<QAxObject> m_workbooks;
     std::unique_ptr<QAxObject> m_workbook;

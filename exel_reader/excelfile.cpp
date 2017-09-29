@@ -53,6 +53,11 @@ bool ExcelFile::open_file(const std::string& filename)
     if (!m_workbooks)
         return false;
 
+    if (m_workbook)
+        m_workbook->dynamicCall ("SaveCopyAs(const QVariant&)", QVariant (QString (m_filename.c_str ())));
+
+    m_filename = filename;
+
     m_workbook.reset (m_workbooks->querySubObject ("Open(const QVariant&)", QVariant (filename.c_str ())));
     if (!m_workbook)
         return false;
@@ -66,6 +71,11 @@ bool ExcelFile::create_file(const std::string& filename)
 {
     if (!m_workbooks)
         return false;
+
+    if (m_workbook)
+        m_workbook->dynamicCall ("SaveCopyAs(const QVariant&)", QVariant (QString (m_filename.c_str ())));
+
+    m_filename = filename;
 
     m_workbook.reset (m_workbooks->querySubObject ("Add"));
     if (!m_workbook)
@@ -131,6 +141,12 @@ std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
     {}
 
     return std::unique_ptr<QAxObject> (new_sheet);
+}
+
+void ExcelFile::save()
+{
+    if (m_workbook)
+        m_workbook->dynamicCall ("SaveCopyAs(const QVariant&)", QVariant (QString (m_filename.c_str ())));
 }
 
 void ExcelFile::save_as(const std::string& filename)
