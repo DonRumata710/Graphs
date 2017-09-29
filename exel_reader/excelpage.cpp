@@ -98,7 +98,10 @@ AxisType ExcelPage::get_x_axis_type()
     std::unique_ptr<QAxObject> cell (m_table->querySubObject (
         "Cells(QVariant,QVariant)", QVariant (2), QVariant (1)
     ));
-    return get_str_type (cell->property ("Value").toString ().toStdString ());
+    if (cell)
+        return get_str_type (cell->property ("Value").toString ().toStdString ());
+    else
+        return AxisType::TYPE_NUM;
 }
 
 bool ExcelPage::get_headers(std::vector<std::string>* const headers)

@@ -48,7 +48,7 @@ ExcelFile::~ExcelFile()
     m_excel->dynamicCall ("Quit()");
 }
 
-bool ExcelFile::open_file(const std::string &filename)
+bool ExcelFile::open_file(const std::string& filename)
 {
     if (!m_workbooks)
         return false;
@@ -62,7 +62,7 @@ bool ExcelFile::open_file(const std::string &filename)
     return true;
 }
 
-bool ExcelFile::create_file(const std::string &filename)
+bool ExcelFile::create_file(const std::string& filename)
 {
     if (!m_workbooks)
         return false;
@@ -82,7 +82,14 @@ std::unique_ptr<QAxObject> ExcelFile::open_page(uint32_t index) const
     if (!m_workbook)
         return nullptr;
 
-    return std::make_unique<QAxObject> (m_workbook->querySubObject ("Worksheets(const QVariant&)", index));
+    index += 1;
+
+    QAxObject* sheet (m_workbook->querySubObject ("Worksheets(const QVariant&)", index));
+
+    QObject::connect(sheet, SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(save_last_error (int, QString, QString, QString)));
+
+    return std::unique_ptr<QAxObject> (sheet);
 }
 
 std::unique_ptr<QAxObject> ExcelFile::open_page(const std::string& name) const
@@ -90,7 +97,12 @@ std::unique_ptr<QAxObject> ExcelFile::open_page(const std::string& name) const
     if (!m_workbook)
         return nullptr;
 
-    return std::make_unique<QAxObject> (m_workbook->querySubObject ("Worksheets(const QVariant&)", QVariant (name.c_str ())));
+    QAxObject* sheet (m_workbook->querySubObject ("Worksheets(const QVariant&)", QVariant (name.c_str ())));
+
+    QObject::connect(sheet, SIGNAL(exception (int, QString, QString, QString)),
+        this, SLOT(save_last_error (int, QString, QString, QString)));
+
+    return std::unique_ptr<QAxObject> (sheet);
 }
 
 std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
@@ -98,7 +110,7 @@ std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
     if (!m_workbook)
         return nullptr;
 
-    QAxObject* new_stat_sheets (nullptr);
+    QAxObject* new_sheet (nullptr);
 
     try
     {
@@ -106,14 +118,19 @@ std::unique_ptr<QAxObject> ExcelFile::create_page(const std::string& name)
         if (sheet_to_copy)
             sheet_to_copy->dynamicCall ("Copy(const QVariant&)", sheet_to_copy->asVariant ());
 
-        new_stat_sheets = m_workbook->querySubObject ("Worksheets(const QVariant&)", 1);
-        if (new_stat_sheets)
-            new_stat_sheets->setProperty ("Name", QString(name.c_str ()));
+        new_sheet = m_workbook->querySubObject ("Worksheets(const QVariant&)", 1);
+        if (new_sheet)
+        {
+            QObject::connect(new_sheet, SIGNAL(exception (int, QString, QString, QString)),
+                this, SLOT(save_last_error (int, QString, QString, QString)));
+
+            new_sheet->setProperty ("Name", QString(name.c_str ()));
+        }
     }
     catch(...)
     {}
 
-    return std::unique_ptr<QAxObject> (new_stat_sheets);
+    return std::unique_ptr<QAxObject> (new_sheet);
 }
 
 void ExcelFile::save_as(const std::string& filename)
