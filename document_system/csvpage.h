@@ -55,6 +55,7 @@ private:
     std::string m_filename;
     std::fstream m_file;
     std::vector<std::vector<std::string>> m_cache;
+    AxisType m_type;
 };
 
 

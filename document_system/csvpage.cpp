@@ -51,6 +51,12 @@ bool CsvPage::push_data_back(const std::string& name, const std::vector<double>&
 
 AxisType CsvPage::get_x_axis_type()
 {
+    if (m_cache.empty ())
+    {
+        if (!read_file (';'))
+            return AxisType::TYPE_NUM;
+    }
+
     return AxisType::TYPE_NUM;
 }
 
@@ -93,8 +99,41 @@ bool CsvPage::get_data(size_t row, std::vector<double>* const data)
             return false;
     }
 
-    for (const std::string& val : m_cache[0])
-        data->push_back (std::stod (val));
+    if (row == 0 && m_type == AxisType::TYPE_TIME)
+    {
+        for (const std::vector<std::string>& data : m_cache)
+        {
+            try
+            {
+                size_t first_point (data.find ('.'));
+                size_t day (std::stoll (data.substr (0, first_point)));
+                size_t second_point (data.find ('.', first_point + 1));
+                size_t month (std::stoll (data.substr (first_point + 1, second_point)));
+                size_t delimiter (data.find (' ', second_point + 1));
+                size_t year (std::stoll (data.substr (second_point + 1, delimiter)));
+                size_t colon (data.find (':'));
+                size_t hour (std::stoll (data.substr (delimiter + 1, colon)));
+                size_t minute (std::stoll (data.substr (colon + 1)));
+
+                tm* time;
+
+
+                data->push_back (std::stod (val[row]));
+            }
+            catch (const std::invalid_argument&)
+            {}
+        }
+    }
+
+    for (const std::vector<std::string>& val : m_cache)
+    {
+        try
+        {
+            data->push_back (std::stod (val[row]));
+        }
+        catch (const std::invalid_argument&)
+        {}
+    }
 }
 
 bool CsvPage::read_file (char delimiter)
@@ -110,6 +149,7 @@ bool CsvPage::read_file (char delimiter)
     if (!m_file.is_open ())
         return false;
 
+    m_cache.push_back (std::vector<std::string> ());
     while (m_file.good ())
     {
         char c = m_file.get ();
@@ -134,16 +174,20 @@ bool CsvPage::read_file (char delimiter)
             if (m_file.peek () == '\n')
             {
                 m_file.get ();
-                m_cache.push_back (std::vector<std::string> ());
             }
 
             m_cache.back ().push_back (ss.str ());
+            ss.str ("");
+            m_cache.push_back (std::vector<std::string> ());
         }
         else
         {
             ss << c;
         }
     }
+
+    if (m_cache.back ().empty ())
+        m_cache.pop_back ();
 
     return true;
 }
