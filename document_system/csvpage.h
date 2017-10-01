@@ -32,6 +32,7 @@
 
 
 #include "page.h"
+#include <QDate>
 #include <fstream>
 
 
@@ -50,12 +51,14 @@ public:
 
 private:
     bool read_file(char delimiter);
+    void brouse_date_formats (std::vector<double>*, const std::string&);
+    double date_to_double (const QDateTime&);
+    double string_to_double (const std::string&);
 
 private:
     std::string m_filename;
     std::fstream m_file;
     std::vector<std::vector<std::string>> m_cache;
-    AxisType m_type;
 };
 
 

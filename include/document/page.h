@@ -55,50 +55,22 @@ public:
 protected:
     static AxisType get_str_type (const std::string& str)
     {
-        auto s (str.begin ());
-        unsigned i (1);
-        char sep = '\n';
-        int lng[5] = { 0 };
-        bool lettersLong (false);
-        bool letters (false);
-        if (!isdigit(*s)) return TYPE_NUM;
-        ++s;
-        //if (!(*s++).isDigit ())
-        while (s != str.end ())
+        size_t pos (0);
+        try
         {
-            if (isdigit(*s)) i++;
-            else
-            {
-                if (isalpha(*s))
-                {
-                    if (letters && lettersLong)
-                        return TYPE_NUM;
-                    else
-                    {
-                        unsigned j (0);
-                        while (isalpha(*s) && s++ != str.end ())
-                            ++j;
-                        if (j > 2 && !lettersLong)
-                            lettersLong = TYPE_TIME;
-                        else if (!letters)
-                            letters = TYPE_TIME;
-                        else
-                            return TYPE_NUM;
-                    }
-                }
-                else if (sep == *s || *s == ',') sep = '\n';
-                else if (sep == '\n') sep = *s;
-                else return TYPE_NUM;
-                if (i > 4) return TYPE_NUM;
-                ++lng[i];
-                i = 0;
-            }
-            ++s;
+            std::stod (str, &pos);
         }
-        if (lng[4] < 2 && lng[2] != 0 &&
-            ((lng[1] + lng[2] + lng[4] > 1 && lettersLong && lng[1] + lng[2] + lng[4] < 5) ||
-            (lng[1] + lng[2] + lng[4] > 2 && !lettersLong && lng[1] + lng[2] + lng[4] < 6)))
+        catch (const std::invalid_argument&)
+        {
             return TYPE_TIME;
+        }
+
+        for (size_t i = pos; i < str.size (); ++i)
+        {
+            if (isdigit (str[i]))
+                return TYPE_TIME;
+        }
+
         return TYPE_NUM;
     }
 

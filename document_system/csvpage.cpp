@@ -56,8 +56,7 @@ AxisType CsvPage::get_x_axis_type()
         if (!read_file (';'))
             return AxisType::TYPE_NUM;
     }
-
-    return AxisType::TYPE_NUM;
+    return get_str_type (m_cache[1][0]);
 }
 
 bool CsvPage::get_headers(std::vector<std::string>* const headers)
@@ -86,7 +85,7 @@ bool CsvPage::get_headers(std::vector<std::string>* const headers)
     return true;
 }
 
-bool CsvPage::get_data(size_t row, std::vector<double>* const data)
+bool CsvPage::get_data(size_t index, std::vector<double>* const data)
 {
     if (!data)
         return false;
@@ -99,41 +98,30 @@ bool CsvPage::get_data(size_t row, std::vector<double>* const data)
             return false;
     }
 
-    if (row == 0 && m_type == AxisType::TYPE_TIME)
+    if (index == 0 && get_x_axis_type () == AxisType::TYPE_TIME)
     {
-        for (const std::vector<std::string>& data : m_cache)
+        for (const std::vector<std::string>& row : m_cache)
         {
             try
             {
-                size_t first_point (data.find ('.'));
-                size_t day (std::stoll (data.substr (0, first_point)));
-                size_t second_point (data.find ('.', first_point + 1));
-                size_t month (std::stoll (data.substr (first_point + 1, second_point)));
-                size_t delimiter (data.find (' ', second_point + 1));
-                size_t year (std::stoll (data.substr (second_point + 1, delimiter)));
-                size_t colon (data.find (':'));
-                size_t hour (std::stoll (data.substr (delimiter + 1, colon)));
-                size_t minute (std::stoll (data.substr (colon + 1)));
-
-                tm* time;
-
-
-                data->push_back (std::stod (val[row]));
+                brouse_date_formats (data, row[0]);
             }
             catch (const std::invalid_argument&)
             {}
         }
+        return true;
     }
 
     for (const std::vector<std::string>& val : m_cache)
     {
         try
         {
-            data->push_back (std::stod (val[row]));
+            data->push_back (string_to_double (val[index]));
         }
         catch (const std::invalid_argument&)
         {}
     }
+    return true;
 }
 
 bool CsvPage::read_file (char delimiter)
@@ -190,4 +178,92 @@ bool CsvPage::read_file (char delimiter)
         m_cache.pop_back ();
 
     return true;
+}
+
+void CsvPage::brouse_date_formats(std::vector<double>* data, const std::string& str)
+{
+    QDateTime date (QDateTime::fromString (str.c_str (), "dd.MM.yy H:mm"));
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::TextDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::ISODate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::SystemLocaleShortDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::SystemLocaleLongDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::DefaultLocaleShortDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::DefaultLocaleLongDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::SystemLocaleDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::LocaleDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::LocalDate);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+
+    date = QDateTime::fromString (str.c_str (), Qt::RFC2822Date);
+    if (date.isValid ())
+    {
+        data->push_back (date_to_double (date));
+    }
+}
+
+double CsvPage::date_to_double(const QDateTime& date)
+{
+
+    double days (abs (date.daysTo (QDateTime (QDate (1899, 12, 30), QTime ()))));
+    days += (date.time ().msecsSinceStartOfDay () / 60000) / 1440.0;
+    return days;
+}
+
+double CsvPage::string_to_double(const std::string& str)
+{
+    std::string number (str);
+    size_t pos (str.find (','));
+    if (pos != std::string::npos)
+    {
+        number.replace (pos, 1, ".");
+    }
+    return std::stod (number);
 }
