@@ -31,8 +31,11 @@
 #include "row.h"
 
 
+WaveletProducer::WaveletProducer()
+{}
+
 WaveletProducer::WaveletProducer(const std::vector<double> &data, const size_t nColumns, size_t startRow, size_t endRow, WaveletStep step, const Intervals *intervals) :
-    m_numColumns (nColumns),
+    m_num_columns (nColumns),
     m_numRows (endRow - --startRow),
     m_size (data.size ()),
     m_step (step),
@@ -44,17 +47,20 @@ WaveletProducer::WaveletProducer(const std::vector<double> &data, const size_t n
     // в следующем варианте:
     // ([нижняя сторона] * 2 - [разница длин верхней и нижней сторон]) * [высота] / 2
     for (size_t i = 0; i < m_numRows; ++i)
-        m_data[i] = &data[(((m_numColumns * 2) - (i - 1) * (size_t) m_step) * i) / 2];
+        m_data[i] = &data[(((m_num_columns * 2) - (i - 1) * (size_t) m_step) * i) / 2];
 }
 
 Row WaveletProducer::get_axisX () const
 {
+    if (!m_intervals)
+        return Row ();
+
     double f = m_intervals->minX;
     double l = m_intervals->maxX;
-    double step = (l - f) / (m_numColumns - 1);
+    double step = (l - f) / (m_num_columns - 1);
 
-    Row axis ("axis X", m_numColumns, 0.0);
-    for (size_t i = 0; i < m_numColumns; ++i)
+    Row axis ("axis X", m_num_columns, 0.0);
+    for (size_t i = 0; i < m_num_columns; ++i)
     {
         axis[i] = f;
         f += step;
@@ -66,19 +72,20 @@ double WaveletProducer::value(size_t row, size_t col) const
 {
     const size_t n (size_t (m_step) * row);
     col -= n;
-    if (col >= ((m_numColumns - n) * 2)) return 0.0;
+    if (col >= ((m_num_columns - n) * 2))
+        return 0.0;
     return m_data[row][col / 2];
 }
 
 size_t WaveletProducer::row_size(size_t i) const
 {
     return (i < m_data.size () - 1) ?
-                m_data[i + 1] - m_data[i] : m_numColumns + (size_t) m_step * i;
+                m_data[i + 1] - m_data[i] : m_num_columns + (size_t) m_step * i;
 }
 
 RowData WaveletProducer::get_data(size_t row) const
 {
-    return { m_data[row], (m_numColumns - (size_t) m_step * row) * 2 };
+    return { m_data[row], (m_num_columns - (size_t) m_step * row) * 2 };
 }
 
 std::vector<Row> WaveletProducer::get_data (std::pair<size_t, size_t> range) const
@@ -111,12 +118,12 @@ std::vector<Row> WaveletProducer::get_data (std::pair<size_t, size_t> range) con
     return rows;
 }
 
-size_t WaveletProducer::get_num_columns () const { return m_numColumns * 2; }
+size_t WaveletProducer::get_num_columns () const { return m_num_columns * 2; }
 size_t WaveletProducer::get_num_rows () const    { return m_numRows; }
 
-double WaveletProducer::get_minX () const { return m_intervals->minX; }
-double WaveletProducer::get_maxX () const { return m_intervals->maxX; }
-double WaveletProducer::get_minY () const { return m_intervals->minY; }
-double WaveletProducer::get_maxY () const { return m_intervals->maxY; }
-double WaveletProducer::get_minZ () const { return m_intervals->minZ; }
-double WaveletProducer::get_maxZ () const { return m_intervals->maxZ; }
+double WaveletProducer::get_minX () const { return m_intervals ? m_intervals->minX : 0.0; }
+double WaveletProducer::get_maxX () const { return m_intervals ? m_intervals->maxX : 0.0; }
+double WaveletProducer::get_minY () const { return m_intervals ? m_intervals->minY : 0.0; }
+double WaveletProducer::get_maxY () const { return m_intervals ? m_intervals->maxY : 0.0; }
+double WaveletProducer::get_minZ () const { return m_intervals ? m_intervals->minZ : 0.0; }
+double WaveletProducer::get_maxZ () const { return m_intervals ? m_intervals->maxZ : 0.0; }

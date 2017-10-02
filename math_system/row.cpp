@@ -30,6 +30,9 @@
 #include "row.h"
 
 
+Row::Row()
+{}
+
 Row::Row(const std::string& name) : m_name (name)
 {}
 

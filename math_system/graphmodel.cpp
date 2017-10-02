@@ -30,6 +30,16 @@
 #include "graphmodel.h"
 
 
+GraphModel *GraphModel::get_deviations() const
+{
+    return new GraphModel (m_source.get_deviations ());
+}
+
+GraphModel *GraphModel::get_smoothing(int points) const
+{
+    return new GraphModel (m_source.get_smoothing (points));
+}
+
 GraphModel* GraphModel::get_correlations (double begin, double end, unsigned step) const
 {
     return new GraphModel (m_source.get_correlations (begin, end, step));
@@ -59,6 +69,25 @@ void GraphModel::save_data(pDocumentWriter document) const
     m_source.save_data (page);
 }
 
-StringList GraphModel::get_headers() const { return m_source.get_headers (); }
+void GraphModel::remove_spaces()
+{
+    m_source.remove_spaces ();
+    m_approx.remove_spaces ();
+}
 
-string GraphModel::get_name () const { return m_source.get_name (); }
+const Row *GraphModel::get_approx(std::string name) const
+{
+    if (m_approx.empty ())
+        return nullptr;
+    return m_approx.get_row (name);
+}
+
+StringList GraphModel::get_headers() const
+{
+    return m_source.get_headers ();
+}
+
+std::string GraphModel::get_name () const
+{
+    return m_source.get_name ();
+}

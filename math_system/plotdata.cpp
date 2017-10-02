@@ -70,9 +70,17 @@ private:
 
 
 /////////////////////////////////////////////////////////////////////
-PlotData::PlotData () : m_data (new PrivateData ()) {}
-PlotData::PlotData (PlotData::pPrivateData data) : m_data (data) {}
-PlotData::PlotData (const PlotData& data) : m_data (data.m_data) {}
+PlotData::PlotData () :
+    m_data (new PrivateData ())
+{}
+
+PlotData::PlotData (PlotData::pPrivateData data) :
+    m_data (data)
+{}
+
+PlotData::PlotData (const PlotData& data) :
+    m_data (data.m_data)
+{}
 
 void PlotData::load_data(pPage page)
 {
@@ -246,7 +254,7 @@ PlotData PlotData::get_approx () const
         double a ((n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX));
         double b ((sumY - a * sumX) / n);
 
-        newdata->series[numrow] = Row (curve.get_name (), 2);
+        newdata->series.push_back (Row (curve.get_name (), 2));
         Row& newRow = newdata->series.back ();
 
         newRow.push_back (a * (*axisX.begin ()) +  b);
@@ -267,7 +275,7 @@ PlotData PlotData::get_smoothing (int points) const
     #pragma omp parallel for
     for (int numrow = 1; numrow < m_data->series.size (); ++numrow)
     {
-        d->series[numrow] = Row (m_data->series[numrow].get_name (), m_data->series[numrow].size (), 0.0);
+        d->series.push_back (Row (m_data->series[numrow].get_name (), m_data->series[numrow].size (), 0.0));
         Row& row (d->series[numrow]);
         int branch (points / 2);
         int fullpoints (branch * 2 + 1);
@@ -313,8 +321,9 @@ PlotData PlotData::get_deviations () const
             medium += m_data->series[col][i];
         medium /= m_data->series[col].size ();
 
-        d->series[col] = Row (m_data->series[col].get_name (), m_data->series[0].size (), 0.0);
-        for (unsigned i = 0; i < m_data->series[col].size (); ++i) d->series[col][i] = m_data->series[col][i] - medium;
+        d->series.push_back (Row (m_data->series[col].get_name (), m_data->series[0].size (), 0.0));
+        for (unsigned i = 0; i < m_data->series[col].size (); ++i)
+            d->series[col][i] = m_data->series[col][i] - medium;
     }
     d->name = "Deviations row";
 
@@ -383,6 +392,9 @@ std::vector<Row>::iterator PlotData::find_column (const std::string& col) const
 
 PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& end, const std::string& col) const
 {
+    if (begin == end)
+        return begin;
+
     const iterRow mid (begin + std::distance(begin, end) / 2);
 
     if (mid->get_name () > col)
@@ -397,17 +409,17 @@ PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& en
 
 //////////////////////////////////////////////////////
 
-PlotData PlotData::get_relative_sp (double fromLin, double toLin, unsigned numstep) const
+PlotData PlotData::get_relative_sp (double from_lin, double to_lin, unsigned numstep) const
 {
-    if (fromLin > toLin)
+    if (from_lin > to_lin)
     {
-        double tmp (fromLin);
-        fromLin = toLin;
-        toLin = tmp;
+        double tmp (from_lin);
+        from_lin = to_lin;
+        to_lin = tmp;
     }
 
-    double from (log10 (fromLin));
-    double to (log10 (toLin));
+    double from (log10 (from_lin));
+    double to (log10 (to_lin));
     double step ((to - from) / (numstep - 1));
     double max (to + step / 4.0);
 
@@ -416,7 +428,11 @@ PlotData PlotData::get_relative_sp (double fromLin, double toLin, unsigned numst
     sp->series.push_back (Row ("Friquency"));
     Row& friquency (sp->series[0]);
 
-    while (from <= max) { friquency.push_back (pow (10.0, from)); from += step; }
+    while (from <= max)
+    {
+        friquency.push_back (pow (10.0, from));
+        from += step;
+    }
 
     const size_t count (m_data->series[0].size ());
 
@@ -477,17 +493,17 @@ PlotData PlotData::get_relative_sp (double fromLin, double toLin, unsigned numst
     return sp;
 }
 
-PlotData PlotData::get_correlations (double from, double to, unsigned numstep) const
+PlotData PlotData::get_correlations (double from_lin, double to_lin, unsigned numstep) const
 {
-    if (from > to)
+    if (from_lin > to_lin)
     {
-        double tmp (from);
-        from = to;
-        to = tmp;
+        double tmp (from_lin);
+        from_lin = to_lin;
+        to_lin = tmp;
     }
 
-    from = log10 (from);
-    to = log10 (to);
+    double from (log10 (from_lin));
+    double to (log10 (to_lin));
     double step ((to - from) / (numstep - 1));
     double max (to + step / 4.0);
 
@@ -496,45 +512,55 @@ PlotData PlotData::get_correlations (double from, double to, unsigned numstep) c
     corr->series.push_back (Row ("Friquency"));
     Row& friquency (corr->series[0]);
 
-    while (from <= max) { friquency.push_back (pow (10.0, from)); from += step; }
+    while (from <= max)
+    {
+        friquency.push_back (pow (10.0, from));
+        from += step;
+    }
 
     const size_t count (m_data->series[0].size ());
 
     for (unsigned rowFst = 1; rowFst < m_data->series.size (); ++rowFst)
-    for (unsigned rowSnd = rowFst + 1; rowSnd < m_data->series.size (); ++rowSnd)
     {
-        const std::vector<double>& fRow (m_data->series[rowFst]);
-        const std::vector<double>& sRow (m_data->series[rowSnd]);
-
-        corr->series.push_back (Row (m_data->series[rowFst].get_name () + "-" + m_data->series[rowSnd].get_name (), corr->series[0].size (), 0.0));
-        std::vector<double>& row (corr->series[1]);
-
-        #pragma omp parallel for
-        for (int i = 0; i < corr->series[0].size (); ++i)
+        for (unsigned rowSnd = rowFst + 1; rowSnd < m_data->series.size (); ++rowSnd)
         {
-            Function fSin;
-            Function fCos;
-            fSin.set_friquency (corr->series[0][i]);
-            fCos.set_friquency (corr->series[0][i]);
-            fSin.set_func (&sin);
-            fCos.set_func (&cos);
+            const std::vector<double>& fRow (m_data->series[rowFst]);
+            const std::vector<double>& sRow (m_data->series[rowSnd]);
 
-            double a (0.0);
-            double b (0.0);
-            double c (0.0);
-            double d (0.0);
+            corr->series.push_back (Row (
+                m_data->series[rowFst].get_name () + "-" + m_data->series[rowSnd].get_name (),
+                corr->series[0].size (),
+                0.0
+            ));
+            std::vector<double>& row (corr->series[1]);
 
-            for (unsigned j = 0; j < count; ++j)
+            #pragma omp parallel for
+            for (int i = 0; i < corr->series[0].size (); ++i)
             {
-                a += fRow[j] * fSin (m_data->series[0][j]);
-                b += fRow[j] * fCos (m_data->series[0][j]);
+                Function fSin;
+                Function fCos;
+                fSin.set_friquency (corr->series[0][i]);
+                fCos.set_friquency (corr->series[0][i]);
+                fSin.set_func (&sin);
+                fCos.set_func (&cos);
 
-                c += sRow[j] * fSin (m_data->series[0][j]);
-                d += sRow[j] * fCos (m_data->series[0][j]);
+                double a (0.0);
+                double b (0.0);
+                double c (0.0);
+                double d (0.0);
+
+                for (unsigned j = 0; j < count; ++j)
+                {
+                    a += fRow[j] * fSin (m_data->series[0][j]);
+                    b += fRow[j] * fCos (m_data->series[0][j]);
+
+                    c += sRow[j] * fSin (m_data->series[0][j]);
+                    d += sRow[j] * fCos (m_data->series[0][j]);
+                }
+
+                row[i] = ((a * c + b * d) / (count * count)) /
+                    sqrt (((a * a + b * b) / (count * count)) * ((c * c + d * d) / (count * count)));
             }
-
-            row[i] = ((a * c + b * d) / (count * count)) /
-                sqrt (((a * a + b * b) / (count * count)) * ((c * c + d * d) / (count * count)));
         }
     }
     corr->name = "Correlation";

@@ -28,33 +28,33 @@
 
 #pragma once
 
+#ifndef MATHTHREAD_H
+#define MATHTHREAD_H
 
-#include <string>
-#include <vector>
+
+#include <qthread.h>
+
+#include <functional>
 
 
-class Row : public std::vector<double>
+class MathThread : public QThread
 {
+    Q_OBJECT
+
 public:
-    Row ();
-    explicit Row (const std::string& name);
-    Row (const std::string& name, size_t size);
-    Row (const std::string& name, size_t size, double value);
-    Row (const std::string& name, const std::vector<double>& data);
-    Row (const std::string& name, std::vector<double>&& data);
-    Row (const Row& values);
-    Row (Row&& values);
+    MathThread (QObject *parent = nullptr);
 
-    Row& operator= (const Row& values);
+    void set_func (std::function<void()>);
 
-    bool    operator<  (const std::string& row) const  { return m_name < row; }
-    bool    operator<  (const Row& row) const          { return m_name < row.m_name; }
+signals:
+    void completed ();
 
-    bool    operator== (const std::string& name) const { return m_name == name; }
-    bool    operator== (const Row& row) const          { return m_name == row.m_name; }
-
-    std::string get_name () const                      { return m_name; }
+protected:
+    void run() Q_DECL_OVERRIDE;
 
 private:
-    std::string m_name;
+    std::function<void()> m_func;
 };
+
+
+#endif // MATHTHREAD_H

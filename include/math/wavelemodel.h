@@ -36,8 +36,6 @@
 #include <map>
 
 
-using std::map;
-
 class GraphModel;
 class WaveletFunction;
 
@@ -45,19 +43,18 @@ class WaveletFunction;
 class WaveletModel : public AbstractModel
 {
 public:
-    WaveletModel (GraphModel*, const WaveletInitParams&);
-    virtual ~WaveletModel ();
+    void calc_wavelet (const GraphModel* const, const WaveletInitParams&);
 
     virtual void save_data (pDocumentWriter document) const override;
 
-    const WaveletProducer& get_data (const string&);
+    const WaveletProducer& get_data (const std::string&);
 
     virtual StringList get_headers () const override;
-    virtual string get_name () const override;
+    virtual std::string get_name () const override;
 
 private:
-    void add_data (const string, WaveletData*);
+    void add_data (const std::string, WaveletData*);
 
-    map<string, WaveletData*> m_data;
-    string m_name;
+    std::map<std::string, WaveletData*> m_data;
+    std::string m_name;
 };

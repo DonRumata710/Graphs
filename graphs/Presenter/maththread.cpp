@@ -26,35 +26,19 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 
+#include "maththread.h"
 
-#include <string>
-#include <vector>
+MathThread::MathThread(QObject *parent) : QThread (parent)
+{}
 
-
-class Row : public std::vector<double>
+void MathThread::set_func(std::function<void ()> func)
 {
-public:
-    Row ();
-    explicit Row (const std::string& name);
-    Row (const std::string& name, size_t size);
-    Row (const std::string& name, size_t size, double value);
-    Row (const std::string& name, const std::vector<double>& data);
-    Row (const std::string& name, std::vector<double>&& data);
-    Row (const Row& values);
-    Row (Row&& values);
+    m_func = func;
+}
 
-    Row& operator= (const Row& values);
-
-    bool    operator<  (const std::string& row) const  { return m_name < row; }
-    bool    operator<  (const Row& row) const          { return m_name < row.m_name; }
-
-    bool    operator== (const std::string& name) const { return m_name == name; }
-    bool    operator== (const Row& row) const          { return m_name == row.m_name; }
-
-    std::string get_name () const                      { return m_name; }
-
-private:
-    std::string m_name;
-};
+void MathThread::run()
+{
+    m_func ();
+    emit completed ();
+}
