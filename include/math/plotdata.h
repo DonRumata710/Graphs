@@ -50,7 +50,7 @@ public:
     PlotData (const PlotData&);
     PlotData (pDocumentReader);
 
-    void load_data (pDocumentReader doc);
+    void load_data (pPage page);
     void save_data (pPage page) const;
 
     PlotData& operator= (const PlotData& plotData);

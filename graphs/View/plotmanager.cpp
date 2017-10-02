@@ -43,48 +43,55 @@
 #include <iostream>
 
 
-PlotManager::PlotManager () {}
 
+template<typename T> class Deleter
+{
+public:
+    Deleter (T* res) : m_res (res)
+    {}
+
+    Deleter(Deleter&& other) : m_res (other.m_res)
+    {
+        other.m_res = nullptr;
+    }
+
+    ~Deleter()
+    {
+        if (m_res)
+            delete m_res;
+    }
+
+private:
+    Deleter(const Deleter&);
+
+    T* m_res;
+};
+
+
+
+PlotManager::PlotManager()
+{}
 
 void PlotManager::set_tab (QTabWidget* _tab)
 {
-    tab = _tab;
+    m_tab = _tab;
 }
-
 
 void PlotManager::load_data (const std::string& filename)
 {
-    size_t index (tab->count ());
-
-    DocumentCreator creator;
-    std::unique_ptr<iDocumentReader> document (creator.get_document_reader(filename));
-
-    if (document != nullptr)
-    {
-        m_pages.push_back (pPresenter (new GraphPresenter (tab, document.get ())));
-        tab->setCurrentIndex (index);
-    }
+    new GraphPresenter (m_tab, filename);
 }
 
 void PlotManager::save_data (const std::string& filename)
 {
-    //QAxObject* sheet (sheets->querySubObject ("Item (const QVariant&)", QVariant (1)));
-    //
-    //while (sheet)
-    //{
-    //    sheet->dynamicCall ("Delete");
-    //    delete sheet;
-    //    sheet = sheets->querySubObject ("Item (const QVariant&)", QVariant (1));
-    //}
-
     DocumentCreator creator;
     std::unique_ptr<iDocumentWriter> document (creator.get_document_writer(filename));
 
     if (document != nullptr)
     {
-        for (pPresenter page : m_pages)
+        for (size_t i = 0; i < m_tab->count (); ++i)
         {
-            TabPresenter* source = qobject_cast<TabPresenter*> (page);
+            TabPresenter* source = qobject_cast<TabPresenter*> (m_tab->widget (i));
             if (source)
                 source->get_model()->save_data(document.get ());
         }
@@ -93,9 +100,7 @@ void PlotManager::save_data (const std::string& filename)
 
 void PlotManager::remove_spaces ()
 {
-    size_t index (tab->currentIndex ());
-    if (m_pages.size () < index) return;
-    GraphPresenter* source = qobject_cast<GraphPresenter*> (m_pages[index]);
+    GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
     if (source)
     {
         source->get_model ()->remove_spaces ();
@@ -108,10 +113,7 @@ void PlotManager::create_approximation ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_pages[index]);
+        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (source)
         {
             source->get_model ()->set_approximation ();
@@ -126,14 +128,9 @@ void PlotManager::create_deviations ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_pages[index]);
-        index = tab->count ();
+        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (source)
-            m_pages.push_back (pPresenter (source->get_deviations ()));
-        tab->setCurrentIndex (index);
+            source->create_deviations_row ();
     }
     catch (ChoiseException) {}
 }
@@ -142,15 +139,10 @@ void PlotManager::create_smoothing ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        GraphPresenter* source (qobject_cast<GraphPresenter*> (m_pages[index]));
-        index = tab->count ();
+        GraphPresenter* source (qobject_cast<GraphPresenter*> (m_tab->currentWidget ()));
         if (!source)
             return;
-        m_pages.push_back (pPresenter (source->get_smoothing ()));
-        tab->setCurrentIndex (index);
+        source->create_smoothing ();
     }
     catch (ChoiseException) {}
 }
@@ -159,15 +151,10 @@ void PlotManager::create_spectr ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        GraphPresenter* source (qobject_cast<GraphPresenter*> (m_pages[index]));
-        index = tab->count ();
+        GraphPresenter* source (qobject_cast<GraphPresenter*> (m_tab->currentWidget ()));
         if (!source)
             return;
-        m_pages.push_back (pPresenter (source->get_spectr ()));
-        tab->setCurrentIndex (index);
+        source->create_spectr ();
     }
     catch (ChoiseException) {}
 }
@@ -176,15 +163,10 @@ void PlotManager::create_correlation ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_pages[index]);
-        index = tab->count ();
+        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (!source)
             return;
-        m_pages.push_back (pPresenter (source->get_correlations ()));
-        tab->setCurrentIndex (index);
+        source->create_correlations ();
     }
     catch (ChoiseException) {}
 }
@@ -193,60 +175,50 @@ void PlotManager::create_wavelet ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_pages[index]);
-        index = tab->count ();
+        GraphPresenter* source = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         if (!source)
             return;
-        m_pages.push_back (pPresenter (source->get_wavelet ()));
-        tab->setCurrentIndex (index);
+        source->create_wavelet ();
     }
     catch (ChoiseException) {}
 }
 
 void PlotManager::create_power ()
 {
-    size_t index (tab->currentIndex ());
-    if (m_pages.size () < index)
-        return;
-    GraphPresenter* spectr = qobject_cast<GraphPresenter*> (m_pages[index]);
-    index = tab->count ();
+    GraphPresenter* spectr = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
     if (!spectr)
         return;
-    m_pages.push_back (pPresenter (spectr->get_power ()));
-    tab->setCurrentIndex (index);
+    spectr->create_power_spectr ();
 }
 
 
 void PlotManager::set_multy_graph (MultyGraphTools* tools)
 {
-    GraphPresenter* c = qobject_cast<GraphPresenter*> (m_pages[tab->currentIndex ()]);
+    GraphPresenter* c = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
     if (c)
     {
         QStringList list;
-        for (string str : c->get_model ()->get_headers ())
+        for (std::string str : c->get_model ()->get_headers ())
             list << QString(str.c_str());
         tools->set_headers (list);
     }
-    for (pPresenter pair : m_pages)
+    for (size_t i = 0; i < m_tab->count (); ++i)
     {
-        GraphPresenter* c = qobject_cast<GraphPresenter*> (pair);
+        GraphPresenter* c = qobject_cast<GraphPresenter*> (m_tab->currentWidget ());
         c->add_multy_graph_tools (tools);
     }
 }
 
 void PlotManager::set_log_scale (LogScale* logScale)
 {
-    for (auto pair : m_pages)
-        pair->set_scale_toolbar (logScale);
+    for (size_t i = 0; i < m_tab->count (); ++i)
+        qobject_cast<TabPresenter*> (m_tab->widget(i))->set_scale_toolbar (logScale);
 }
 
 void PlotManager::set_grid ()
 {
-    for (pPresenter pair : m_pages)
-        pair->set_grid ();
+    for (size_t i = 0; i < m_tab->count (); ++i)
+        qobject_cast<TabPresenter*> (m_tab->widget(i))->set_grid ();
 }
 
 
@@ -254,15 +226,10 @@ void PlotManager::create_s_wavelet ()
 {
     try
     {
-        size_t index (tab->currentIndex ());
-        if (m_pages.size () < index)
-            return;
-        SpectrogramPresenter* raster = qobject_cast<SpectrogramPresenter*> (m_pages[index]);
-        index = tab->count ();
+        SpectrogramPresenter* raster = qobject_cast<SpectrogramPresenter*> (m_tab->currentWidget ());
         if (!raster)
             return;
-        m_pages.push_back (pPresenter (raster->get_local_wavlet ()));
-        tab->setCurrentIndex (index);
+        raster->get_local_wavlet ();
     }
     catch (ChoiseException) {}
 }
@@ -270,20 +237,19 @@ void PlotManager::create_s_wavelet ()
 
 void PlotManager::save_plot ()
 {
-    m_pages[tab->currentIndex ()]->save_picture (tr ("plot.pdf"));
+    qobject_cast<TabPresenter*> (m_tab->currentWidget ())->save_picture (tr ("plot.pdf"));
 }
 
 void PlotManager::close_graph ()
 {
-    tab->clear ();
-    m_pages.clear ();
+    std::list<Deleter<QWidget>> deleters;
+    for (size_t i = 0; i < m_tab->count (); ++i)
+        deleters.push_back (Deleter<QWidget> (m_tab->widget (i)));
+    m_tab->clear ();
 }
 
 void PlotManager::close_graph (int i)
 {
-    tab->removeTab (i);
-    auto tmp (m_pages[i]);
-    m_pages[i] = m_pages[m_pages.size() - 1];
-    m_pages[m_pages.size() - 1] = tmp;
-    m_pages.erase (m_pages.end () - 1);
+    Deleter<QWidget> deleter (m_tab->widget (i));
+    m_tab->removeTab (i);
 }

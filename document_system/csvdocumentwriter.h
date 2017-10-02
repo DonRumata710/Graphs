@@ -32,6 +32,7 @@
 
 
 #include "documentwriter.h"
+#include "page.h"
 
 
 class CsvDocumentWriter final : public iDocumentWriter
@@ -43,6 +44,9 @@ public:
 
 private:
     CsvDocumentWriter (const std::string& filename);
+
+private:
+    std::string m_filename;
 };
 
 

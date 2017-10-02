@@ -45,7 +45,39 @@ public:
     virtual ~iPage () {}
 
     virtual bool set_x_axis_type (AxisType type) = 0;
-    virtual bool save_data (const std::string& name, const std::vector<double>& data) = 0;
+    virtual bool push_data_back (const std::string& name, const std::vector<double>& data) = 0;
+
+    virtual AxisType get_x_axis_type () = 0;
+
+    virtual bool get_headers (std::vector<std::string>* const) = 0;
+    virtual bool get_data (size_t row, std::vector<double>* const) = 0;
+
+protected:
+    static AxisType get_str_type (const std::string& str)
+    {
+        size_t pos (0);
+        try
+        {
+            std::stod (str, &pos);
+        }
+        catch (const std::invalid_argument&)
+        {
+            return TYPE_TIME;
+        }
+
+        for (size_t i = pos; i < str.size (); ++i)
+        {
+            if (isdigit (str[i]))
+                return TYPE_TIME;
+        }
+
+        return TYPE_NUM;
+    }
+
+    static bool is_text (const std::string& str)
+    {
+        return !(isdigit (*str.begin ()) && (isdigit (*(str.end () - 1))));
+    }
 };
 
 

@@ -34,27 +34,40 @@
 
 #include "document/page.h"
 #include "excelfile.h"
-#include "exceldocumentwriter.h"
 
 
 class ExcelPage final : public iPage
 {
     friend class ExcelDocumentWriter;
+    friend class ExcelDocumentReader;
 
 public:
     virtual ~ExcelPage ();
 
     virtual bool set_x_axis_type (AxisType type) override;
-    virtual bool save_data (const std::string& name, const std::vector<double>& data) override;
+    virtual bool push_data_back (const std::string& name, const std::vector<double>& data) override;
+
+    virtual AxisType get_x_axis_type () override;
+
+    virtual bool get_headers(std::vector<std::string>* const) override;
+    virtual bool get_data (size_t row, std::vector<double>* const) override;
 
 private:
     ExcelPage (std::shared_ptr<ExcelFile> file, QAxObject* table);
     ExcelPage (std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject>&& table);
 
+    size_t get_rows_number ();
+    size_t get_points_number ();
+    bool load_data ();
+
 private:
     std::shared_ptr<ExcelFile> m_file;
     std::unique_ptr<QAxObject> m_table;
     std::vector<QList<QVariant>> m_cache;
+
+    size_t m_columns_num = 0;
+    size_t m_points_num = 0;
+    bool m_have_headers = false;
 };
 
 

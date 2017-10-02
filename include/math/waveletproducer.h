@@ -61,6 +61,7 @@ private:
 class WaveletProducer
 {
 public:
+    WaveletProducer ();
     WaveletProducer (const std::vector<double>& data, const size_t nColumns, size_t startRow, size_t endRow, WaveletStep step, const Intervals* intervals);
 
     Row get_axisX () const;
@@ -87,14 +88,14 @@ private:
     std::vector<const double*> m_data;
     size_t m_counter = 1;
 
-    size_t m_numColumns;
-    size_t m_numRows;
+    size_t m_num_columns = 0;
+    size_t m_numRows = 0;
 
-    const size_t m_size;
+    const size_t m_size = 0;
 
-    WaveletStep m_step;
+    WaveletStep m_step = WaveletStep::ONE;
 
-    const Intervals* m_intervals;
+    const Intervals* m_intervals = nullptr;
 };
 
 

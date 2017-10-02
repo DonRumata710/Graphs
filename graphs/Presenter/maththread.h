@@ -28,22 +28,33 @@
 
 #pragma once
 
-#ifndef EXCELSAVEFILE_H
-#define EXCELSAVEFILE_H
+#ifndef MATHTHREAD_H
+#define MATHTHREAD_H
 
 
-#include "excelfile.h"
+#include <qthread.h>
+
+#include <functional>
 
 
-class ExcelSaveFile final : public ExcelFile
+class MathThread : public QThread
 {
+    Q_OBJECT
+
 public:
-    ExcelSaveFile (const std::string& filename);
-    ~ExcelSaveFile ();
+    MathThread (QObject *parent = nullptr);
+
+    void set_func (std::function<void()>);
+
+signals:
+    void completed ();
+
+protected:
+    void run() Q_DECL_OVERRIDE;
 
 private:
-    std::string m_filename;
+    std::function<void()> m_func;
 };
 
 
-#endif // EXCELSAVEFILE_H
+#endif // MATHTHREAD_H

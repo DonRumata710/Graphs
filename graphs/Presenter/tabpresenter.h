@@ -29,6 +29,7 @@
 #pragma once
 
 
+#include "maththread.h"
 #include "math/abstractmodel.h"
 #include "View/grid.h"
 
@@ -49,13 +50,17 @@ class TabPresenter : public QWidget
     Q_OBJECT
 
 public:
-    TabPresenter (QTabWidget*, AbstractModel*);
+    TabPresenter ();
+
+    virtual void init (QTabWidget*, AbstractModel*);
 
     void save_picture (QString);
 
     AbstractModel* get_model () const;
 
 public slots:
+    void loading_complete ();
+
     void set_grid ();
     void set_scale_toolbar (LogScale*);
 
@@ -68,10 +73,16 @@ protected:
     QTabWidget* get_tab () const;
     QwtPlot* get_plot () const;
 
+protected:
+    mutable MathThread m_thread;
+    QComboBox* m_source = nullptr;
+
 private:
-    AbstractModel* m_model;
-    QTabWidget* m_tab;
-    QComboBox* m_source;
-    QwtPlot* m_plot;
+    virtual void prepare_tab () = 0;
+
+private:
+    AbstractModel* m_model = nullptr;
+    QTabWidget* m_tab = nullptr;
+    QwtPlot* m_plot = nullptr;
     std::unique_ptr<Grid> m_grid;
 };

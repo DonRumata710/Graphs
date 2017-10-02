@@ -45,6 +45,7 @@ public:
 
 private:
     ExcelDocumentWriter (const std::string& filename);
+    ExcelDocumentWriter (const ExcelDocumentWriter&) = delete;
 
 private:
     struct PrivateData;

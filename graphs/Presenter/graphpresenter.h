@@ -52,21 +52,21 @@ class GraphPresenter : public TabPresenter
     Q_OBJECT
 
 public:
-    GraphPresenter (QTabWidget* parent, pDocumentReader);
-    GraphPresenter (QTabWidget* parent, GraphModel*);
+    GraphPresenter ();
+    GraphPresenter (QTabWidget* parent, const std::string&);
 
     void add_multy_graph_tools (MultyGraphTools*);
 
     GraphModel* get_model () const;
 
-    GraphPresenter* get_deviations () const;
-    GraphPresenter* get_smoothing () const;
-    GraphPresenter* get_spectr () const;
-    GraphPresenter* get_correlations () const;
+    void create_deviations_row () const;
+    void create_smoothing() const;
+    void create_spectr () const;
+    void create_correlations() const;
 
-    GraphPresenter* get_power () const;
+    GraphPresenter* create_power_spectr () const;
 
-    SpectrogramPresenter* get_wavelet () const;
+    void create_wavelet() const;
 
 public slots:
     void set_current_curve (const QString&);
@@ -78,8 +78,10 @@ public slots:
     void clear ();
 
 private:
+    void prepare_tab ();
     void add_curve (const vector<double>& axis, const vector<double>& source, const QString);
 
+private:
     vector<pCurve> m_curves;
     QString m_current;
 

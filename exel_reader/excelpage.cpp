@@ -79,7 +79,7 @@ bool ExcelPage::set_x_axis_type(AxisType type)
     return true;
 }
 
-bool ExcelPage::save_data(const std::string& name, const std::vector<double>& data)
+bool ExcelPage::push_data_back(const std::string& name, const std::vector<double>& data)
 {
     if (m_cache.size () < data.size ())
         m_cache.assign(data.size () + 1, QList<QVariant> ());
@@ -93,6 +93,75 @@ bool ExcelPage::save_data(const std::string& name, const std::vector<double>& da
     return true;
 }
 
+AxisType ExcelPage::get_x_axis_type()
+{
+    std::unique_ptr<QAxObject> cell (m_table->querySubObject (
+        "Cells(QVariant,QVariant)", QVariant (2), QVariant (1)
+    ));
+    if (cell)
+        return get_str_type (cell->property ("Value").toString ().toStdString ());
+    else
+        return AxisType::TYPE_NUM;
+}
+
+bool ExcelPage::get_headers(std::vector<std::string>* const headers)
+{
+    if (!headers)
+        return false;
+
+    if (m_cache.empty ())
+    {
+        if (!load_data ())
+            return false;
+    }
+
+    headers->clear ();
+    headers->reserve(m_columns_num);
+
+    if (m_have_headers)
+    {
+        QList<QVariant> header_list (m_cache.front ());
+        QList<QVariant>::iterator iter (header_list.begin ());
+        while (iter != header_list.end ())
+            headers->push_back ((iter++)->toString ().toStdString ());
+    }
+    else
+    {
+        for (size_t i = 0; i < m_columns_num; ++i)
+            headers->push_back (std::to_string (i));
+    }
+
+    return true;
+}
+
+bool ExcelPage::get_data(size_t index, std::vector<double>* const row)
+{
+    if (!row)
+        return false;
+
+    if (m_cache.empty ())
+    {
+        if (!load_data ())
+            return false;
+    }
+
+    if (index > m_cache.size ())
+        return false;
+
+    row->clear ();
+    row->reserve(m_points_num - (m_have_headers ? 1 : 0));
+
+    std::vector<QList<QVariant>>::iterator iter (m_cache.begin () + (m_have_headers ? 1 : 0));
+    try
+    {
+        while (iter != m_cache.end ())
+            row->push_back ((*iter++).at (index).toDouble ());
+    }
+    catch (...)
+    {}
+    return true;
+}
+
 ExcelPage::ExcelPage(std::shared_ptr<ExcelFile> file, QAxObject* table) :
     m_file (file),
     m_table (table)
@@ -102,3 +171,62 @@ ExcelPage::ExcelPage(std::shared_ptr<ExcelFile> file, std::unique_ptr<QAxObject>
     m_file (file),
     m_table (std::move (table))
 {}
+
+size_t ExcelPage::get_rows_number()
+{
+    if (!m_columns_num)
+    {
+        std::unique_ptr<QAxObject> cell (m_table->querySubObject ("Cells(QVariant,Columns.Count)", QVariant (1)));
+        if (!cell)
+            return 0;
+        std::unique_ptr<QAxObject> columns_num (cell->querySubObject ("End (xlToRight)"));
+        if (!columns_num)
+            return 0;
+        m_columns_num = columns_num->property ("Column").toInt ();
+    }
+    return m_columns_num;
+}
+
+size_t ExcelPage::get_points_number()
+{
+    if (!m_points_num)
+    {
+        std::unique_ptr<QAxObject> cell (m_table->querySubObject ("Cells(Rows.Count,QVariant)", QVariant (1)));
+        if (!cell)
+            return 0;
+        std::unique_ptr<QAxObject> numRowsEx (cell->querySubObject ("End (xlDown)"));
+        if (!numRowsEx)
+            return 0;
+        m_points_num = numRowsEx->property ("Row").toInt ();
+    }
+    return m_points_num;
+}
+
+bool ExcelPage::load_data ()
+{
+    if (!m_table)
+        return false;
+
+    std::unique_ptr<QAxObject> top_left_cell (m_table->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
+    std::unique_ptr<QAxObject> bottom_right_cell (m_table->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (get_points_number ()), QVariant (get_rows_number ())));
+
+    if (!top_left_cell || !bottom_right_cell)
+        return false;
+
+    std::unique_ptr<QAxObject> range (m_table->querySubObject (
+        "Range(const QVariant&,const QVariant&)", top_left_cell->asVariant (), bottom_right_cell->asVariant ()
+    ));
+
+    if (!range)
+        return false;
+
+    range->setProperty ("NumberFormat", QVariant ("Double"));
+
+    QList<QVariant> cache_list (range->property ("Value").toList ());
+
+    for (QVariant list : cache_list)
+        m_cache.push_back (list.toList ());
+
+    m_have_headers = is_text (m_cache.at (0).at (1).toString ().toStdString ());
+    return true;
+}

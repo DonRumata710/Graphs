@@ -29,6 +29,8 @@
 #include "graphpresenter.h"
 #include "spectrogrampresenter.h"
 
+#include "document/documentcreator.h"
+
 #include "math/row.h"
 #include "math/graphmodel.h"
 #include "math/wavelemodel.h"
@@ -42,36 +44,35 @@
 #include "qwt_plot.h"
 
 
-GraphPresenter::GraphPresenter (QTabWidget* parent, pDocumentReader doc) :
-    TabPresenter (parent, new GraphModel (doc))
+GraphPresenter::GraphPresenter ()
+{}
+
+GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename)
 {
     if (parent)
     {
-        connect (
-            get_headers (),
-            SIGNAL (currentTextChanged (const QString&)),
-            SLOT (attach_curve (const QString&))
-        );
-        parent->addTab (this, QString(get_model()->get_name ().c_str()));
-        attach_curve (get_headers ()->currentText ());
+        TabPresenter::init (parent, new GraphModel);
+
+        m_thread.set_func ([=](){
+            DocumentCreator creator;
+            std::unique_ptr<iDocumentReader> document (creator.get_document_reader(filename));
+
+            if (!document)
+                return;
+
+            get_model ()->load_data (document.get ());
+
+            QStringList list;
+            for (std::string str : get_model ()->get_headers ())
+                list << QString (str.c_str ());
+
+            m_source->addItems (list);
+            set_x_format (get_model ()->get_type ());
+        });
+        connect (&m_thread, SIGNAL(completed()), SLOT(loading_complete()));
+        m_thread.start ();
     }
 }
-
-GraphPresenter::GraphPresenter (QTabWidget* parent, GraphModel* data) :
-    TabPresenter (parent, data)
-{
-    if (parent)
-    {
-        connect (
-            get_headers (),
-            SIGNAL (currentTextChanged (const QString&)),
-            SLOT (attach_curve (const QString&))
-            );
-        parent->addTab (this, QString(get_model()->get_name ().c_str()));
-        attach_curve (get_headers ()->currentText ());
-    }
-}
-
 
 void GraphPresenter::add_multy_graph_tools (MultyGraphTools* tools)
 {
@@ -83,57 +84,86 @@ GraphModel* GraphPresenter::get_model () const
     return (GraphModel*) TabPresenter::get_model ();
 }
 
-
-GraphPresenter* GraphPresenter::get_deviations () const
+void GraphPresenter::create_deviations_row() const
 {
-    return new GraphPresenter (get_tab (), get_model ()->get_deviations ());
+    GraphPresenter* presenter (new GraphPresenter);
+    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
+
+    m_thread.set_func ([this, presenter](){
+        presenter->init (get_tab (), get_model ()->get_deviations ());
+    });
+    m_thread.start ();
 }
 
-GraphPresenter* GraphPresenter::get_smoothing () const
+void GraphPresenter::create_smoothing () const
 {
     Smoothing smoothing;
+    if (smoothing.exec () != QDialog::Accepted)
+        throw ChoiseException ();
 
-    if (smoothing.exec () == QDialog::Accepted)
-        return new GraphPresenter (
-            get_tab (),
-            get_model ()->get_smoothing (smoothing.get_value ())
-        );
+    GraphPresenter* presenter (new GraphPresenter);
+    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
-    throw ChoiseException ();
+    int value = smoothing.get_value ();
+
+    m_thread.set_func ([this, presenter, value](){
+        presenter->init (get_tab (), get_model ()->get_smoothing (value));
+    });
+    m_thread.start ();
 }
 
-GraphPresenter* GraphPresenter::get_spectr () const
+void GraphPresenter::create_spectr() const
 {
     Spectr spectr;
 
-    if (spectr.exec () == QDialog::Accepted)
-        return new GraphPresenter (
-            get_tab (),
-            get_model ()->get_relative_sp (spectr.get_begin (), spectr.get_end (), spectr.get_steps ())
-        );
+    if (spectr.exec () != QDialog::Accepted)
+        throw ChoiseException ();
 
-    throw ChoiseException ();
+    GraphPresenter* presenter (new GraphPresenter);
+    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
+
+    double begin (spectr.get_begin ());
+    double end (spectr.get_end ());
+    double steps (spectr.get_steps ());
+
+    m_thread.set_func ([this, presenter, begin, end, steps](){
+        presenter->init (get_tab (), get_model ()->get_relative_sp (begin, end, steps));
+    });
+    m_thread.start ();
 }
 
-GraphPresenter* GraphPresenter::get_correlations () const
+void GraphPresenter::create_correlations () const
 {
     Spectr spectr;
 
-    if (spectr.exec () == QDialog::Accepted)
-        return new GraphPresenter (
-            get_tab (),
-            get_model ()->get_correlations (spectr.get_begin (), spectr.get_end (), spectr.get_steps ())
-        );
+    if (spectr.exec () != QDialog::Accepted)
+        throw ChoiseException ();
 
-    throw ChoiseException ();
+    GraphPresenter* presenter (new GraphPresenter);
+    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
+
+    double begin (spectr.get_begin ());
+    double end (spectr.get_end ());
+    double steps (spectr.get_steps ());
+
+    m_thread.set_func ([this, presenter, begin, end, steps](){
+        presenter->init (get_tab (), get_model ()->get_correlations (begin, end, steps));
+    });
+    m_thread.start ();
 }
 
-GraphPresenter* GraphPresenter::get_power () const
+GraphPresenter* GraphPresenter::create_power_spectr () const
 {
-    return new GraphPresenter (get_tab (), get_model ()->get_power ());
+    GraphPresenter* presenter (new GraphPresenter);
+    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
+
+    m_thread.set_func ([this, presenter](){
+        presenter->init (get_tab (), get_model ()->get_power ());
+    });
+    m_thread.start ();
 }
 
-SpectrogramPresenter* GraphPresenter::get_wavelet () const
+void GraphPresenter::create_wavelet () const
 {
     /*
      * QStringList source;
@@ -142,15 +172,23 @@ SpectrogramPresenter* GraphPresenter::get_wavelet () const
      */
 
     WaveletWindow waveletWin;
-    if (waveletWin.exec () != QDialog::Accepted) throw ChoiseException ();
+    if (waveletWin.exec () != QDialog::Accepted)
+        throw ChoiseException ();
 
-    SpectrogramPresenter* wavelet = new SpectrogramPresenter (
-        get_tab (),
-        get_model (),
-        waveletWin.get_wavelet_info ()
+    WaveletInitParams params (waveletWin.get_wavelet_info ());
+
+    new SpectrogramPresenter (get_tab (), get_model (), params);
+}
+
+void GraphPresenter::prepare_tab()
+{
+    connect (
+        get_headers (),
+        SIGNAL (currentTextChanged (const QString&)),
+        SLOT (attach_curve (const QString&))
     );
-
-    return wavelet;
+    attach_curve (get_headers ()->currentText ());
+    get_tab ()->addTab (this, QString(get_model()->get_name ().c_str()));
 }
 
 void GraphPresenter::set_current_curve (const QString& cur)

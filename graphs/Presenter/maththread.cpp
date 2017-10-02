@@ -26,26 +26,19 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 
-#ifndef EXCELOPENFILE_H
-#define EXCELOPENFILE_H
+#include "maththread.h"
 
+MathThread::MathThread(QObject *parent) : QThread (parent)
+{}
 
-#include "excelfile.h"
-
-
-class ExcelOpenFile final : public ExcelFile
+void MathThread::set_func(std::function<void ()> func)
 {
-public:
-    ExcelOpenFile(const std::string& filename);
+    m_func = func;
+}
 
-    QAxObject* get_table() const;
-
-private:
-    std::unique_ptr<QAxObject> m_sheets;
-    std::unique_ptr<QAxObject> m_sheet;
-};
-
-
-#endif // EXCELOPENFILE_H
+void MathThread::run()
+{
+    m_func ();
+    emit completed ();
+}

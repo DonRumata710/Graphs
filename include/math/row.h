@@ -36,6 +36,7 @@
 class Row : public std::vector<double>
 {
 public:
+    Row ();
     explicit Row (const std::string& name);
     Row (const std::string& name, size_t size);
     Row (const std::string& name, size_t size, double value);

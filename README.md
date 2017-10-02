@@ -11,7 +11,7 @@ Application for wavelet and spectral analysis<br>
 
 ## Requirement
 For compiling this project it is needed to have installed [QT](https://www.qt.io/). Currently version 5.6 is used.<br>
-Application work only with files created in Microsoft Excel for now.<br>
+Application work with xlsx, xls and csv files.<br>
 
 ## Author
 DonRumata710 (donrumata710@yandex.com)<br>

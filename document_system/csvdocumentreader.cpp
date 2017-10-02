@@ -28,6 +28,7 @@
 
 
 #include "csvdocumentreader.h"
+#include "csvpage.h"
 
 
 pDocumentReader CsvDocumentReader::create(const std::string& filename)
@@ -35,20 +36,17 @@ pDocumentReader CsvDocumentReader::create(const std::string& filename)
     return pDocumentReader(new CsvDocumentReader (filename));
 }
 
-AxisType CsvDocumentReader::get_x_axis_type()
+pPage CsvDocumentReader::get_page(const std::string &name) const
 {
-    return TYPE_NUM;
+    return pPage (new CsvPage (m_filename));
 }
 
-void CsvDocumentReader::get_headers(std::vector<std::string>* const)
+pPage CsvDocumentReader::get_page(size_t index) const
 {
+    return pPage (new CsvPage (m_filename));
 }
 
-void CsvDocumentReader::get_data(size_t row, std::vector<double>* const)
-{
-}
+CsvDocumentReader::CsvDocumentReader(const std::string& filename) :
+    m_filename (filename)
+{}
 
-CsvDocumentReader::CsvDocumentReader(const std::string& filename)
-{
-
-}

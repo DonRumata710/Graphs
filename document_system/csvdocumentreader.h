@@ -30,6 +30,7 @@
 
 
 #include "documentreader.h"
+#include "page.h"
 
 
 class CsvDocumentReader final : public iDocumentReader
@@ -37,11 +38,12 @@ class CsvDocumentReader final : public iDocumentReader
 public:
     static pDocumentReader create (const std::string& filename);
 
-    virtual AxisType get_x_axis_type () override;
-
-    virtual void get_headers (std::vector<std::string>* const) override;
-    virtual void get_data (size_t row, std::vector<double>* const) override;
+    virtual pPage get_page (const std::string& name) const override;
+    virtual pPage get_page (size_t index) const override;
 
 private:
-    explicit CsvDocumentReader (const std::string& filename);
+    explicit CsvDocumentReader (const std::string&);
+
+private:
+    std::string m_filename;
 };

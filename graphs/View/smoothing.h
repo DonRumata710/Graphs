@@ -40,7 +40,7 @@ class Smoothing : public QDialog
 public:
     Smoothing (QWidget* parent = nullptr);
 
-    int get_value ();
+    int get_value () const;
 
 private:
     Ui_Smoothing m_smooth;
