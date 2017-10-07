@@ -41,7 +41,8 @@ HEADERS += \
     View/swaveletperiod.h \
     View/wavelet.h \
     View/zoomer.h \
-    Presenter/maththread.h
+    Presenter/maththread.h \
+    Presenter/indicator.h
 
 SOURCES += \
     Presenter/graphpresenter.cpp \
@@ -61,7 +62,8 @@ SOURCES += \
     View/wavelet.cpp \
     View/zoomer.cpp \
     main.cpp \
-    Presenter/maththread.cpp
+    Presenter/maththread.cpp \
+    Presenter/indicator.cpp
 
 INCLUDEPATH += $$PWD/../include
 
