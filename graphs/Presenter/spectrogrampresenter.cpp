@@ -70,7 +70,8 @@ public:
 };
 
 
-SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params) :
+SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params, QStatusBar* status_bar) :
+    TabPresenter (status_bar),
     m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(wavelet_init_params.type.c_str ()) + "\" " + QString(graph->get_name ().c_str())))
 {
     if (parent)
@@ -102,7 +103,7 @@ GraphPresenter* SpectrogramPresenter::get_local_wavlet ()
         for (Row& line : wavletLines)
             model->add_row (line);
 
-        GraphPresenter* slice (new GraphPresenter);
+        GraphPresenter* slice (new GraphPresenter (get_status_bar ()));
         slice->init (qobject_cast<QTabWidget*> (parent ()), model);
 
         return slice;

@@ -30,6 +30,7 @@
 
 
 #include "maththread.h"
+#include "indicator.h"
 #include "math/abstractmodel.h"
 #include "View/grid.h"
 
@@ -50,7 +51,7 @@ class TabPresenter : public QWidget
     Q_OBJECT
 
 public:
-    TabPresenter ();
+    TabPresenter (QStatusBar*);
 
     virtual void init (QTabWidget*, AbstractModel*);
 
@@ -64,6 +65,8 @@ public slots:
     void set_grid ();
     void set_scale_toolbar (LogScale*);
 
+    void increment_state ();
+
     void set_scale_x (int);
     void set_scale_y (int);
 
@@ -72,6 +75,7 @@ protected:
     void set_x_format (AxisType);
     QTabWidget* get_tab () const;
     QwtPlot* get_plot () const;
+    QStatusBar* get_status_bar () const;
 
 protected:
     mutable MathThread m_thread;
@@ -85,4 +89,5 @@ private:
     QTabWidget* m_tab = nullptr;
     QwtPlot* m_plot = nullptr;
     std::unique_ptr<Grid> m_grid;
+    std::unique_ptr<Indicator> m_indicator;
 };

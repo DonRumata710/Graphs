@@ -52,8 +52,8 @@ class GraphPresenter : public TabPresenter
     Q_OBJECT
 
 public:
-    GraphPresenter ();
-    GraphPresenter (QTabWidget* parent, const std::string&);
+    GraphPresenter (QStatusBar*);
+    GraphPresenter (QTabWidget* parent, const std::string& filename, QStatusBar*);
 
     void add_multy_graph_tools (MultyGraphTools*);
 

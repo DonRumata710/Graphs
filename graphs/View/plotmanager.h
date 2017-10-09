@@ -50,7 +50,7 @@ class PlotManager : public QObject
 public:
     PlotManager ();
 
-    void set_tab (QTabWidget*);
+    void set_widgets (QTabWidget*, QStatusBar*);
 
     void load_data (const std::string& document);
     void save_data (const std::string& document);
@@ -80,4 +80,5 @@ private:
     PlotManager (const PlotManager&);
 
     QTabWidget* m_tab;
+    QStatusBar* m_status_bar;
 };

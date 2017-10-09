@@ -36,8 +36,11 @@
 #include <qlayout.h>
 
 
-TabPresenter::TabPresenter() : m_thread (this)
+TabPresenter::TabPresenter(QStatusBar* status_bar) : m_thread (this)
 {
+    if (status_bar)
+        m_indicator = std::make_unique<Indicator> (status_bar, get_model()->get_name ());
+
     QHBoxLayout* hl = new QHBoxLayout ();
     QVBoxLayout* vl = new QVBoxLayout ();
     vl->addLayout (hl);
@@ -91,6 +94,8 @@ void TabPresenter::loading_complete ()
     set_x_format (m_model->get_type ());
 
     prepare_tab ();
+
+    m_indicator.reset ();
 }
 
 void TabPresenter::set_grid ()
@@ -107,7 +112,6 @@ void TabPresenter::set_grid ()
     }
     m_plot->replot ();
 }
-
 
 void TabPresenter::set_scale_toolbar (LogScale* logScale)
 {
@@ -155,4 +159,9 @@ QTabWidget* TabPresenter::get_tab () const
 QwtPlot* TabPresenter::get_plot() const
 {
     return m_plot;
+}
+
+QStatusBar *TabPresenter::get_status_bar () const
+{
+    return m_indicator->get_status_bar ();
 }

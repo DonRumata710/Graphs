@@ -44,10 +44,12 @@
 #include "qwt_plot.h"
 
 
-GraphPresenter::GraphPresenter ()
+GraphPresenter::GraphPresenter (QStatusBar* status_bar) :
+    TabPresenter (status_bar)
 {}
 
-GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename)
+GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename, QStatusBar* status_bar) :
+    TabPresenter (status_bar)
 {
     if (parent)
     {
@@ -86,7 +88,7 @@ GraphModel* GraphPresenter::get_model () const
 
 void GraphPresenter::create_deviations_row() const
 {
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     m_thread.set_func ([this, presenter](){
@@ -101,7 +103,7 @@ void GraphPresenter::create_smoothing () const
     if (smoothing.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     int value = smoothing.get_value ();
@@ -119,7 +121,7 @@ void GraphPresenter::create_spectr() const
     if (spectr.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     double begin (spectr.get_begin ());
@@ -139,7 +141,7 @@ void GraphPresenter::create_correlations () const
     if (spectr.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     double begin (spectr.get_begin ());
@@ -154,7 +156,7 @@ void GraphPresenter::create_correlations () const
 
 GraphPresenter* GraphPresenter::create_power_spectr () const
 {
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     m_thread.set_func ([this, presenter](){
@@ -177,7 +179,7 @@ void GraphPresenter::create_wavelet () const
 
     WaveletInitParams params (waveletWin.get_wavelet_info ());
 
-    new SpectrogramPresenter (get_tab (), get_model (), params);
+    new SpectrogramPresenter (get_tab (), get_model (), params, get_status_bar ());
 }
 
 void GraphPresenter::prepare_tab()
