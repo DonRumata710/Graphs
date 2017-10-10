@@ -50,7 +50,7 @@ Application::Application(QWidget *parent) : QMainWindow (parent)
     m_grid.setupUi (this);
 
     setCentralWidget (m_grid.tabWidget);
-    m_manager.set_tab (m_grid.tabWidget);
+    m_manager.set_widgets (m_grid.tabWidget, m_grid.statusBar);
 
     m_grid.aLogScale->setCheckable (true);
     m_grid.aMultyGraph->setCheckable (true);

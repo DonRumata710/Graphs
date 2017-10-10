@@ -44,14 +44,24 @@
 #include "qwt_plot.h"
 
 
-GraphPresenter::GraphPresenter ()
+GraphPresenter::GraphPresenter (QStatusBar* status_bar) :
+    TabPresenter (status_bar)
 {}
 
-GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename)
+GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename, QStatusBar* status_bar) :
+    TabPresenter (status_bar)
 {
     if (parent)
     {
         TabPresenter::init (parent, new GraphModel);
+        std::string::size_type start (filename.find_last_of('/') + 1);
+        std::string::size_type end (filename.find_last_of('.'));
+
+        if (start > end)
+            start = 0;
+
+        std::string name (filename.substr (start, end));
+        set_name (name);
 
         m_thread.set_func ([=](){
             DocumentCreator creator;
@@ -60,7 +70,7 @@ GraphPresenter::GraphPresenter (QTabWidget* parent, const std::string& filename)
             if (!document)
                 return;
 
-            get_model ()->load_data (document.get ());
+            get_model ()->load_data (document->get_page (0));
 
             QStringList list;
             for (std::string str : get_model ()->get_headers ())
@@ -86,7 +96,8 @@ GraphModel* GraphPresenter::get_model () const
 
 void GraphPresenter::create_deviations_row() const
 {
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
+    presenter->set_name (get_name () + " - deviations row");
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     m_thread.set_func ([this, presenter](){
@@ -101,10 +112,11 @@ void GraphPresenter::create_smoothing () const
     if (smoothing.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    GraphPresenter* presenter (new GraphPresenter);
-    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
-
     int value = smoothing.get_value ();
+
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
+    presenter->set_name (get_name () + " - smoothed row by " + std::to_string(value) + " points");
+    connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     m_thread.set_func ([this, presenter, value](){
         presenter->init (get_tab (), get_model ()->get_smoothing (value));
@@ -119,7 +131,7 @@ void GraphPresenter::create_spectr() const
     if (spectr.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     double begin (spectr.get_begin ());
@@ -139,7 +151,8 @@ void GraphPresenter::create_correlations () const
     if (spectr.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
+    presenter->set_name (get_name () + " - correlations");
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     double begin (spectr.get_begin ());
@@ -154,7 +167,8 @@ void GraphPresenter::create_correlations () const
 
 GraphPresenter* GraphPresenter::create_power_spectr () const
 {
-    GraphPresenter* presenter (new GraphPresenter);
+    GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
+    presenter->set_name (get_name () + " - spectr");
     connect (&m_thread, SIGNAL(completed()), presenter, SLOT(loading_complete()));
 
     m_thread.set_func ([this, presenter](){
@@ -165,19 +179,13 @@ GraphPresenter* GraphPresenter::create_power_spectr () const
 
 void GraphPresenter::create_wavelet () const
 {
-    /*
-     * QStringList source;
-     * for (string str : get_model ()->get_headers ())
-     *  source << QString(str.c_str());
-     */
-
     WaveletWindow waveletWin;
     if (waveletWin.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
     WaveletInitParams params (waveletWin.get_wavelet_info ());
 
-    new SpectrogramPresenter (get_tab (), get_model (), params);
+    new SpectrogramPresenter (get_tab (), get_model (), params, get_status_bar (), get_name ());
 }
 
 void GraphPresenter::prepare_tab()
@@ -188,7 +196,7 @@ void GraphPresenter::prepare_tab()
         SLOT (attach_curve (const QString&))
     );
     attach_curve (get_headers ()->currentText ());
-    get_tab ()->addTab (this, QString(get_model()->get_name ().c_str()));
+    get_tab ()->addTab (this, QString(get_name ().c_str()));
 }
 
 void GraphPresenter::set_current_curve (const QString& cur)

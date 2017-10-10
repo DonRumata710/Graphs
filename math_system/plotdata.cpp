@@ -35,7 +35,6 @@
 
 struct PlotData::PrivateData
 {
-    std::string name = "Data";
     std::vector<Row> series;
 };
 
@@ -107,107 +106,9 @@ PlotData& PlotData::operator= (const PlotData& plotData)
     return *this;
 }
 
-/*
-void PlotData::set_data (QAxObject* StatSheet)
-{
-    QAxObject* cell (StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (1), QVariant (1)));
-    QString info (cell->property ("Value").toString ());
-    delete cell;
-
-    bool noHeader (!is_text (info));
-
-    cell = StatSheet->querySubObject ("Cells(Rows.Count,QVariant)", QVariant (1));
-    QAxObject* numRowsEx = cell->querySubObject ("End (xlDown)");
-    size_t dataSize = numRowsEx->property ("Row").toInt ();
-    delete numRowsEx;
-    delete cell;
-
-    cell = StatSheet->querySubObject ("Cells(QVariant,Columns.Count)", QVariant (1));
-    QAxObject* numColumnsEx = cell->querySubObject ("End (xlToRight)");
-    size_t numColumns = numColumnsEx->property ("Column").toInt ();
-    delete numColumnsEx;
-    delete cell;
-
-    if (!noHeader)
-    {
-        for (unsigned i = 1; i <= numColumns; ++i)
-        {
-            cell = StatSheet->querySubObject ("Cells(QVariant,QVariant)", QVariant (1), QVariant (i));
-            get_series ().push_back (Row (cell->property ("Value").toString ().toStdString(), dataSize - 1, 0.0));
-            delete cell;
-        }
-    }
-    else
-    {
-        for (unsigned i = 1; i <= numColumns; ++i)
-            get_series ().push_back (Row (QString::number (i).toStdString (), dataSize, 0.0));
-    }
-
-    QAxObject* Cell1 (StatSheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (noHeader ? 1 : 2), QVariant (1)));
-    QAxObject* Cell2 (StatSheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (dataSize), QVariant (numColumns)));
-    QAxObject* range (StatSheet->querySubObject ("Range(const QVariant&,const QVariant&)", Cell1->asVariant (), Cell2->asVariant ()));
-    range->setProperty ("NumberFormat", QVariant ("Double"));
-
-    QList<QVariant> list = range->property ("Value").toList ();
-    for (unsigned row = 0; row < dataSize - (noHeader ? 0 : 1); ++row)
-    {
-        QList<QVariant> rowList (list[row].toList ());
-        for (unsigned col = 0; col < numColumns; ++col)
-            get_series ()[col][row] = rowList[col].toDouble ();
-    }
-
-    delete Cell1;
-    delete Cell2;
-    delete range;
-
-    std::sort (get_series ().begin () + 1, get_series ().end ());
-    set_name ("Source row");
-}
-
-void PlotData::save_data (QAxObject* sheet) const
-{
-    if (m_data->series.empty ()) return;
-
-    QAxObject* Cell1 (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
-    QAxObject* Cell2 (sheet->querySubObject ("Cells(QVariant&,QVariant&)",
-        QVariant (m_data->series[0].size () + 1),
-        QVariant (m_data->series.size ())
-    ));
-    QAxObject* range (sheet->querySubObject ("Range(const QVariant&,const QVariant&)",
-        Cell1->asVariant (),
-        Cell2->asVariant ()
-    ));
-
-    QList<QVariant> cellsList;
-    QList<QVariant> rowsList;
-
-    for (Row c : m_data->series) cellsList << QString (c.get_name ().c_str());
-    rowsList << QVariant (cellsList);
-
-    for (size_t i = 0; i < m_data->series[0].size (); i++)
-    {
-        cellsList.clear ();
-        for (size_t j = 0; j < m_data->series.size (); j++) cellsList << m_data->series[j][i];
-        rowsList << QVariant (cellsList);
-    }
-
-    range->setProperty ("Value", QVariant (rowsList));
-}
-*/
-
 size_t PlotData::get_size () const { return m_data->series.size () - 1; }
 
 bool PlotData::empty () const { return m_data->series.empty (); }
-
-const std::string& PlotData::get_name () const
-{
-    return m_data->name;
-}
-
-void PlotData::set_name (const std::string& name)
-{
-    m_data->name = name;
-}
 
 StringList PlotData::get_headers () const
 {
@@ -297,10 +198,6 @@ PlotData PlotData::get_smoothing (int points) const
             row[i] /= points;
         }
     }
-
-    char buf[10] = { '\0' };
-    d->name = m_data->name + " smoothed by " + itoa (points, buf, 10);
-
     return d;
 }
 
@@ -325,8 +222,6 @@ PlotData PlotData::get_deviations () const
         for (unsigned i = 0; i < m_data->series[col].size (); ++i)
             d->series[col][i] = m_data->series[col][i] - medium;
     }
-    d->name = "Deviations row";
-
     return d;
 }
 
@@ -390,12 +285,12 @@ std::vector<Row>::iterator PlotData::find_column (const std::string& col) const
         return quick_search (m_data->series.begin () + 1, m_data->series.end (), col);
 }
 
-PlotData::iterRow PlotData::quick_search(const iterRow& begin, const iterRow& end, const std::string& col) const
+PlotData::IterRow PlotData::quick_search(const IterRow& begin, const IterRow& end, const std::string& col) const
 {
     if (begin == end)
         return begin;
 
-    const iterRow mid (begin + std::distance(begin, end) / 2);
+    const IterRow mid (begin + std::distance(begin, end) / 2);
 
     if (mid->get_name () > col)
         return quick_search (begin, mid, col);
@@ -488,7 +383,6 @@ PlotData PlotData::get_relative_sp (double from_lin, double to_lin, unsigned num
             row[i] = (a * c + b * d) / (count * count);
         }
     }
-    sp->name = "Spectr";
     std::sort (sp->series.begin () + 1, sp->series.end ());
     return sp;
 }
@@ -563,7 +457,6 @@ PlotData PlotData::get_correlations (double from_lin, double to_lin, unsigned nu
             }
         }
     }
-    corr->name = "Correlation";
     std::sort (corr->series.begin () + 1, corr->series.end ());
     return corr;
 }

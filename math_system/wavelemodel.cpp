@@ -36,8 +36,6 @@ using std::unique_ptr;
 
 void WaveletModel::calc_wavelet(const GraphModel* const graph, const WaveletInitParams& wavelet_init_params)
 {
-    m_name = "Wavelet " + graph->get_name ();
-
     const Row& axis (graph->get_axis ());
     StringList slist (graph->get_headers ());
     set_type (graph->get_type ());
@@ -52,7 +50,7 @@ void WaveletModel::calc_wavelet(const GraphModel* const graph, const WaveletInit
     }
 }
 
-void WaveletModel::save_data (pDocumentWriter document) const
+void WaveletModel::save_data (pPage page) const
 {
     /*
     for (auto& data : m_data)
@@ -82,9 +80,4 @@ StringList WaveletModel::get_headers () const
     for (const std::pair<std::string, WaveletData*>& pair : m_data)
         headers.push_back(pair.first);
     return headers;
-}
-
-std::string WaveletModel::get_name () const
-{
-    return m_name;
 }

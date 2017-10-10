@@ -30,6 +30,7 @@
 
 
 #include "maththread.h"
+#include "indicator.h"
 #include "math/abstractmodel.h"
 #include "View/grid.h"
 
@@ -50,13 +51,16 @@ class TabPresenter : public QWidget
     Q_OBJECT
 
 public:
-    TabPresenter ();
+    TabPresenter (QStatusBar*);
 
     virtual void init (QTabWidget*, AbstractModel*);
 
     void save_picture (QString);
 
     AbstractModel* get_model () const;
+
+    void set_name (const std::string& name);
+    const std::string& get_name () const;
 
 public slots:
     void loading_complete ();
@@ -72,6 +76,7 @@ protected:
     void set_x_format (AxisType);
     QTabWidget* get_tab () const;
     QwtPlot* get_plot () const;
+    QStatusBar* get_status_bar () const;
 
 protected:
     mutable MathThread m_thread;
@@ -84,5 +89,8 @@ private:
     AbstractModel* m_model = nullptr;
     QTabWidget* m_tab = nullptr;
     QwtPlot* m_plot = nullptr;
+    QStatusBar* m_status_bar = nullptr;
     std::unique_ptr<Grid> m_grid;
+    std::unique_ptr<Indicator> m_indicator;
+    std::string m_name;
 };

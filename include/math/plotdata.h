@@ -59,9 +59,6 @@ public:
     bool empty () const;
     StringList get_headers () const;
 
-    const std::string& get_name () const;
-    void set_name (const std::string& name);
-
     PlotData get_approx () const;
     PlotData get_smoothing (int) const;
 
@@ -82,14 +79,15 @@ private:
     struct PrivateData;
     typedef std::shared_ptr<PrivateData> pPrivateData;
 
-    typedef std::vector<Row>::iterator iterRow;
+    typedef std::vector<Row>::iterator IterRow;
 
     PlotData (pPrivateData data);
 
     std::vector<double> get_smoothed (const std::vector<double>&) const;
-    iterRow find_column (const std::string&) const;
+    IterRow find_column (const std::string&) const;
 
-    iterRow quick_search (const iterRow& begin, const iterRow& end, const std::string& col) const;
+    IterRow quick_search (const IterRow& begin, const IterRow& end, const std::string& col) const;
 
+private:
     pPrivateData m_data;
 };

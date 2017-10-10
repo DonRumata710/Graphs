@@ -28,31 +28,31 @@
 
 #pragma once
 
-
-#include "abstractmodel.h"
-#include "waveletproducer.h"
-#include "waveletinitparams.h"
-
-#include <map>
+#ifndef INDICATOR_H
+#define INDICATOR_H
 
 
-class GraphModel;
-class WaveletFunction;
+#include <qstatusbar.h>
+#include <qlabel.h>
+#include <qprogressbar.h>
 
 
-class WaveletModel : public AbstractModel
+class Indicator : public QObject
 {
+    Q_OBJECT
+
 public:
-    void calc_wavelet (const GraphModel* const, const WaveletInitParams&);
+    Indicator (QStatusBar*);
+    ~Indicator ();
 
-    virtual void save_data (pPage) const override;
+    void set_name (const std::string&);
 
-    const WaveletProducer& get_data (const std::string&);
-
-    virtual StringList get_headers () const override;
+    QStatusBar* get_status_bar () const;
 
 private:
-    void add_data (const std::string, WaveletData*);
-
-    std::map<std::string, WaveletData*> m_data;
+    QLabel* m_label;
+    QStatusBar* m_status_bar;
 };
+
+
+#endif

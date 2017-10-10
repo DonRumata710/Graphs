@@ -26,33 +26,29 @@
 //
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
+
+#include "indicator.h"
 
 
-#include "abstractmodel.h"
-#include "waveletproducer.h"
-#include "waveletinitparams.h"
-
-#include <map>
-
-
-class GraphModel;
-class WaveletFunction;
-
-
-class WaveletModel : public AbstractModel
+Indicator::Indicator(QStatusBar* status_bar) :
+    m_status_bar (status_bar),
+    m_label (new QLabel ())
 {
-public:
-    void calc_wavelet (const GraphModel* const, const WaveletInitParams&);
+    if (status_bar)
+        status_bar->addWidget (m_label);
+}
 
-    virtual void save_data (pPage) const override;
+Indicator::~Indicator()
+{
+    m_status_bar->removeWidget (m_label);
+}
 
-    const WaveletProducer& get_data (const std::string&);
+void Indicator::set_name(const std::string& label)
+{
+    m_label->setText ((label + " in progress...").c_str ());
+}
 
-    virtual StringList get_headers () const override;
-
-private:
-    void add_data (const std::string, WaveletData*);
-
-    std::map<std::string, WaveletData*> m_data;
-};
+QStatusBar *Indicator::get_status_bar() const
+{
+    return m_status_bar;
+}

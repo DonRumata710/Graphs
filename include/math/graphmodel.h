@@ -56,8 +56,8 @@ public:
     GraphModel* get_relative_sp (double begin, double end, unsigned step) const;
     GraphModel* get_power () const;
 
-    void load_data (pDocumentReader document);
-    virtual void save_data (pDocumentWriter document) const override;
+    void load_data (pPage);
+    virtual void save_data (pPage) const override;
 
     void remove_spaces ();
     
@@ -79,7 +79,6 @@ public:
     const Row* get_approx (std::string name) const;
 
     virtual StringList get_headers () const override;
-    virtual std::string get_name () const override;
 
 
 private:

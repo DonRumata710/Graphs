@@ -72,14 +72,15 @@ private:
 PlotManager::PlotManager()
 {}
 
-void PlotManager::set_tab (QTabWidget* _tab)
+void PlotManager::set_widgets (QTabWidget* tab, QStatusBar* status_bar)
 {
-    m_tab = _tab;
+    m_tab = tab;
+    m_status_bar = status_bar;
 }
 
 void PlotManager::load_data (const std::string& filename)
 {
-    new GraphPresenter (m_tab, filename);
+    new GraphPresenter (m_tab, filename, m_status_bar);
 }
 
 void PlotManager::save_data (const std::string& filename)
@@ -93,7 +94,7 @@ void PlotManager::save_data (const std::string& filename)
         {
             TabPresenter* source = qobject_cast<TabPresenter*> (m_tab->widget (i));
             if (source)
-                source->get_model()->save_data(document.get ());
+                source->get_model()->save_data(document->get_page (source->get_name ()));
         }
     }
 }
