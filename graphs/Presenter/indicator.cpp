@@ -30,11 +30,10 @@
 #include "indicator.h"
 
 
-Indicator::Indicator(QStatusBar* status_bar, const std::string& label) :
+Indicator::Indicator(QStatusBar* status_bar) :
     m_status_bar (status_bar),
     m_label (new QLabel ())
 {
-    m_label->setText (label.c_str ());
     if (status_bar)
         status_bar->addWidget (m_label);
 }
@@ -42,6 +41,11 @@ Indicator::Indicator(QStatusBar* status_bar, const std::string& label) :
 Indicator::~Indicator()
 {
     m_status_bar->removeWidget (m_label);
+}
+
+void Indicator::set_name(const std::string& label)
+{
+    m_label->setText ((label + " in progress...").c_str ());
 }
 
 QStatusBar *Indicator::get_status_bar() const

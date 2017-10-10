@@ -70,12 +70,13 @@ public:
 };
 
 
-SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params, QStatusBar* status_bar) :
+SpectrogramPresenter::SpectrogramPresenter (QTabWidget* parent, GraphModel* graph, const WaveletInitParams& wavelet_init_params, QStatusBar* status_bar, const std::string& name) :
     TabPresenter (status_bar),
-    m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(wavelet_init_params.type.c_str ()) + "\" " + QString(graph->get_name ().c_str())))
+    m_spectrogram (new QwtPlotSpectrogram (tr ("Wavlet") + " \"" + QString(wavelet_init_params.type.c_str ()) + "\" " + QString(name.c_str())))
 {
     if (parent)
     {
+        set_name (name + " - wavelet");
         TabPresenter::init (parent, new WaveletModel);
 
         m_thread.set_func([=, wavelet_init_params](){
@@ -98,12 +99,14 @@ GraphPresenter* SpectrogramPresenter::get_local_wavlet ()
         WaveletModel* origin_model (dynamic_cast<WaveletModel*> (get_model ()));
         model->add_row (origin_model->get_data (get_headers ()->currentText ().toStdString()).get_axisX ());
 
-        vector<Row> wavletLines (origin_model->get_data (get_headers ()->currentText ().toStdString()).get_data (dialog.get_period ()));
+        std::pair<size_t, size_t> period (dialog.get_period ());
+        vector<Row> wavletLines (origin_model->get_data (get_headers ()->currentText ().toStdString()).get_data (period));
 
         for (Row& line : wavletLines)
             model->add_row (line);
 
         GraphPresenter* slice (new GraphPresenter (get_status_bar ()));
+        slice->set_name (get_name () + " slice: " + std::to_string (period.first) + " / " + std::to_string (period.second));
         slice->init (qobject_cast<QTabWidget*> (parent ()), model);
 
         return slice;

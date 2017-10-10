@@ -50,10 +50,8 @@ public:
 
     AxisType get_type () const { return m_type; }
 
-    virtual void save_data (pDocumentWriter document) const = 0;
-
+    virtual void save_data (pPage) const = 0;
     virtual StringList get_headers () const = 0;
-    virtual std::string get_name () const = 0;
 
 protected:
     void set_type (AxisType type) { m_type = type; }

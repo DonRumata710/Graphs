@@ -42,8 +42,10 @@ class Indicator : public QObject
     Q_OBJECT
 
 public:
-    Indicator (QStatusBar*, const std::string&);
+    Indicator (QStatusBar*);
     ~Indicator ();
+
+    void set_name (const std::string&);
 
     QStatusBar* get_status_bar () const;
 

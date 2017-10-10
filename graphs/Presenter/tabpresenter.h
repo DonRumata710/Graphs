@@ -59,13 +59,14 @@ public:
 
     AbstractModel* get_model () const;
 
+    void set_name (const std::string& name);
+    const std::string& get_name () const;
+
 public slots:
     void loading_complete ();
 
     void set_grid ();
     void set_scale_toolbar (LogScale*);
-
-    void increment_state ();
 
     void set_scale_x (int);
     void set_scale_y (int);
@@ -88,6 +89,8 @@ private:
     AbstractModel* m_model = nullptr;
     QTabWidget* m_tab = nullptr;
     QwtPlot* m_plot = nullptr;
+    QStatusBar* m_status_bar = nullptr;
     std::unique_ptr<Grid> m_grid;
     std::unique_ptr<Indicator> m_indicator;
+    std::string m_name;
 };

@@ -55,16 +55,14 @@ GraphModel* GraphModel::get_power () const
     return new GraphModel (m_source.get_power ());
 }
 
-void GraphModel::load_data(pDocumentReader document)
+void GraphModel::load_data(pPage page)
 {
-    pPage page (document->get_page (0));
     set_type(page->get_x_axis_type ());
     m_source.load_data (page);
 }
 
-void GraphModel::save_data(pDocumentWriter document) const
+void GraphModel::save_data(pPage page) const
 {
-    pPage page (document->get_page (m_source.get_name ()));
     page->set_x_axis_type(get_type ());
     m_source.save_data (page);
 }
@@ -85,9 +83,4 @@ const Row *GraphModel::get_approx(std::string name) const
 StringList GraphModel::get_headers() const
 {
     return m_source.get_headers ();
-}
-
-std::string GraphModel::get_name () const
-{
-    return m_source.get_name ();
 }

@@ -36,10 +36,12 @@
 #include <qlayout.h>
 
 
-TabPresenter::TabPresenter(QStatusBar* status_bar) : m_thread (this)
+TabPresenter::TabPresenter(QStatusBar* status_bar) :
+    m_thread (this),
+    m_status_bar (status_bar)
 {
     if (status_bar)
-        m_indicator = std::make_unique<Indicator> (status_bar, get_model()->get_name ());
+        m_indicator = std::make_unique<Indicator> (status_bar);
 
     QHBoxLayout* hl = new QHBoxLayout ();
     QVBoxLayout* vl = new QVBoxLayout ();
@@ -82,6 +84,18 @@ void TabPresenter::save_picture (QString filename)
 AbstractModel* TabPresenter::get_model() const
 {
     return m_model;
+}
+
+void TabPresenter::set_name(const std::string& name)
+{
+    m_name = name;
+    if (m_indicator)
+        m_indicator->set_name (m_name);
+}
+
+const std::string& TabPresenter::get_name() const
+{
+    return m_name;
 }
 
 void TabPresenter::loading_complete ()
@@ -163,5 +177,5 @@ QwtPlot* TabPresenter::get_plot() const
 
 QStatusBar *TabPresenter::get_status_bar () const
 {
-    return m_indicator->get_status_bar ();
+    return m_status_bar;
 }

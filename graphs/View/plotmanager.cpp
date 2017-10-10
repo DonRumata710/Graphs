@@ -94,7 +94,7 @@ void PlotManager::save_data (const std::string& filename)
         {
             TabPresenter* source = qobject_cast<TabPresenter*> (m_tab->widget (i));
             if (source)
-                source->get_model()->save_data(document.get ());
+                source->get_model()->save_data(document->get_page (source->get_name ()));
         }
     }
 }

@@ -47,7 +47,7 @@ class SpectrogramPresenter : public TabPresenter
     Q_OBJECT
 
 public:
-    SpectrogramPresenter (QTabWidget* parent, GraphModel*, const WaveletInitParams&, QStatusBar*);
+    SpectrogramPresenter (QTabWidget* parent, GraphModel*, const WaveletInitParams&, QStatusBar*, const std::string& name);
 
     GraphPresenter* get_local_wavlet ();
 
