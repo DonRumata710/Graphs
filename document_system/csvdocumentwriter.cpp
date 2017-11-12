@@ -38,7 +38,7 @@ pDocumentWriter CsvDocumentWriter::create(const std::string& filename)
 
 pPage CsvDocumentWriter::get_page(const std::string& name) const
 {
-    return pPage (new CsvPage (m_filename));
+    return pPage (new CsvPage (name + ".csv"));
 }
 
 CsvDocumentWriter::CsvDocumentWriter(const std::string& filename) :
