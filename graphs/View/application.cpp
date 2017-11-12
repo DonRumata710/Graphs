@@ -82,7 +82,7 @@ void Application::open ()
 
 void Application::save ()
 {
-    save_doc ("result.xls");
+    save_doc (m_filename);
 }
 
 void Application::save_as ()
