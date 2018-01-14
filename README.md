@@ -13,7 +13,7 @@ Application for wavelet and spectral analysis<br>
 For compiling this project it is needed to have installed [QT](https://www.qt.io/). Currently version 5.6 is used.<br>
 
 ## Program description
-Application work with xlsx, xls and csv files on Wondows. Only csv files are supported on Linux<br>
+Application work with xlsx, xls and csv files on Windows. Only csv files are supported on Linux<br>
 In excel files data should be located on the first page.<br>
 First column is X axis. All others are Y. Columns can have headers. If they haven't headers they will be numerated automatically.<br>
 In excel files saved data will be located on the relevant pages. If saving to csv files were chosen each page will be saved to its own file.
