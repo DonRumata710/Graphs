@@ -34,9 +34,9 @@
 WaveletProducer::WaveletProducer()
 {}
 
-WaveletProducer::WaveletProducer(const std::vector<double> &data, const size_t nColumns, size_t startRow, size_t endRow, WaveletStep step, const Intervals *intervals) :
-    m_num_columns (nColumns),
-    m_numRows (endRow - --startRow),
+WaveletProducer::WaveletProducer(const std::vector<double>& data, const size_t columns_num, size_t start_row, size_t end_row, WaveletStep step, const Intervals* intervals) :
+    m_num_columns (columns_num),
+    m_numRows (end_row - --start_row),
     m_size (data.size ()),
     m_step (step),
     m_intervals (intervals)
@@ -77,7 +77,7 @@ double WaveletProducer::value(size_t row, size_t col) const
     return m_data[row][col / 2];
 }
 
-size_t WaveletProducer::row_size(size_t i) const
+size_t WaveletProducer::get_row_size(size_t i) const
 {
     return (i < m_data.size () - 1) ?
                 m_data[i + 1] - m_data[i] : m_num_columns + (size_t) m_step * i;

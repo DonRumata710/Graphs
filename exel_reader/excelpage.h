@@ -46,6 +46,7 @@ public:
 
     virtual bool set_x_axis_type (AxisType type) override;
     virtual bool push_data_back (const std::string& name, const std::vector<double>& data) override;
+    virtual bool push_data_back (const std::string& name, const double* data, size_t size) override;
 
     virtual AxisType get_x_axis_type () override;
 

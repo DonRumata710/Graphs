@@ -57,7 +57,7 @@ public:
     GraphModel* get_power () const;
 
     void load_data (pPage);
-    virtual void save_data (pPage) const override;
+    virtual void save_data (pDocumentWriter, const std::string&) const override;
 
     void remove_spaces ();
     

@@ -46,6 +46,7 @@ public:
 
     virtual bool set_x_axis_type (AxisType type) = 0;
     virtual bool push_data_back (const std::string& name, const std::vector<double>& data) = 0;
+    virtual bool push_data_back (const std::string& name, const double* data, size_t size) = 0;
 
     virtual AxisType get_x_axis_type () = 0;
 

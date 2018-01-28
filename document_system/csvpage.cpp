@@ -34,6 +34,11 @@
 CsvPage::CsvPage(const std::string& filename) : m_filename (filename)
 {}
 
+CsvPage::~CsvPage()
+{
+    save_file ();
+}
+
 bool CsvPage::set_x_axis_type(AxisType type)
 {
     return true;
@@ -41,10 +46,26 @@ bool CsvPage::set_x_axis_type(AxisType type)
 
 bool CsvPage::push_data_back(const std::string& name, const std::vector<double>& data)
 {
+    if (m_cache.empty ())
+        m_cache.assign(data.size () + 1, std::vector<std::string> ());
+
     m_cache[0].push_back (name);
 
     for (size_t i = 0; i != data.size (); ++i)
-        m_cache[i].push_back (std::to_string (data[i]));
+        m_cache[i + 1].push_back (std::to_string (data[i]));
+
+    return true;
+}
+
+bool CsvPage::push_data_back(const std::string &name, const double *data, size_t size)
+{
+    if (m_cache.empty ())
+        m_cache.assign(size + 1, std::vector<std::string> ());
+
+    m_cache[0].push_back (name);
+
+    for (size_t i = 0; i != size; ++i)
+        m_cache[i + 1].push_back (std::to_string (data[i]));
 
     return true;
 }
@@ -266,4 +287,18 @@ double CsvPage::string_to_double(const std::string& str)
         number.replace (pos, 1, ".");
     }
     return std::stod (number);
+}
+
+void CsvPage::save_file()
+{
+    std::ofstream file (m_filename);
+    if (file.is_open ())
+    {
+        for (const std::vector<std::string>& line : m_cache)
+        {
+            for (const std::string& value : line)
+                file << value << ";";
+            file << "\n";
+        }
+    }
 }
