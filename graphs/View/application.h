@@ -28,6 +28,9 @@
 
 #pragma once
 
+#include "logscale.h"
+#include "multygraph.h"
+
 #include <QtCore>
 #include <QtGui>
 #include <QtWidgets>
@@ -89,6 +92,6 @@ private:
 
     PlotManager m_manager;
 
-    LogScale* logScale = nullptr;
-    MultyGraphTools* m_multygraphtools = nullptr;
+    std::unique_ptr<LogScale> logScale;
+    std::unique_ptr<MultyGraphTools> m_multygraphtools;
 };

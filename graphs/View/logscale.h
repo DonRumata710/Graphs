@@ -31,6 +31,8 @@
 #include <QtCore>
 #include <QtWidgets>
 
+#include <memory>
+
 
 class LogScale : public QToolBar
 {
@@ -40,6 +42,6 @@ public:
     void connect_widget (QWidget*);
 
 private:
-    QCheckBox* scaleX;
-    QCheckBox* scaleY;
+    std::unique_ptr<QCheckBox> scaleX;
+    std::unique_ptr<QCheckBox> scaleY;
 };

@@ -29,19 +29,18 @@
 #include "multygraph.h"
 
 
-MultyGraphTools::MultyGraphTools (QWidget* parent) : QToolBar (parent)
+MultyGraphTools::MultyGraphTools (QWidget* parent) :
+    QToolBar (parent),
+    m_curves (new QComboBox (this)),
+    m_bAdd (new QPushButton (this)),
+    m_bRem (new QPushButton (this))
 {
-    m_curves = new QComboBox (this);
-
-    m_bAdd = new QPushButton ();
     m_bAdd->setText (tr ("Add curve"));
-
-    m_bRem = new QPushButton ();
     m_bRem->setText (tr ("Remove curve"));
 
-    addWidget (m_curves);
-    addWidget (m_bAdd);
-    addWidget (m_bRem);
+    addWidget (m_curves.get ());
+    addWidget (m_bAdd.get ());
+    addWidget (m_bRem.get ());
 }
 
 void MultyGraphTools::set_headers (QStringList h)
@@ -51,7 +50,7 @@ void MultyGraphTools::set_headers (QStringList h)
 
 void MultyGraphTools::connect_widget (QWidget* w)
 {
-    connect (m_curves, SIGNAL (currentTextChanged (const QString&)), w, SLOT (set_current_curve (const QString&)));
-    connect (m_bAdd, SIGNAL (clicked ()), w, SLOT (attach_curve ()));
-    connect (m_bRem, SIGNAL (clicked ()), w, SLOT (detach_curve ()));
+    connect (m_curves.get (), SIGNAL (currentTextChanged (const QString&)), w, SLOT (set_current_curve (const QString&)));
+    connect (m_bAdd.get (), SIGNAL (clicked ()), w, SLOT (attach_curve ()));
+    connect (m_bRem.get (), SIGNAL (clicked ()), w, SLOT (detach_curve ()));
 }
