@@ -165,7 +165,7 @@ void GraphPresenter::create_correlations () const
     m_thread.start ();
 }
 
-GraphPresenter* GraphPresenter::create_power_spectr () const
+void GraphPresenter::create_power_spectr () const
 {
     GraphPresenter* presenter (new GraphPresenter (get_status_bar ()));
     presenter->set_name (get_name () + " - spectr");
@@ -183,9 +183,7 @@ void GraphPresenter::create_wavelet () const
     if (waveletWin.exec () != QDialog::Accepted)
         throw ChoiseException ();
 
-    WaveletInitParams params (waveletWin.get_wavelet_info ());
-
-    new SpectrogramPresenter (get_tab (), get_model (), params, get_status_bar (), get_name ());
+    new SpectrogramPresenter (get_tab (), get_model (), waveletWin.get_wavelet_info (), get_status_bar (), get_name ());
 }
 
 void GraphPresenter::prepare_tab()

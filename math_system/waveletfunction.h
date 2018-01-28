@@ -79,14 +79,15 @@ private:
 class MorletWavelet final : public WaveletFunction
 {
 public:
-    MorletWavelet (size_t num_periods);
+    MorletWavelet (const size_t min_points, const size_t max_points, const size_t num_periods);
     virtual Intervals compute (const std::vector<double>& x, const std::vector<double>& y, std::vector<double>& wavelet, size_t& num_columns, size_t& min_points, size_t& max_points) const override;
     virtual WaveletStep get_step () const override { return WaveletStep::ONE; }
     virtual std::string get_name () const override { return "MORLET"; }
 
 private:
-    void m_calc_morlet_factors (const int num_points, std::vector<std::complex<double>>& data) const;
+    std::vector<std::complex<double>> m_calc_morlet_factors (const int num_points) const;
 
     const size_t m_num_periods;
+    const size_t m_max_points;
     const size_t m_min_points;
 };

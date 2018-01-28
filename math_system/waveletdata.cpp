@@ -54,7 +54,9 @@ WaveletData::WaveletData (const std::vector<double>& x, const std::vector<double
     }
     else if (wavelet_init_params.type == "MORLET")
     {
-        function = std::make_unique<MorletWavelet>(wavelet_init_params.min_points_num);
+        function = std::make_unique<MorletWavelet>(wavelet_init_params.min_points_num,
+                                                   wavelet_init_params.max_points_num,
+                                                   wavelet_init_params.morlet_length);
     }
 
     size_t num_columns (0);
