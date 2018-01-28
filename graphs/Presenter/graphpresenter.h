@@ -64,7 +64,7 @@ public:
     void create_spectr () const;
     void create_correlations() const;
 
-    GraphPresenter* create_power_spectr () const;
+    void create_power_spectr () const;
 
     void create_wavelet() const;
 

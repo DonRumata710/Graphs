@@ -55,7 +55,7 @@ Intervals HaarWavelet::compute (const std::vector<double>& x, const std::vector<
 
     const size_t num_threads (prepare_threads ());
 
-    wavelet.assign ((num_columns - (max_points - 1)) * num_rows, 0.0);
+    wavelet.assign ((num_columns + 1 - num_rows) * num_rows, 0.0);
 
     std::unique_ptr<double> minZ (new double[omp_get_max_threads ()]);
     std::unique_ptr<double> maxZ (new double[omp_get_max_threads ()]);
@@ -69,12 +69,12 @@ Intervals HaarWavelet::compute (const std::vector<double>& x, const std::vector<
 
   #pragma omp parallel for schedule(dynamic, 16)
     for (int i = 0; i < num_rows; ++i)
-    {    // Ïåðåáîð âñåõ ðÿäîâ
-        const size_t branch (i + m_min_points);          // Ðàñ÷åò äëèíû êàæäîé ÷àñòè ôóíêöèè
-        const size_t rowSize (num_columns - i * 2);      // Ðàñ÷åò êîëè÷åñòâà çíà÷åíèé â ðÿäó
-        const size_t rowOffset ((num_columns - (i - 1)) * i);  // Ñäâèã àäðåñàöèè ðÿäà â âåêòîðå
+    {    // ÐŸÐµÑ€ÐµÐ±Ð¾Ñ€ Ð²ÑÐµÑ… Ñ€ÑÐ´Ð¾Ð²
+        const size_t branch (i + m_min_points);          // Ð Ð°ÑÑ‡ÐµÑ‚ Ð´Ð»Ð¸Ð½Ñ‹ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ñ‡Ð°ÑÑ‚Ð¸ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
+        const size_t rowSize (num_columns - i * 2);      // Ð Ð°ÑÑ‡ÐµÑ‚ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð° Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ð¹ Ð² Ñ€ÑÐ´Ñƒ
+        const size_t rowOffset ((num_columns - (i - 1)) * i);  // Ð¡Ð´Ð²Ð¸Ð³ Ð°Ð´Ñ€ÐµÑÐ°Ñ†Ð¸Ð¸ Ñ€ÑÐ´Ð° Ð² Ð²ÐµÐºÑ‚Ð¾Ñ€Ðµ
         for (int j = 0; j < rowSize; ++j)
-        {    // Ïåðåáîð âñåõ òî÷åê
+        {    // ÐŸÐµÑ€ÐµÐ±Ð¾Ñ€ Ð²ÑÐµÑ… Ñ‚Ð¾Ñ‡ÐµÐº
             const size_t offset (rowOffset + j);
             size_t marker (branch);
             for (size_t k = 0; k < marker; ++k)
@@ -86,7 +86,7 @@ Intervals HaarWavelet::compute (const std::vector<double>& x, const std::vector<
 
             if (minZ.get ()[omp_get_thread_num ()] > wavelet[offset])
                 minZ.get ()[omp_get_thread_num ()] = wavelet[offset];
-            else
+
             if (maxZ.get ()[omp_get_thread_num ()] < wavelet[offset])
                 maxZ.get ()[omp_get_thread_num ()] = wavelet[offset];
         }
@@ -118,7 +118,7 @@ Intervals FhatWavelet::compute (const std::vector<double>& x, const std::vector<
     size_t num_threads (prepare_threads ());
     num_columns = x.size () - 2 - (m_min_points - 1) * 3;
 
-    wavelet.assign ((((num_columns * 2) - (max_points - 1) * 3) * num_rows) / 2, 0.0);
+    wavelet.assign ((((num_columns * 2) - (num_rows - 1) * 3) * num_rows) / 2, 0.0);
 
     std::unique_ptr<double> minZ (new double[omp_get_max_threads ()]);
     std::unique_ptr<double> maxZ (new double[omp_get_max_threads ()]);
@@ -132,12 +132,12 @@ Intervals FhatWavelet::compute (const std::vector<double>& x, const std::vector<
 
   #pragma omp parallel for schedule(dynamic, 16)
     for (int i = 0; i < num_rows; ++i)
-    {    // Ïåðåáîð âñåõ ðÿäîâ
-        const size_t branch (i + m_min_points);          // Ðàñ÷åò äëèíû êàæäîé ÷àñòè ôóíêöèè
-        const size_t rowSize (num_columns - i * 3);      // Ðàñ÷åò êîëè÷åñòâà çíà÷åíèé â ðÿäó
-        const size_t rowOffset ((((num_columns * 2) - (i - 1) * 3) * i) / 2);         // Ñäâèã àäðåñàöèè ðÿäà â âåêòîðå
+    {    // ÐŸÐµÑ€ÐµÐ±Ð¾Ñ€ Ð²ÑÐµÑ… Ñ€ÑÐ´Ð¾Ð²
+        const size_t branch (i + m_min_points);          // Ð Ð°ÑÑ‡ÐµÑ‚ Ð´Ð»Ð¸Ð½Ñ‹ ÐºÐ°Ð¶Ð´Ð¾Ð¹ Ñ‡Ð°ÑÑ‚Ð¸ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
+        const size_t rowSize (num_columns - i * 3);      // Ð Ð°ÑÑ‡ÐµÑ‚ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð° Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ð¹ Ð² Ñ€ÑÐ´Ñƒ
+        const size_t rowOffset ((((num_columns * 2) - (i - 1) * 3) * i) / 2);         // Ð¡Ð´Ð²Ð¸Ð³ Ð°Ð´Ñ€ÐµÑÐ°Ñ†Ð¸Ð¸ Ñ€ÑÐ´Ð° Ð² Ð²ÐµÐºÑ‚Ð¾Ñ€Ðµ
         for (size_t j = 0; j < rowSize; ++j)
-        {    // Ïåðåáîð âñåõ òî÷åê
+        {    // ÐŸÐµÑ€ÐµÐ±Ð¾Ñ€ Ð²ÑÐµÑ… Ñ‚Ð¾Ñ‡ÐµÐº
             const size_t offset (rowOffset + j);
             size_t marker (branch);
             for (size_t k = 0; k < marker; ++k)
@@ -152,7 +152,7 @@ Intervals FhatWavelet::compute (const std::vector<double>& x, const std::vector<
 
             if (minZ.get ()[omp_get_thread_num ()] > wavelet[offset])
                 minZ.get ()[omp_get_thread_num ()] = wavelet[offset];
-            else
+
             if (maxZ.get ()[omp_get_thread_num ()] < wavelet[offset])
                 maxZ.get ()[omp_get_thread_num ()] = wavelet[offset];
         }
@@ -171,52 +171,51 @@ Intervals FhatWavelet::compute (const std::vector<double>& x, const std::vector<
 
 
 
-MorletWavelet::MorletWavelet (size_t num_periods) :
+MorletWavelet::MorletWavelet (const size_t min_points, const size_t max_points, const size_t num_periods) :
     m_num_periods (num_periods),
-    m_min_points (num_periods * 2)
+    m_max_points (max_points > min_points ? max_points : min_points),
+    m_min_points (max_points < min_points ? max_points : min_points)
 {}
 
 
 Intervals MorletWavelet::compute (const std::vector<double>& x, const std::vector<double>& y, std::vector<double>& wavelet, size_t& num_columns, size_t& min_points, size_t& max_points) const
 {
-    const size_t m_num_threads (prepare_threads ());
+    const size_t num_threads (prepare_threads ());
 
-    min_points = m_min_points;
-    max_points = y.size ();
-    num_columns = y.size () + 1 - m_min_points;
-    const size_t num_rows (num_columns);
+    min_points = (m_min_points < m_num_periods * 2) ? m_min_points : m_num_periods * 2;
+    max_points = y.size () < m_max_points ? y.size () : m_max_points;
+    num_columns = y.size () + 1 - min_points;     // ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ñ‡Ð¸ÑÐµÐ» Ð² Ð½Ð¸Ð¶Ð½ÐµÐ¼ Ñ€ÑÐ´Ñƒ
+    const size_t num_rows (max_points + 1 - min_points);
 
-    wavelet.assign ((num_columns + 1) * num_rows / 2, 0.0);
+    wavelet.assign ((num_columns + y.size () + 1 - max_points) * num_rows / 2, 0.0);
 
-    std::unique_ptr<double> minZ (new double[omp_get_max_threads ()]);
-    std::unique_ptr<double> maxZ (new double[omp_get_max_threads ()]);
+    std::unique_ptr<double> minZ (new double[num_threads]);
+    std::unique_ptr<double> maxZ (new double[num_threads]);
 
   #pragma omp parallel
     {
-        int threadNum (omp_get_thread_num ());
-        minZ.get ()[threadNum] = std::numeric_limits<double>::max ();
-        maxZ.get ()[threadNum] = std::numeric_limits<double>::lowest ();
+        int thread_num (omp_get_thread_num ());
+        minZ.get ()[thread_num] = std::numeric_limits<double>::max ();
+        maxZ.get ()[thread_num] = std::numeric_limits<double>::lowest ();
     }
 
   #pragma omp parallel for schedule(dynamic, 16)
     for (int i = 0; i < num_rows; ++i)
-    {    // Ïåðåáîð âñåõ ðÿäîâ
-        std::vector<std::complex<double>> morlet_factors;
-        m_calc_morlet_factors (i + m_min_points, morlet_factors);
-        size_t num_indexes (y.size () + 1 - morlet_factors.size ());
-        for (size_t j = 0; j < num_indexes; ++j)
+    {    // ÐŸÐµÑ€ÐµÐ±Ð¾Ñ€ Ð²ÑÐµÑ… Ñ€ÑÐ´Ð¾Ð²
+        std::vector<std::complex<double>> morlet_factors (m_calc_morlet_factors (i + min_points));
+        std::vector<std::complex<double>> row (y.size () + 1 - morlet_factors.size ());
+        for (size_t j = 0; j < row.size (); ++j)
         {
-            std::vector<std::complex<double>> collection (num_indexes);
             for (size_t k = 0; k < morlet_factors.size (); ++k)
-                collection[j] += y[j + k] * morlet_factors[k];
+                row[j] += y[j + k] * morlet_factors[k];
 
-            double index ((i * num_rows) / 2 + j);
+            double index ((num_columns * 2 + 1 - i) * i / 2 + j);
             wavelet[index] =
-          #if 1
+          #if 0
                 sqrt (collection[j].real () * collection[j].real () + collection[j].imag () * collection[j].imag ()) /
                 ((morlet_factors.size ()) * (morlet_factors.size ()));
           #else
-                collection[j].imag () / morlet_factors.size ();
+                row[j].imag ();
           #endif
 
             if (minZ.get ()[omp_get_thread_num ()] > wavelet[index])
@@ -227,7 +226,7 @@ Intervals MorletWavelet::compute (const std::vector<double>& x, const std::vecto
         }
     }
 
-    for (int i = 1; i < m_num_threads; ++i)
+    for (int i = 1; i < num_threads; ++i)
     {
         if (minZ.get ()[0] > minZ.get ()[i])
             minZ.get ()[0] = minZ.get ()[i];
@@ -236,13 +235,13 @@ Intervals MorletWavelet::compute (const std::vector<double>& x, const std::vecto
             maxZ.get ()[0] = maxZ.get ()[i];
     }
 
-    return { x[0], x[x.size () - 1], double (m_num_periods / 2), double (num_rows + m_num_periods), minZ.get ()[0], maxZ.get ()[0] };
+    return { x[0], x[x.size () - 1], double (min_points), double (max_points), minZ.get ()[0], maxZ.get ()[0] };
 }
 
 
-void MorletWavelet::m_calc_morlet_factors (const int num_points, std::vector<std::complex<double>>& data) const
+std::vector<std::complex<double>> MorletWavelet::m_calc_morlet_factors(const int num_points) const
 {
-    data.assign (num_points, 0.0);
+    std::vector<std::complex<double>> data (num_points);
     const int real_points (num_points * 2 + 1);
     for (int i = 0; i < num_points; ++i)
     {
@@ -252,4 +251,5 @@ void MorletWavelet::m_calc_morlet_factors (const int num_points, std::vector<std
         val = val * haus;
         data[i] = val;
     }
+    return data;
 }

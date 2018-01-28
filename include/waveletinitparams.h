@@ -41,6 +41,7 @@ struct WaveletInitParams
     std::string type;
     size_t min_points_num;
     size_t max_points_num;
+    size_t morlet_length;
 };
 
 

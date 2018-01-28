@@ -43,10 +43,15 @@
 
 class WaveletWindow : public QDialog
 {
+    Q_OBJECT
+
 public:
-    WaveletWindow (QWidget* parent = nullptr);
+    explicit WaveletWindow (QWidget* parent = nullptr);
 
     WaveletInitParams get_wavelet_info () const;
+
+public slots:
+    void look_wavelet_changing (const QString&);
 
 private:
     Ui_Wavelet m_wavelet;

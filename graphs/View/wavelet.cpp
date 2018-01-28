@@ -39,15 +39,34 @@ WaveletWindow::WaveletWindow (QWidget* parent) : QDialog (parent)
     m_list << "MORLET";
     m_wavelet.cbWaveletFunction->addItems (m_list);
 
+    connect (m_wavelet.cbWaveletFunction, SIGNAL(currentIndexChanged(QString)), SLOT(look_wavelet_changing(QString)));
+    m_wavelet.label_14->setHidden(true);
+    m_wavelet.sbLength->setHidden(true);
+
     RangeMaster* range = new RangeMaster (this);
     range->set_spin_box (m_wavelet.sbMax, m_wavelet.sbMin);
 }
 
 WaveletInitParams WaveletWindow::get_wavelet_info() const
 {
-    WaveletInitParams params;
-    params.max_points_num = m_wavelet.sbMax->value ();
-    params.min_points_num = m_wavelet.sbMin->value ();
-    params.type = m_wavelet.cbWaveletFunction->currentText ().toStdString();
-    return params;
+    return {
+        m_wavelet.cbWaveletFunction->currentText ().toStdString(),
+        (size_t) m_wavelet.sbMin->value (),
+        (size_t) m_wavelet.sbMax->value (),
+        (size_t) m_wavelet.sbLength->value ()
+    };
+}
+
+void WaveletWindow::look_wavelet_changing (const QString& str)
+{
+    if (str == "MORLET")
+    {
+        m_wavelet.label_14->setHidden(false);
+        m_wavelet.sbLength->setHidden(false);
+    }
+    else
+    {
+        m_wavelet.label_14->setHidden(true);
+        m_wavelet.sbLength->setHidden(true);
+    }
 }
