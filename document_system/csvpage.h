@@ -40,9 +40,11 @@ class CsvPage : public iPage
 {
 public:
     CsvPage (const std::string& filename);
+    ~CsvPage ();
 
     virtual bool set_x_axis_type (AxisType type) override;
     virtual bool push_data_back (const std::string& name, const std::vector<double>& data) override;
+    virtual bool push_data_back (const std::string& name, const double* data, size_t size) override;
 
     virtual AxisType get_x_axis_type () override;
 
@@ -54,6 +56,7 @@ private:
     void brouse_date_formats (std::vector<double>*, const std::string&);
     double date_to_double (const QDateTime&);
     double string_to_double (const std::string&);
+    void save_file ();
 
 private:
     std::string m_filename;

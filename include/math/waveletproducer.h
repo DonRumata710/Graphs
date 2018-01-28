@@ -38,8 +38,6 @@
 struct RowData
 {
 public:
-    RowData () {}
-
     RowData (const double* start, size_t size) :
         m_start (start), m_size (size)
     {}
@@ -50,6 +48,11 @@ public:
     }
 
     size_t size () const { return m_size; }
+
+    const double* get_ptr () const
+    {
+        return m_start;
+    }
 
 private:
     const double* m_start;
@@ -62,13 +65,13 @@ class WaveletProducer
 {
 public:
     WaveletProducer ();
-    WaveletProducer (const std::vector<double>& data, const size_t nColumns, size_t startRow, size_t endRow, WaveletStep step, const Intervals* intervals);
+    WaveletProducer (const std::vector<double>& data, const size_t columns_num, size_t start_row, size_t end_row, WaveletStep step, const Intervals* intervals);
 
     Row get_axisX () const;
 
     double value (size_t row, size_t col) const;
 
-    size_t row_size (size_t i) const;
+    size_t get_row_size (size_t i) const;
 
     RowData get_data (size_t row) const;
 

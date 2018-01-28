@@ -50,18 +50,12 @@ void WaveletModel::calc_wavelet(const GraphModel* const graph, const WaveletInit
     }
 }
 
-void WaveletModel::save_data (pPage page) const
+void WaveletModel::save_data (pDocumentWriter document, const std::string& wavelet_desc) const
 {
-    /*
     for (auto& data : m_data)
     {
-        unique_ptr<QAxObject> sheetToCopy (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
-        sheetToCopy->dynamicCall ("Copy(const QVariant&)", sheetToCopy->asVariant ());
-        unique_ptr<QAxObject> newSheet (workbook->querySubObject ("Worksheets(const QVariant&)", 1));
-        newSheet->setProperty ("Name", QString (data.first.c_str ()));
-        data.second->save_data (newSheet.get ());
+        data.second->save_data(document->get_page(wavelet_desc + "-" + data.first));
     }
-    */
 }
 
 const WaveletProducer& WaveletModel::get_data (const std::string& name)

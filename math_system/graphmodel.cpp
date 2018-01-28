@@ -61,8 +61,9 @@ void GraphModel::load_data(pPage page)
     m_source.load_data (page);
 }
 
-void GraphModel::save_data(pPage page) const
+void GraphModel::save_data(pDocumentWriter document, const std::string& page_name) const
 {
+    pPage page (document->get_page(page_name));
     page->set_x_axis_type(get_type ());
     m_source.save_data (page);
 }

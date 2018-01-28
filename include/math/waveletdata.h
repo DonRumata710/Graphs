@@ -50,24 +50,16 @@ public:
 
     const WaveletProducer& get_producer () const;
 
-    void save_data (pDocumentReader document);
+    void save_data (pPage page);
 
 private:
-    /*
-     * void m_haaf_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_french_hat_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_morlet_wavelet (const vector<double>&, const vector<double>&, vector<double>&, size_t, size_t);
-     * void m_calc_morlet_factors (const int num_points, const int min_points, std::vector<std::complex<double>>& data);
-     */
-
-    std::vector<double> wavelet;
+    std::vector<double> m_wavelet;
     size_t columns = 0;
 
     Intervals m_intervals;
+    size_t m_step = 1;
 
     std::unique_ptr<WaveletProducer> data;
-
-    bool m_isFrenchHat = false;
 
     static size_t m_numThreads;
 };

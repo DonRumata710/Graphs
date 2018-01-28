@@ -62,9 +62,11 @@ WaveletData::WaveletData (const std::vector<double>& x, const std::vector<double
     size_t num_columns (0);
     size_t min_points (0);
     size_t max_points (0);
-    m_intervals = function->compute (x, y, wavelet, num_columns, min_points, max_points);
+    m_intervals = function->compute (x, y, m_wavelet, num_columns, min_points, max_points);
 
-    data.reset (new WaveletProducer (wavelet, num_columns, min_points, max_points, function->get_step (), &m_intervals));
+    data.reset (new WaveletProducer (m_wavelet, num_columns, min_points, max_points, function->get_step (), &m_intervals));
+
+    m_step = (size_t) function->get_step();
 }
 
 const WaveletProducer& WaveletData::get_producer () const
@@ -72,34 +74,20 @@ const WaveletProducer& WaveletData::get_producer () const
     return *data;
 }
 
-void WaveletData::save_data (pDocumentReader document)
+void WaveletData::save_data (pPage page)
 {
-    /*
-    if (wavelet.empty ()) return;
+    if (m_wavelet.empty ())
+        return;
 
-    QAxObject* Cell1 (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (1), QVariant (1)));
-    QAxObject* Cell2 (sheet->querySubObject ("Cells(QVariant&,QVariant&)", QVariant (columns + 1), QVariant (wavelet.size () / columns + 1)));
-    QAxObject* range (sheet->querySubObject ("Range(const QVariant&,const QVariant&)", Cell1->asVariant (), Cell2->asVariant ()));
+    std::vector<double> axis;
+    double step ((m_intervals.maxX - m_intervals.minX) / data->get_num_columns ());
+    for (double i = m_intervals.minX + step / 2.0; i < m_intervals.maxX; i += step)
+        axis.push_back (i);
+    page->push_data_back ("x axis", axis);
 
-    QList<QVariant> cellsList;
-    QList<QVariant> rowsList;
-
-    cellsList << QString::number (0);
-    for (int i = int (m_intervals.minY + 1.50001); i < int (m_intervals.maxY - 1.49999); i += (m_isFrenchHat ? 3 : 2))
-        cellsList << QString::number (i);
-    rowsList << QVariant (cellsList);
-
-    double step ((m_intervals.maxX - m_intervals.minX) / columns);
-
-    for (int j = 0; j < columns; j++)
+    for (int i = 0; i < data->get_num_rows (); i++)
     {
-        cellsList.clear ();
-        cellsList << step * j;
-        for (int i = 0; i < wavelet.size () / columns; i++)
-            cellsList << wavelet[i * columns + j];
-        rowsList << QVariant (cellsList);
+        RowData row (data->get_data (i));
+        page->push_data_back (std::to_string (row.size ()), row.get_ptr (), row.size ());
     }
-
-    range->setProperty ("Value", QVariant (rowsList));
-    */
 }

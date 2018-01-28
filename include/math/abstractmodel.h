@@ -50,7 +50,7 @@ public:
 
     AxisType get_type () const { return m_type; }
 
-    virtual void save_data (pPage) const = 0;
+    virtual void save_data (pDocumentWriter, const std::string&) const = 0;
     virtual StringList get_headers () const = 0;
 
 protected:

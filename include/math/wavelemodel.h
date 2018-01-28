@@ -45,7 +45,7 @@ class WaveletModel : public AbstractModel
 public:
     void calc_wavelet (const GraphModel* const, const WaveletInitParams&);
 
-    virtual void save_data (pPage) const override;
+    virtual void save_data (pDocumentWriter, const std::string&) const override;
 
     const WaveletProducer& get_data (const std::string&);
 

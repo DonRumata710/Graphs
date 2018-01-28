@@ -64,9 +64,10 @@ double MatrixRasterData::value (double x, double y) const
 
 std::vector<RowData> MatrixRasterData::get_data ()
 {
-    QwtInterval yInterval (interval (Qt::YAxis));
-    size_t size ((yInterval.maxValue () - 1.4999) + 1 - (yInterval.minValue () + 1.4999));
-    std::vector<RowData> vec (size);
+    QwtInterval y_interval (interval (Qt::YAxis));
+    size_t size ((y_interval.maxValue () - 1.4999) + 1 - (y_interval.minValue () + 1.4999));
+    std::vector<RowData> vec;
+    vec.reserve (size);
 
     for (size_t i = 0; i < size; ++i)
         vec.push_back (data.get_data (i));

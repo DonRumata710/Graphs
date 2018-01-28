@@ -93,6 +93,20 @@ bool ExcelPage::push_data_back(const std::string& name, const std::vector<double
     return true;
 }
 
+bool ExcelPage::push_data_back(const std::string& name, const double *data, size_t size)
+{
+    if (m_cache.size () < size)
+        m_cache.assign(size + 1, QList<QVariant> ());
+
+    m_cache[0] << name.c_str ();
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_cache[i + 1] << data[i];
+    }
+
+    return true;
+}
+
 AxisType ExcelPage::get_x_axis_type()
 {
     std::unique_ptr<QAxObject> cell (m_table->querySubObject (
