@@ -150,15 +150,14 @@ void Application::add_scale_toolbar ()
 {
     if (!logScale)
     {
-        logScale = new LogScale (this);
-        addToolBar (logScale);
-        m_manager.set_log_scale (logScale);
+        logScale = std::make_unique<LogScale> (this);
+        addToolBar (logScale.get ());
+        m_manager.set_log_scale (logScale.get ());
     }
     else
     {
-        removeToolBar (logScale);
-        delete logScale;
-        logScale = nullptr;
+        removeToolBar (logScale.get ());
+        logScale.release ();
     }
     //m_grid.aLogScale->setChecked (logScale);
 }
@@ -167,15 +166,14 @@ void Application::add_multygraph_tools ()
 {
     if (!m_multygraphtools)
     {
-        m_multygraphtools = new MultyGraphTools (this);
-        addToolBar (m_multygraphtools);
-        m_manager.set_multy_graph (m_multygraphtools);
+        m_multygraphtools = std::make_unique<MultyGraphTools> (this);
+        addToolBar (m_multygraphtools.get ());
+        m_manager.set_multy_graph (m_multygraphtools.get ());
     }
     else
     {
-        removeToolBar (m_multygraphtools);
-        delete m_multygraphtools;
-        m_multygraphtools = nullptr;
+        removeToolBar (m_multygraphtools.get ());
+        m_multygraphtools.release ();
     }
     //m_grid.aMultyGraph->setChecked (m_multygraphtools);
 }

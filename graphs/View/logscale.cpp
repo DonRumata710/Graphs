@@ -29,21 +29,20 @@
 #include "logscale.h"
 
 
-LogScale::LogScale (QWidget* parent) : QToolBar (parent)
+LogScale::LogScale (QWidget* parent) :
+    QToolBar (parent),
+    scaleX (new QCheckBox (this)),
+    scaleY (new QCheckBox (this))
 {
-    scaleX = new QCheckBox (this);
-    scaleY = new QCheckBox (this);
-
     scaleX->setText (tr ("log. scale X"));
     scaleY->setText (tr ("log. scale Y"));
 
-    addWidget (scaleX);
-    addWidget (scaleY);
+    addWidget (scaleX.get ());
+    addWidget (scaleY.get ());
 }
-
 
 void LogScale::connect_widget (QWidget* w)
 {
-    connect (scaleX, SIGNAL (stateChanged (int)), w, SLOT (set_scale_x (int)));
-    connect (scaleY, SIGNAL (stateChanged (int)), w, SLOT (set_scale_y (int)));
+    connect (scaleX.get (), SIGNAL (stateChanged (int)), w, SLOT (set_scale_x (int)));
+    connect (scaleY.get (), SIGNAL (stateChanged (int)), w, SLOT (set_scale_y (int)));
 }

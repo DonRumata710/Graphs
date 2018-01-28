@@ -31,6 +31,8 @@
 #include <QtCore>
 #include <QtWidgets>
 
+#include <memory>
+
 
 class MultyGraphTools : public QToolBar
 {
@@ -44,7 +46,7 @@ public:
     void connect_widget (QWidget*);
 
 private:
-    QComboBox* m_curves;
-    QPushButton* m_bAdd;
-    QPushButton* m_bRem;
+    std::unique_ptr<QComboBox> m_curves;
+    std::unique_ptr<QPushButton> m_bAdd;
+    std::unique_ptr<QPushButton> m_bRem;
 };
