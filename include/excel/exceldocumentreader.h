@@ -2,7 +2,7 @@
 //
 // Graphs
 //
-// Copyright (c) 2016-2017 DonRumata710
+// Copyright (c) 2016-2018 DonRumata710
 //
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
